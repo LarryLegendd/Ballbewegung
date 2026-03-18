@@ -1,5 +1,6 @@
 package spiel1;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -186,7 +187,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
             URL neutralURL = getClass().getResource("/images/lanze_temp.png");//TODO Bilder einfuegen
             URL pressedURL = getClass().getResource("/images/schwert_temp.png");
             URL startNeutralURL = getClass().getResource("/images/start_temp.png");
-
+            URL staubSaugerURL = getClass().getResource("/images/staubsauger_temp.png");
+            
             if (neutralURL == null || pressedURL == null) {
                 throw new RuntimeException("Button-Bilder nicht gefunden!");
             }
@@ -200,7 +202,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
             grapplingButtonPressed= ImageIO.read(pressedURL);
             grapplingButtonNeutral= ImageIO.read(pressedURL);
             staubsaugerButtonPressed= ImageIO.read(pressedURL);
-            staubsaugerButtonNeutral= ImageIO.read(pressedURL);
+            staubsaugerButtonNeutral= ImageIO.read(staubSaugerURL);
             schwungSeilButtonPressed= ImageIO.read(neutralURL); 
             schwungSeilButtonNeutral= ImageIO.read(pressedURL); 
 
@@ -343,11 +345,13 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
         if(currentScreen == "spiel") { // Spiel läuft
         	Vector2 bodenLinks = new Vector2(0,0).toJPanel();
-        	Vector2 bodenRechts = new Vector2(999999,0).toJPanel();
+        	Vector2 bodenRechts = new Vector2(99999999,0).toJPanel();
         	//Boden
-        	g.setColor(Color.GREEN);
-        	g.drawLine((int) bodenLinks.x, (int) bodenLinks.y, (int) bodenRechts.x, (int) bodenRechts.y);
-        	g.setColor(Color.black);
+        	g2d.setColor(Color.green);
+        	g2d.setStroke(new BasicStroke(5.0f));
+        	g2d.drawLine((int) bodenLinks.x, (int) bodenLinks.y, (int) bodenRechts.x, (int) bodenRechts.y);
+        	g2d.setStroke(new BasicStroke());
+        	g2d.setColor(Color.black);
         	//Player
         	player.paintMe(g);
         	

@@ -8,12 +8,15 @@ import java.io.IOException;
 
 public class Player extends GameObject{
 	
+	Vector2 standardSpeed;
+	
 	public Player(Transform transform, double width, double height){
 		super(transform, width, height);//der Spieler wird fliegend erzeugt
+		standardSpeed=transform.speed;
 	}
 	
 	public void reset() {
-		setSpeed(transform.speed);//springt nach oben
+		setSpeed(standardSpeed);//springt nach oben
 		setPosition(new Vector2(10,Spielfeld.screenHeight/2));
 	}
 	
