@@ -24,7 +24,7 @@ public class Player extends GameObject{
 	public void moveGameObject(double time) {
 		transform.speed= transform.speed.multiply((1-(0.02*time)));//Luftwiderstand
     	setPosition(	getPosition().add(getSpeed().multiply(time))	);
-    	setSpeed(getSpeed().add(new Vector2(0,-.13).multiply(time)));//Gravitation
+    	transform.speed=transform.speed.add(new Vector2(0,-.13).multiply(time));//Gravitation
     }
 	
 	@Override

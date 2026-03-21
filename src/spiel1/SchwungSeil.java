@@ -56,13 +56,28 @@ public class SchwungSeil extends Weapon {
 	private Timer swingtimer = 	new Timer(13, new ActionListener(){//schiesst über längere zeit
 		@Override
 	    public void actionPerformed(ActionEvent e) {
-			//zentripetalkraft v^2/r
-			double r = hitEnemy.transform.position.makeLocal(playertransform.position).length();
-			double v = playertransform.speed.length();
+			//richtung korrigieren
+			double speed = playertransform.speed.length();
 			//richtung
-			Vector2 dir = hitEnemy.transform.position.makeLocal(playertransform.position).normalize().rotate(Math.PI/2*3);
+			// 2D Kreuzprodukt (z-Komponente)
+			double cross = hitEnemy.transform.position.makeLocal(playertransform.position).x * playertransform.speed.y - hitEnemy.transform.position.makeLocal(playertransform.position).y * playertransform.speed.x;
+
+			Vector2 dir;
+
+			if (cross > 0) {
+			    // gegen Uhrzeigersinn
+			    System.out.println("geguhr");
+			    dir = hitEnemy.transform.position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2);
+			} else {
+			    // im Uhrzeigersinn
+			    System.out.println("uhr");
+			    dir = hitEnemy.transform.position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2 *3);
+			}
+			double speedrichtungsunterschied = Math.cos(playertransform.speed.angle()-dir.angle());
+			Vector2 zielspeed=dir.multiply(speed);
 			
-			hitListener.onHit(dir.multiply(v*v/r));
+			Vector2 speeddifference = zielspeed.subtract(playertransform.speed).multiply(speedrichtungsunterschied);
+			hitListener.onHit(speeddifference);//////////temp-->new Vector2(0,0));//temp 
 			//hitListener.onHit(playertransform.speed=playertransform.speed.add(new Vector2(0,.13).multiply(timeController.getTimeSpeed())));//Gravitation entgegenwirken
 
 			
