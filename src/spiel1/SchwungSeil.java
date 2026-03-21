@@ -56,10 +56,16 @@ public class SchwungSeil extends Weapon {
 	private Timer swingtimer = 	new Timer(13, new ActionListener(){//schiesst über längere zeit
 		@Override
 	    public void actionPerformed(ActionEvent e) {
+			//zentripetalkraft v^2/r
+			double r = hitEnemy.transform.position.makeLocal(playertransform.position).length();
+			double v = playertransform.speed.length();
+			//richtung
+			Vector2 dir = hitEnemy.transform.position.makeLocal(playertransform.position).normalize().rotate(Math.PI/2*3);
 			
-		
-			hitListener.onHit(hitEnemy.transform.position.makeLocal(playertransform.position).multiply(playertransform.speed.length()*playertransform.speed.length()));
-		
+			hitListener.onHit(dir.multiply(v*v/r));
+			//hitListener.onHit(playertransform.speed=playertransform.speed.add(new Vector2(0,.13).multiply(timeController.getTimeSpeed())));//Gravitation entgegenwirken
+
+			
 		}});
 	
 	Timer t;
@@ -83,9 +89,7 @@ public class SchwungSeil extends Weapon {
   		if(hitbox.collides(enemy.getHitbox())) {
       		enemy.schadenNehmen(1);
       		
-      		Vector2 enemydiff = enemy.transform.position.makeLocal(playertransform.position);
-      		System.out.println("enemydiff: "+enemydiff+" grappleEnemyKnockback: "+grappleEnemyKnockback);
-      		enemy.addSpeed(enemydiff.normalize().multiply(grappleEnemyKnockback).reverse());
+      		Vector2 enemydiff = enemy.transform.position.makeLocal(playertransform.position);//temp braucht man vielleicht nicht
       		
       		knockback = enemydiff.normalize().multiply(grappleKnockback);
       		System.out.println("knockback: " + knockback);
@@ -98,7 +102,9 @@ public class SchwungSeil extends Weapon {
 	}
 	@Override
 	public void hitReleased() {
-		swingtimer.stop();
+		if (swingtimer != null) {
+			swingtimer.stop();
+		}
 		setCooldown(false);
 		show();//beendet nach ein bischen extrazeit den timer
 	}
@@ -130,7 +136,9 @@ public class SchwungSeil extends Weapon {
 							if(shoot(enemy)) {
 								hitEnemy = enemy;
 								t.stop();
-								swingtimer.restart();
+								if (swingtimer != null) {
+									swingtimer.restart();
+								}
 								
 							
 						}

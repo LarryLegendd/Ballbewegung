@@ -5,4 +5,5 @@ public interface TimeController {
 	void normalTime();
 	boolean isTimeSlowed();
 	void slowTimeFor(int millis);
+	double getTimeSpeed();
 }

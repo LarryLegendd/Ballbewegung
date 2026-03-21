@@ -165,6 +165,11 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     }
     
     
+    @Override
+    public double getTimeSpeed() {
+    	return timeMultiplyer;
+    }
+    
     
     private void initGame() {
     	
@@ -237,6 +242,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         sword=new Sword(player.transform);
         grapple = new Grapplinghook(player.transform, this, this);//this ist der timecontroller/cameracontroller
         staubsauger = new Staubsauger(player.transform);
+        schwungSeil = new SchwungSeil(player.transform, this, this);
         leftWeapon=sword;
         rightWeapon=grapple;
         
@@ -358,9 +364,9 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	//Weapons
         	if(leftWeapon != null)leftWeapon.paintMe(g);
         	else System.out.println("leftweapon ist" + leftWeapon);
-//        	leftWeapon.getHitbox().paintMe(g);
-        	if(leftWeapon != null) {rightWeapon.paintMe(g);
-        	rightWeapon.getHitbox().paintMe(g);
+        	if(leftWeapon.getHitbox() != null) leftWeapon.getHitbox().paintMe(g);
+        	if(rightWeapon != null) {rightWeapon.paintMe(g);
+        		if(rightWeapon.getHitbox() != null) rightWeapon.getHitbox().paintMe(g);
         	}
         	else System.out.println("rightweapom ist" + rightWeapon);
         	
@@ -495,6 +501,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     				rightUpgradeButton.setpressed(grapplingButton.getpressed());
     				rightWeapon = grapple;
     			}
+    			
     			if(staubsaugerButton.press(mouseScreenPos)) {
     				rightUpgradeButton.setneutral(staubsaugerButton.getneutral());
     				rightUpgradeButton.setpressed(staubsaugerButton.getpressed());

@@ -65,7 +65,8 @@ public class Staubsauger extends Weapon{
 					System.out.println("getriffen");
 					hit=true;
 					
-					enemy.schadenNehmen(1);
+					// temp die zeile kann wahrscheinlich weg außer es ist unballenced enemy.schadenNehmen(0);
+					
 					//knockback
 					Vector2 enemydiff = enemy.transform.position.makeLocal(playertransform.position);
 		      		enemy.addSpeed(enemydiff.normalize().multiply(enemyKnockback).reverse());
