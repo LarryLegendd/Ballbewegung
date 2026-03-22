@@ -1,6 +1,8 @@
 package spiel1;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -22,17 +24,17 @@ public class Sword extends Weapon {
 	private int level = 0;
 
 	private double[][] levelArr = {
-//			winkel,range,kb,	 Preis
-		  {Math.PI/6, 	30, 8, 		3},
-		  {Math.PI/5.5, 35, 8.3,	5},
-		  {Math.PI/5, 	40, 8.6,	8},
-		  {Math.PI/4.5, 50, 8.9,	10},
-		  {Math.PI/4, 	60, 10.2,	15},
-		  {Math.PI/3, 	70, 10.5,	20},
-		  {Math.PI/2.6, 80, 10.8,	30},
-		  {Math.PI/2.3, 90, 12.1,	40},
-		  {Math.PI/2, 	100,12.8,	50},
-		  {Math.PI/1.8, 140,13.4,	100},
+//			winkel,		range,	kb,	 Preis
+		  {Math.PI/3,	100,	12, 	3},
+		  {Math.PI/2.85,110, 	14,	5},
+		  {Math.PI/2.7,	120, 	16,	8},
+		  {Math.PI/2.55,130, 	18,	10},
+		  {Math.PI/2.4, 	140,20,		15},
+		  {Math.PI/2.25,150, 	22,	20},
+		  {Math.PI/2.1, 160, 	24,	30},
+		  {Math.PI/1.95,170, 	26,	40},
+		  {Math.PI/1.8, 	180,28,		50},
+		  {Math.PI/1.65,190,	30,		100},
 	};
 	
 	private double angle = levelArr[0][0];
@@ -117,12 +119,17 @@ public class Sword extends Weapon {
 	
 	@Override
 	public void paintMe(Graphics g){
+		Graphics2D g2d = (Graphics2D) g; 
 		if(isShown&&drawEndpoint1!=null) {
 			Vector2 JEndpoint1 = drawEndpoint1.toJPanel();
 			Vector2 JEndpoint2 = drawEndpoint2.toJPanel();
 			Vector2 JPlayerPos = drawPlayerPos.toJPanel();
 			g.drawLine((int)JPlayerPos.x, (int)JPlayerPos.y,(int) JEndpoint1.x, (int) JEndpoint1.y);
 			g.drawLine((int)JPlayerPos.x, (int)JPlayerPos.y,(int) JEndpoint2.x, (int) JEndpoint2.y);
+			
+			double startangle = drawEndpoint2.makeLocal(drawPlayerPos).angle();
+			System.out.println(startangle);
+			g2d.drawArc((int) (JPlayerPos.x-range),(int) (JPlayerPos.y-range), (int)range*2,(int) range*2, (int) Math.toDegrees(startangle),(int) Math.toDegrees(angle));
 		}
 	}
 

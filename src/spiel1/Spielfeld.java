@@ -189,27 +189,34 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	 * 			shop
     	 */
         try {
-            URL neutralURL = getClass().getResource("/images/lanze_temp.png");//TODO Bilder einfuegen
+        	URL neutralURL = getClass().getResource("/images/lanze_temp.png");//TODO Bilder einfuegen
             URL pressedURL = getClass().getResource("/images/schwert_temp.png");
             URL startNeutralURL = getClass().getResource("/images/start_temp.png");
             URL staubSaugerURL = getClass().getResource("/images/staubsauger_temp.png");
+            URL seilURL = getClass().getResource("/images/Seil_temp.png");
+            URL grapplingURL = getClass().getResource("/images/grappling_hook.png");
             
             if (neutralURL == null || pressedURL == null) {
                 throw new RuntimeException("Button-Bilder nicht gefunden!");
             }
 
-            startButtonNeutral = ImageIO.read(startNeutralURL);//TODO Bilder hinzufügen
             startButtonPressed = ImageIO.read(pressedURL);
+            startButtonNeutral = ImageIO.read(startNeutralURL);//TODO Bilder hinzufügen
+
             swordButtonPressed = ImageIO.read(neutralURL);
             swordButtonNeutral = ImageIO.read(pressedURL);
-            spearButtonPressed = ImageIO.read(startNeutralURL);
+
+            spearButtonPressed = ImageIO.read(pressedURL);
             spearButtonNeutral = ImageIO.read(neutralURL);
+
             grapplingButtonPressed= ImageIO.read(pressedURL);
-            grapplingButtonNeutral= ImageIO.read(pressedURL);
+            grapplingButtonNeutral= ImageIO.read(grapplingURL);
+
             staubsaugerButtonPressed= ImageIO.read(pressedURL);
             staubsaugerButtonNeutral= ImageIO.read(staubSaugerURL);
-            schwungSeilButtonPressed= ImageIO.read(neutralURL); 
-            schwungSeilButtonNeutral= ImageIO.read(pressedURL); 
+
+            schwungSeilButtonPressed= ImageIO.read(pressedURL);
+            schwungSeilButtonNeutral= ImageIO.read(seilURL);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -221,12 +228,11 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		leftUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3,prefSize.getHeight()/2),200,20,swordButtonPressed,swordButtonNeutral);
 		rightUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3*2,prefSize.getHeight()/2),200,20,spearButtonPressed,spearButtonNeutral);
 		
-		swordButton			= new Button(new Vector2(prefSize.getWidth()/30,prefSize.getHeight()/(buttons.length+2)*2),200,20,swordButtonPressed,swordButtonNeutral);
-	    System.out.println(swordButton.getWorldPos()+" sword");
+		swordButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*2),200,20,swordButtonPressed,swordButtonNeutral);
 		spearButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*3),200,20,spearButtonPressed,spearButtonNeutral);
 	    grapplingButton		= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*4),200,20,grapplingButtonPressed,grapplingButtonNeutral);
 	    staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral);
-		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*6),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral);
+		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
 
     	
         
