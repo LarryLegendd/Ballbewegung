@@ -9,6 +9,7 @@ import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.image.RescaleOp;
 
 public class Button extends GameObject {
 	private BufferedImage currentImage;
@@ -23,6 +24,19 @@ public class Button extends GameObject {
         this.pressedImage = pressed;
         this.neutralImage = neutral;
         this.currentImage = neutral;
+    }
+
+    public Button(Vector2 midpoint, double width, double height, BufferedImage neutral) {
+        super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height);
+        System.out.println(transform.position);
+        this.pressedImage = darkenImage(neutral, 0.5f);
+        this.neutralImage = neutral;
+        this.currentImage = neutral;
+    }
+
+    private BufferedImage darkenImage(BufferedImage image, float alpha) {
+        RescaleOp op = new RescaleOp(alpha, 0f, null);
+        return op.filter(image, null);
     }
     
     public BufferedImage getpressed() {
