@@ -21,6 +21,7 @@ public class SchwungSeil extends Weapon {
 	
 	private Transform  transform = new Transform(new Vector2(0,0));
 	
+	private Transform playertransform;
 	
 	//level
 	private int level = 0;
@@ -53,9 +54,14 @@ public class SchwungSeil extends Weapon {
 	private WeaponHitListener hitListener;
 	private Enemy hitEnemy;
 	
+	private Player player;
+	
 	private Timer swingtimer = 	new Timer(13, new ActionListener(){//schiesst über längere zeit
 		@Override
 	    public void actionPerformed(ActionEvent e) {
+			
+			playertransform = player.getTransform();
+			
 			//richtung korrigieren
 			double speed = playertransform.speed.length();
 			//richtung

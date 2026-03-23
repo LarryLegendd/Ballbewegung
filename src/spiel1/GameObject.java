@@ -24,6 +24,10 @@ public abstract class GameObject{
         return transform.position;
     }
     
+    public Transform getTransform() {
+    	return transform;
+    }
+    
     public RectHitbox getHitbox() {
     	return hitbox;
     }
