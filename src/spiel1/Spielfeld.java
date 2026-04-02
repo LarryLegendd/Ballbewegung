@@ -280,7 +280,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	player.reset();
     	currentScreen = "spiel";
     	cooldown = false;
-    	for(Weapon weapon : weapons)weapon.reset();
+    	for(Weapon weapon : weapons) if(weapon!= null)weapon.reset();
     }
     
     
@@ -333,6 +333,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	}
         	
         	//enemy zeug
+        	//Das spawnen hier sollte von dem oben ersetzt werden temp ,aber TODO das oben funktioniert nicht (und ist falsch weil wenn man schon oben rechts(und lu) war ist unten rechts nicht neu obwohle es das sein sollte) und weil dann enemis leer ist geht gar nichts mehr
         	framecounter++;//TODO das soll mit einer zahl ersetzt werden die sich beim scrollen erhöht
         	if(framecounter % 20==0) {
         		//enemies.add(new Enemy(new Transform(new Vector2(Math.random()*this.getWidth(),Math.random()*this.getHeight())),20,20,5));//temp das darunter ist richtig //für debugen new Enemy(new Vector2(600,660),20,20,5));//
