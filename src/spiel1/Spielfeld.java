@@ -49,13 +49,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private Grapplinghook grapple;
 	private Staubsauger staubsauger;
 	private SchwungSeil schwungSeil;
-	
-	private Weapon[] weapons = {
-			sword,
-			spear,
-			grapple,
-			staubsauger,
-			schwungSeil};
+	private Weapon[] weapons;
 	
 	private Weapon leftWeapon = null;//TODO die zuteilung
 	private Weapon rightWeapon = null;
@@ -180,19 +174,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     
     
     private void initGame() {
-    	
-//    	//setLayout(new BorderLayout());
-//    	// === Shop Panel ===
-//        shopPanel.setLayout(new FlowLayout());
-//        shopPanel.setBounds(0, 0, prefSize.width, prefSize.height);
-//        shopPanel.setOpaque(false);
-////
-////        startButton.setPreferredSize(new Dimension(150, 50));
-////        startButton.addActionListener(e -> resetGame());
-////
-////        shopPanel.add(startButton);
-//        shopPanel.setVisible(false); // standardmäßig versteckt
-
     	/*
     	 * 			shop
     	 */
@@ -257,6 +238,13 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         grapple = new Grapplinghook(player.transform, this, this);//this ist der timecontroller/cameracontroller
         staubsauger = new Staubsauger(player.transform);
         schwungSeil = new SchwungSeil(player.transform, player, this, this);
+        weapons = new Weapon[]{
+    			sword,
+    			spear,
+    			grapple,
+    			staubsauger,
+    			schwungSeil};
+        
         leftWeapon=sword;
         rightWeapon=grapple;
         
@@ -279,8 +267,23 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	enemies.clear();
     	player.reset();
     	currentScreen = "spiel";
-    	cooldown = false;
-    	for(Weapon weapon : weapons) if(weapon!= null)weapon.reset();
+    	for(int i = 0; i < weapons.length; i++) if(weapons[i]!= null) {
+    		weapons[i].reset();
+    		System.out.println("waffe "+i+" geresettet");
+    	}else System.out.println("waffe "+i+" ist null");
+    	cooldown=true;
+    	t = new Timer(13, new ActionListener() {
+    		@Override
+		    public void actionPerformed(ActionEvent e) {//für einen frame cooldown, dass der startklick kein hit ist //temp  TODO das funktioniert nicht
+    			int i=0;
+    		if(i>1) {
+    			cooldown = false;
+    			t.stop();
+    		}
+    		i++;
+    		}});
+    	t.start();
+    	
     }
     
     
@@ -312,7 +315,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         if (currentScreen == "spiel") { // Spiel läuft
         	//Player
         	player.moveGameObject( timeMultiplyer);
-        	System.out.println(screenHeight/2 +" screm , camerapops "+cameraPos.y/2);
         	cameraPos=cameraPos.lerp(player.transform.position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
         	
         	if(cameraPos.x>cameraPosMaxX) {//neues Terrain in x - richtung
