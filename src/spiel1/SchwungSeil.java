@@ -55,7 +55,7 @@ public class SchwungSeil extends Weapon {
 	private Enemy hitEnemy;
 	
 	private Player player;
-	
+
 	private Timer swingtimer = 	new Timer(13, new ActionListener(){//schiesst über längere zeit
 		@Override
 	    public void actionPerformed(ActionEvent e) {
@@ -67,9 +67,12 @@ public class SchwungSeil extends Weapon {
 			//richtung
 			// 2D Kreuzprodukt (z-Komponente)
 			double cross = hitEnemy.transform.position.makeLocal(playertransform.position).x * playertransform.speed.y - hitEnemy.transform.position.makeLocal(playertransform.position).y * playertransform.speed.x;
-
+			
 			Vector2 dir;
-
+			
+			
+			player.startSwing();
+			
 			if (cross > 0) {
 			    // gegen Uhrzeigersinn
 			    System.out.println("geguhr");
@@ -82,6 +85,15 @@ public class SchwungSeil extends Weapon {
 			double speedrichtungsunterschied = Math.cos(playertransform.speed.angle()-dir.angle());
 			Vector2 zielspeed=dir.multiply(speed);
 			
+			//berechnung von dem teil der Gravitation der in die richtige richtung geht
+			Vector2 gravdown = new Vector2(0,-.13).multiply(timeController.getTimeSpeed());
+			
+			double gravitationeffizienz = Math.cos(gravdown.rotate(-dir.angle()).angle());//wie viel von der gravitation wirkt(0 - 1)
+			//							
+			Vector2 teilgrav = gravdown.rotate(Math.PI/2).multiply(gravitationeffizienz).rotate(dir.angle());//teil der gravitation der in die richtige richtung geht
+			
+			zielspeed=zielspeed.add(teilgrav);//gravitation
+			
 			Vector2 speeddifference = zielspeed.subtract(playertransform.speed).multiply(speedrichtungsunterschied);
 			hitListener.onHit(speeddifference);//////////temp-->new Vector2(0,0));//temp 
 			//hitListener.onHit(playertransform.speed=playertransform.speed.add(new Vector2(0,.13).multiply(timeController.getTimeSpeed())));//Gravitation entgegenwirken
@@ -91,11 +103,12 @@ public class SchwungSeil extends Weapon {
 	
 	Timer t;
 	
-	public SchwungSeil(Transform playertransform, TimeController timeController, CameraController cameraController) {
+	public SchwungSeil(Transform playertransform, Player player, TimeController timeController, CameraController cameraController) {
 		this.playertransform = playertransform;
 		hitbox = new TriangleHitbox(basisBreite, range, transform);
 		this.timeController = timeController;
 		this.cameraController = cameraController;
+		this.player = player;
 	}
 	
 	
@@ -105,7 +118,7 @@ public class SchwungSeil extends Weapon {
   		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
   		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
   		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
-  		isShown=true;//muss manuel gemacht werden weil es unteschiedlich lang dauert;
+  		isShown=true;//muss manuell(nicht mit show()) gemacht werden weil es unteschiedlich lang dauert;
   		
   		if(hitbox.collides(enemy.getHitbox())) {
       		enemy.schadenNehmen(1);
@@ -125,6 +138,7 @@ public class SchwungSeil extends Weapon {
 	public void hitReleased() {
 		if (swingtimer != null) {
 			swingtimer.stop();
+			player.stopSwing();
 		}
 		setCooldown(false);
 		show();//beendet nach ein bischen extrazeit den timer
@@ -154,7 +168,8 @@ public class SchwungSeil extends Weapon {
 						shoottimer--;
 												
 						for(Enemy enemy : enemies){
-							if(shoot(enemy)) {
+							if(shoot(enemy)) 
+							{
 								hitEnemy = enemy;
 								t.stop();
 								if (swingtimer != null) {
@@ -162,7 +177,7 @@ public class SchwungSeil extends Weapon {
 								}
 								
 							
-						}
+							}else
 							if (shoottimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
 				                listener.onMiss();
 				                shoottimer = shoottime;

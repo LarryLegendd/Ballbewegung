@@ -248,7 +248,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         sword=new Sword(player.transform);
         grapple = new Grapplinghook(player.transform, this, this);//this ist der timecontroller/cameracontroller
         staubsauger = new Staubsauger(player.transform);
-        schwungSeil = new SchwungSeil(player.transform, this, this);
+        schwungSeil = new SchwungSeil(player.transform, player, this, this);
         leftWeapon=sword;
         rightWeapon=grapple;
         
