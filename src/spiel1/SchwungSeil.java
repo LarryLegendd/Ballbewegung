@@ -141,7 +141,7 @@ public class SchwungSeil extends Weapon {
 			player.stopSwing();
 		}
 		setCooldown(false);
-		show();//beendet nach ein bischen extrazeit den timer
+		isShown=false;
 	}
 	
 	@Override
@@ -167,7 +167,8 @@ public class SchwungSeil extends Weapon {
 				        
 						shoottimer--;
 												
-						for(Enemy enemy : enemies){
+						for(Enemy enemy : enemies)
+						{
 							if(shoot(enemy)) 
 							{
 								hitEnemy = enemy;
@@ -177,15 +178,16 @@ public class SchwungSeil extends Weapon {
 								}
 								
 							
-							}else
-							if (shoottimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
-				                listener.onMiss();
-				                shoottimer = shoottime;
-				                peneltyCooldown(30);
-				                show();//beendet nach ein bischen extrazeit den timer
-				                ((Timer) e.getSource()).stop();
-				            }
+							}
 						}
+						if (shoottimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
+			                listener.onMiss();
+			                shoottimer = shoottime;
+			                peneltyCooldown(30);
+			                show();//beendet nach ein bischen extrazeit den timer
+			                ((Timer) e.getSource()).stop();
+			            }
+					
 			        }
 			    });
 			t.start();
@@ -243,5 +245,13 @@ public class SchwungSeil extends Weapon {
 	@Override
 	public Hitbox getHitbox() {
 		return hitbox;
+	}
+	
+	@Override
+	public void reset() {
+		swingtimer.stop();
+		player.stopSwing();
+		setCooldown(false);
+		isShown=false;
 	}
 }

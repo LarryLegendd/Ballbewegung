@@ -43,11 +43,19 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	// Vector2 playerpos, Vector2 enemypos, Vector2 mauspos, double toleranzWinkel, double range, Enemy enemy, Graphics g //vllt temp
 	
 	public static boolean cooldown;
+	
 	private Sword sword;
 	private Spear spear;
 	private Grapplinghook grapple;
 	private Staubsauger staubsauger;
 	private SchwungSeil schwungSeil;
+	
+	private Weapon[] weapons = {
+			sword,
+			spear,
+			grapple,
+			staubsauger,
+			schwungSeil};
 	
 	private Weapon leftWeapon = null;//TODO die zuteilung
 	private Weapon rightWeapon = null;
@@ -272,6 +280,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	player.reset();
     	currentScreen = "spiel";
     	cooldown = false;
+    	for(Weapon weapon : weapons)weapon.reset();
     }
     
     

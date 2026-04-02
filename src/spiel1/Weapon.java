@@ -25,7 +25,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	            showTimer--;
 
 	            if (showTimer <= 0) {
-	                isShown = false;
+	                if(isShown ==true) isShown = false;//falls es schon geändert wurde
 	                ((Timer) e.getSource()).stop();
 	                showTimer = 50; // optional: Reset für nächsten Gebrauch
 	            }
@@ -58,6 +58,11 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	}
 	protected boolean getCooldown() {
 		return Spielfeld.cooldown;
+	}
+	
+	public void reset() {
+		setCooldown(false);
+		isShown=false;
 	}
 	
 	public abstract void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener);
