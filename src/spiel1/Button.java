@@ -55,9 +55,10 @@ public class Button extends GameObject {
     }
     public void setneutral(BufferedImage neutral) {
     	neutralImage = neutral;
+    	currentImage = neutral;
     }
     
-    public boolean press(Vector2 mouseWorld) {//timer starten TODO das der knopf länger in dem stadium ist
+    public boolean press(Vector2 mouseWorld) {
     	
     	lastpos = transform.position;
     	

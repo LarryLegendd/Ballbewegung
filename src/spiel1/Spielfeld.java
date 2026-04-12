@@ -51,7 +51,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private SchwungSeil schwungSeil;
 	private Weapon[] weapons;
 	
-	private Weapon leftWeapon = null;//TODO die zuteilung
+	private Weapon leftWeapon = null;
 	private Weapon rightWeapon = null;
 	
 	private boolean isTimeSlowed;
@@ -74,9 +74,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private int framecounter = 0;
 	
 	static int money = 1000;//vllt nicht static weil es so schon mitgegeben wird
-	
-	// Shop-Panel
-    private final JPanel shopPanel = new JPanel();
     
 	
 	//Buttons
@@ -84,7 +81,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     private BufferedImage startButtonNeutral;
     private BufferedImage startButtonPressed;
     
-    Button leftUpgradeButton;//TODO Bilder die sich nach ausgwähltem ändern
+    Button leftUpgradeButton;
     Button rightUpgradeButton;
 
     
@@ -270,12 +267,14 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	for(int i = 0; i < weapons.length; i++) if(weapons[i]!= null) {
     		weapons[i].reset();
     		System.out.println("waffe "+i+" geresettet");
-    	}else System.out.println("waffe "+i+" ist null");
+    	}else System.out.println("waffe "+i+" ist null");//TODO cooldown bug wenn man mit cooldown stirbt kann man nicht mehr schiessen(glaube ich) aber ist nicht replezierbar
     	cooldown=true;
+    	System.out.println(cooldown);
     	t = new Timer(13, new ActionListener() {
     		@Override
 		    public void actionPerformed(ActionEvent e) {//für einen frame cooldown, dass der startklick kein hit ist //temp  TODO das funktioniert nicht
     			int i=0;
+    			System.out.println(cooldown);
     		if(i>1) {
     			cooldown = false;
     			t.stop();
@@ -306,7 +305,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	
     	
     	
-    	//TODO theoretisch nur bei änderung nötig 
+
     	screenHeight = this.getHeight();
     	screenWidth = this.getWidth();
     	
