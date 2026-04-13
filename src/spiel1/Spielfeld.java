@@ -352,7 +352,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	cameraPos=new Vector2(0,0);
         }
         
-       
+       //TODO counter für score wenn man spielt
         
         repaint(); // ruft die paintComponent Methode auf, um das Spielfeld neu zu zeichnen
     }
@@ -370,7 +370,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	Vector2 bodenLinks = new Vector2(0,0).toJPanel();
         	Vector2 bodenRechts = new Vector2(99999999,0).toJPanel();
         	//Boden
-        	g2d.setColor(Color.green);
+        	g2d.setColor(Color.red);
         	g2d.setStroke(new BasicStroke(5.0f));
         	g2d.drawLine((int) bodenLinks.x, (int) bodenLinks.y, (int) bodenRechts.x, (int) bodenRechts.y);
         	g2d.setStroke(new BasicStroke());

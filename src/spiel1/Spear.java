@@ -4,8 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Spear extends Weapon {
-	private double spearKnockback = 3;
-	private double spearEnemyKnockback = 2;
+	
 	
 	private Vector2 letzteSpitze;
 	private Vector2 letzteBasis1;
@@ -16,20 +15,22 @@ public class Spear extends Weapon {
 	
 	private double[][] levelArr = {
 		//	Breite,range,kb, Preis
-			  {10, 70, 5,		3},
-			  {13, 80, 5.3,		5},
-			  {16, 90, 5.6,		8},
-			  {19, 100, 5.9,	10},
-			  {22, 110, 6.2,	15},
-			  {25, 120, 6.5,	20},
-			  {28, 140, 6.8,	30},
-			  {31, 160, 7.1,	40},
-			  {34, 180, 7.4,	50},
-			  {37, 200, 7.7,	100},
+			  {20, 150, 15,		3},
+			  {25, 160, 18,		5},
+			  {30, 170, 21,		8},
+			  {35, 180, 24,	10},
+			  {40, 190, 27,	15},
+			  {45, 200, 30,	20},
+			  {50, 210, 33,	30},
+			  {55, 220, 36,	40},
+			  {60, 230, 39,	50},
+			  {65, 240, 42,	100},
 		};
 	
 	private double basisBreite = levelArr[0][0];
 	private double range = levelArr[0][1];
+	private double spearKnockback = levelArr[0][3];
+	private double spearEnemyKnockback = 2;
 	
 	private TriangleHitbox hitbox;
 	
@@ -63,7 +64,7 @@ public class Spear extends Weapon {
 				//TODO irgenddwie timer das es länger da ist
 			
 				
-				if(hitbox.collides(enemy.getHitbox())) {
+				if(hitbox.collides(enemy.getHitbox(),64)) {
 		    		enemy.schadenNehmen(1);
 		    		enemy.addSpeed(mausdiff.normalize().multiply(spearEnemyKnockback));
 		    		
