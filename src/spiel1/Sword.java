@@ -19,9 +19,6 @@ public class Sword extends Weapon {
 	private Vector2 drawEndpoint1;
 	private Vector2 drawEndpoint2;
 	private Vector2 drawPlayerPos;
-	
-	//level
-	private int level = 0;
 
 	private double[][] levelArr = {
 //			winkel,		range,	kb,	 Preis

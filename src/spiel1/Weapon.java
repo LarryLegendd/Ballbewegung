@@ -12,8 +12,12 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	protected boolean isShown=false;
 	protected int showTimer = 50;//vllt braucht man das garnicht weil das in show scchon geregelt ist temp
 	protected int cooldownTimer;
-	
+	private boolean stopcooldown;
 	protected Transform playertransform;
+	protected int level;
+	public void stopCooldownTimer() {
+		stopcooldown = true;
+	}
 	
 	protected void show() {//vllt machen das das schwert auf cooldown in der zeit  ist TODO
 		showTimer = 50;
@@ -41,11 +45,16 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		Timer t = new Timer(13, new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
+	        	if(stopcooldown) {
+	        		((Timer) e.getSource()).stop();
+	                cooldownTimer = 0;
+	                stopcooldown = false;
+	        	}
 	            cooldownTimer--;
 	            if (cooldownTimer <= 0) {
 	                setCooldown(false);
 	                ((Timer) e.getSource()).stop();
-	                cooldownTimer = millis;
+	                cooldownTimer = 0;
 	            }
 	        }
 	    });
@@ -69,6 +78,10 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	public abstract void levelUp(double money);
 	public abstract Hitbox getHitbox();
 	public  void paintMe(Graphics g) {}
+	
+	public  int getLevel() {
+		return level;
+	}
 	
 	public void hitReleased() {};
 }

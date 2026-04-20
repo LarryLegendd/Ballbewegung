@@ -23,9 +23,7 @@ public class SchwungSeil extends Weapon {
 	
 	private Transform playertransform;
 	
-	//level
-	private int level = 0;
-	
+		
 	private double[][] levelArr = {
 		//	Breite,range,kb, Preis, shoottime
 			  {2, 	3, 	5,		3,	5},

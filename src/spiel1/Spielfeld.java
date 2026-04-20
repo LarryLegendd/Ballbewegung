@@ -120,7 +120,10 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     private Timer t; // Timer, der in regelmäßigen Abständen die Methode doOnTick() aufruft
 
     private Cursor c; // Cursor-Objekt, um den Mauszeiger zu verändern
-
+    
+    private int score=0;
+    private int highscore=0;
+    
     public Spielfeld() {
         setFocusable(true);
         setPreferredSize(prefSize);
@@ -268,6 +271,9 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     		weapons[i].reset();
     		System.out.println("waffe "+i+" geresettet");
     	}else System.out.println("waffe "+i+" ist null");//TODO cooldown bug wenn man mit cooldown stirbt kann man nicht mehr schiessen(glaube ich) aber ist nicht replezierbar
+    	
+    	//cooldown
+    	for(Weapon weapon: weapons)weapon.stopCooldownTimer();
     	cooldown=true;
     	System.out.println(cooldown);
     	t = new Timer(13, new ActionListener() {
@@ -346,13 +352,19 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	
         	
         //wenn spieler nach unten fällt
-           if(player.getPosition().y<0)	currentScreen="shop";
+           if(player.getPosition().y<0) {
+        	   score= (int) player.getPosition().x;
+        	   if(score>highscore)highscore=score;
+        	   
+        	   
+        	   currentScreen="shop";
+           }
         }
         if (currentScreen == "shop") {
         	cameraPos=new Vector2(0,0);
         }
         
-       //TODO counter für score wenn man spielt
+       
         
         repaint(); // ruft die paintComponent Methode auf, um das Spielfeld neu zu zeichnen
     }
@@ -397,10 +409,18 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         }
         
         if(currentScreen.equals("shop")){
+        	
+        	g.drawString(("Score: "+score),(int) screenWidth/2,(int) screenHeight/3);
+        	g.drawString(("Highscore: "+highscore),(int) screenWidth/2,(int) screenHeight/3 -20);
+        	
         	startButton.paintMe(g);
         	
         	leftUpgradeButton.paintMe(g);
         	rightUpgradeButton.paintMe(g);
+        	
+        	g.drawString(("Level: "+leftWeapon.getLevel()),(int) leftUpgradeButton.getPosition().x,(int) leftUpgradeButton.getPosition().y+20);
+        	g.drawString(("Level: "+rightWeapon.getLevel()),(int) rightUpgradeButton.getPosition().x,(int) rightUpgradeButton.getPosition().y+20);
+        	
         	
         	//for(Button button : buttons) button.paintMe(g);
         	swordButton.paintMe(g);

@@ -24,8 +24,6 @@ public class Grapplinghook extends Weapon {
 	
 	private Vector2 speed;
 	
-	//level
-	private int level = 0;
 	
 	private double[][] levelArr = {
 		//	Breite,range,kb, Preis, shoottime

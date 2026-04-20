@@ -10,8 +10,6 @@ public class Spear extends Weapon {
 	private Vector2 letzteBasis1;
 	private Vector2 letzteBasis2;
 	
-	//level
-	private int level = 0;
 	
 	private double[][] levelArr = {
 		//	Breite,range,kb, Preis
