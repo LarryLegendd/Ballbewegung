@@ -38,9 +38,11 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	
 	private Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
 	
-	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-	
-	// Vector2 playerpos, Vector2 enemypos, Vector2 mauspos, double toleranzWinkel, double range, Enemy enemy, Graphics g //vllt temp
+	private EnemyArea[] enemies = new EnemyArea[4];
+
+	private  ArrayList<ArrayList<EnemyArea>> Areas = new ArrayList<>();
+
+		// Vector2 playerpos, Vector2 enemypos, Vector2 mauspos, double toleranzWinkel, double range, Enemy enemy, Graphics g //vllt temp
 	
 	public static boolean cooldown;
 	
@@ -64,11 +66,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	
 	public static double screenHeight;//wird in SpielFenster gesetzt
 	public static double screenWidth;
-	
-    /**
-	 * Das soll eine gelbe unterringelung fixen
-	 */
-	private static final long serialVersionUID = 1L;
 
 	//temp
 	private int framecounter = 0;
@@ -264,7 +261,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     
     private void resetGame() {
     	System.out.println("spielreset");
-    	enemies.clear();
+
     	player.reset();
     	currentScreen = "spiel";
     	for(int i = 0; i < weapons.length; i++) if(weapons[i]!= null) {
@@ -321,8 +318,34 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	//Player
         	player.moveGameObject( timeMultiplyer);
         	cameraPos=cameraPos.lerp(player.transform.position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
-        	
-        	if(cameraPos.x>cameraPosMaxX) {//neues Terrain in x - richtung
+
+
+			enemies[0] = Areas.get((int)player.getPosition().x/10000).get((int)player.getPosition().y/10000);//aaaaaaaaaaaaaaaaaaaaaaahh TODO der rest muss nicht gesetzt werden sondern von Areas abgerufen werden
+
+			enemies[1] =;
+
+			enemies[1].setYpos(enemies[0].getYpos()); //gleiche höhe wie 0
+
+			enemies[2].setXpos(enemies[0].getXpos());//gleich weit nach rechts wie ypos
+			if(((int)player.getPosition().x%10000)<5000){
+				enemies[1].setXpos(enemies[0].getXpos()-1);//wenn links ist dann -1 und rechts +1
+
+				enemies[3].setXpos(enemies[0].getXpos()-1);//das zweite hat gleiche xpos aber andere ypos
+			} else{
+				enemies[1].setXpos(enemies[0].getXpos()+1);//wenn links ist dann -1 und rechts +1
+
+				enemies[3].setXpos(enemies[0].getXpos()+1);//das zweite hat gleiche xpos aber andere ypos
+			}
+			if(((int)player.getPosition().y%10000)<5000){
+				enemies[2].setYpos(enemies[0].getYpos()-1);//wenn unten ist dann -1 und rechts +1
+
+				enemies[3].setYpos(enemies[0].getYpos()-1);//das zweite hat gleiche xpos aber andere ypos
+			} else{
+				enemies[2].setYpos(enemies[0].getYpos()+1);//wenn drüber ist dann +1
+
+				enemies[3].setYpos(enemies[0].getYpos()+1);//das zweite hat gleiche xpos aber andere ypos
+			}
+        	if(player.getPosition().x%10000) {//neues Terrain in x - richtung
         		cameraPosMaxX=cameraPos.x;
         		
         		if(cameraPosMaxX % 20==0) {//gegner in x-richtung spawnen
@@ -340,6 +363,10 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	}
         	
         	//enemy zeug
+
+
+
+
         	//Das spawnen hier sollte von dem oben ersetzt werden temp ,aber TODO das oben funktioniert nicht (und ist falsch weil wenn man schon oben rechts(und lu) war ist unten rechts nicht neu obwohle es das sein sollte) und weil dann enemis leer ist geht gar nichts mehr
         	framecounter++;//TODO das soll mit einer zahl ersetzt werden die sich beim scrollen erhöht
         	if(framecounter % 20==0) {
