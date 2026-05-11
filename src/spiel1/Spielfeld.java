@@ -38,7 +38,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	
 	private Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
 	
-	private EnemyArea[] enemies = new EnemyArea[4];
+	private EnemyArea[] enemyArea = new EnemyArea[4];
 
 	private  ArrayList<ArrayList<EnemyArea>> Areas = new ArrayList<>();
 
@@ -57,7 +57,10 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private Weapon rightWeapon = null;
 	
 	private boolean isTimeSlowed;
-	private double timeMultiplyer = 1;
+
+
+
+	private static double timeMultiplyer = 1;
 	
 	//camera für scrollen (links unten die ecke ist die kamerapos
 	static Vector2 cameraPos= new Vector2(0,0);
@@ -144,6 +147,9 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	timeMultiplyer = 1; 
     	slowTimeRemaining = 0;
     }
+	public static double getTimeMultiplyer() {
+		return timeMultiplyer;
+	}
     @Override
     public void slowTimeFor(int millis){//TODO das es so rein und rausfaded
     	slowTimeRemaining = millis;
@@ -320,63 +326,30 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	cameraPos=cameraPos.lerp(player.transform.position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
 
 
-			enemies[0] = Areas.get((int)player.getPosition().x/10000).get((int)player.getPosition().y/10000);//aaaaaaaaaaaaaaaaaaaaaaahh TODO der rest muss nicht gesetzt werden sondern von Areas abgerufen werden
+			enemyArea[0] = Areas.get((int)player.getPosition().x/10000).get((int)player.getPosition().y/10000);//aaaaaaaaaaaaaaaaaaaaaaahh TODO der rest muss nicht gesetzt werden sondern von Areas abgerufen werden
 
-			enemies[1] =;
+			if(((int)player.getPosition().x%10000)<5000)	enemyArea[1] = Areas.get(((int)player.getPosition().x/10000)-1).get((int)player.getPosition().y/10000);//links
+			else enemyArea[1] = Areas.get(((int)player.getPosition().x/10000)+1).get((int)player.getPosition().y/10000);//rechts
 
-			enemies[1].setYpos(enemies[0].getYpos()); //gleiche höhe wie 0
+			if(((int)player.getPosition().y%10000)<5000)	enemyArea[2] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)-1);//unten
+			else enemyArea[2] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)+1);
 
-			enemies[2].setXpos(enemies[0].getXpos());//gleich weit nach rechts wie ypos
-			if(((int)player.getPosition().x%10000)<5000){
-				enemies[1].setXpos(enemies[0].getXpos()-1);//wenn links ist dann -1 und rechts +1
-
-				enemies[3].setXpos(enemies[0].getXpos()-1);//das zweite hat gleiche xpos aber andere ypos
-			} else{
-				enemies[1].setXpos(enemies[0].getXpos()+1);//wenn links ist dann -1 und rechts +1
-
-				enemies[3].setXpos(enemies[0].getXpos()+1);//das zweite hat gleiche xpos aber andere ypos
+			if(((int)player.getPosition().x%10000)<5000){//links
+				if(((int)player.getPosition().y%10000)<5000)	enemyArea[3] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)-1);//unten
+				else enemyArea[3] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)+1);//oben
+			}else{//rechts
+				if(((int)player.getPosition().y%10000)<5000)	enemyArea[3] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)-1);//unten
+				else enemyArea[3] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)+1);//oben
 			}
-			if(((int)player.getPosition().y%10000)<5000){
-				enemies[2].setYpos(enemies[0].getYpos()-1);//wenn unten ist dann -1 und rechts +1
 
-				enemies[3].setYpos(enemies[0].getYpos()-1);//das zweite hat gleiche xpos aber andere ypos
-			} else{
-				enemies[2].setYpos(enemies[0].getYpos()+1);//wenn drüber ist dann +1
-
-				enemies[3].setYpos(enemies[0].getYpos()+1);//das zweite hat gleiche xpos aber andere ypos
+			for(int i = 0; i<4;i++) {
+				enemyArea[i].update();
 			}
-        	if(player.getPosition().x%10000) {//neues Terrain in x - richtung
-        		cameraPosMaxX=cameraPos.x;
-        		
-        		if(cameraPosMaxX % 20==0) {//gegner in x-richtung spawnen
-            		//enemies.add(new Enemy(new Transform(new Vector2(Math.random()*this.getWidth(),Math.random()*this.getHeight())),20,20,5));//temp das darunter ist richtig //für debugen new Enemy(new Vector2(600,660),20,20,5));//
-            		enemies.add(new Enemy(new Transform(new Vector2(this.getWidth()+cameraPos.x, (Math.random()*this.getHeight()) +cameraPos.y)),20,20,5));//spawnt gegner auf einer random höhe am rechten randgröse:20 20, 5leben
-            	}
-        	}
-        	if(cameraPos.y>cameraPosMaxY) {//neues Terrain in y - richtung
-        		cameraPosMaxY=cameraPos.y;
-        		
-        		if(cameraPosMaxY % 20==0) {//gegner in y-richtung spawnen
-            		//enemies.add(new Enemy(new Transform(new Vector2(Math.random()*this.getWidth(),Math.random()*this.getHeight())),20,20,5));//temp das darunter ist richtig //für debugen new Enemy(new Vector2(600,660),20,20,5));//
-            		enemies.add(new Enemy(new Transform(new Vector2(Math.random()* this.getWidth()+cameraPos.x,this.getHeight()+cameraPos.y)),20,20,5));//spawnt gegner auf einer random höhe am rechten randgröse:20 20, 5leben
-            	}
-        	}
-        	
-        	//enemy zeug
-
-
-
 
         	//Das spawnen hier sollte von dem oben ersetzt werden temp ,aber TODO das oben funktioniert nicht (und ist falsch weil wenn man schon oben rechts(und lu) war ist unten rechts nicht neu obwohle es das sein sollte) und weil dann enemis leer ist geht gar nichts mehr
         	framecounter++;//TODO das soll mit einer zahl ersetzt werden die sich beim scrollen erhöht
-        	if(framecounter % 20==0) {
-        		//enemies.add(new Enemy(new Transform(new Vector2(Math.random()*this.getWidth(),Math.random()*this.getHeight())),20,20,5));//temp das darunter ist richtig //für debugen new Enemy(new Vector2(600,660),20,20,5));//
-        		enemies.add(new Enemy(new Transform(new Vector2(this.getWidth()+cameraPos.x,Math.random()*(this.getHeight()+cameraPos.x))),20,20,5));//spawnt gegner auf einer random höhe am rechten randgröse:20 20, 5leben
-        	}
-        	
-        	for(Enemy enemy : enemies) enemy.moveGameObject(timeMultiplyer);
-        	enemies.removeIf(Enemy::isDead);
-        	
+
+
         	
         //wenn spieler nach unten fällt
            if(player.getPosition().y<0) {
@@ -427,11 +400,9 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	else System.out.println("rightweapom ist" + rightWeapon);
         	
         	// Enemy(Vector2 objectPosition, double width, double height, int health){
-        	for(Enemy enemy: enemies)
-        	{
-        		enemy.paintMe(g);
-        		enemy.getHitbox().paintMe(g);
-        	}
+			for(int i = 0; i<4;i++) {
+				enemyArea[i].paintMe(g);
+			}
         	
         }
         
@@ -477,31 +448,37 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	System.out.println(mouseScreenPos);
     	if(arg0.getButton()==3) //rechtsklick
 		{
-			
-			rightWeapon.hit(mouseScreenPos, enemies ,new WeaponHitListener() {
-				
-				@Override
-				public void onHit(Vector2 knockback) {
-					player.addSpeed(knockback);
-					System.out.println(knockback+"knockback");
-				}
+			for(int i = 0; i<4;i++) {
+					rightWeapon.hit(mouseScreenPos, enemyArea[i].getEnemies(), new WeaponHitListener() {
 
-				@Override
-				public void onMiss() {}
-			});
+						@Override
+						public void onHit(Vector2 knockback) {
+							player.addSpeed(knockback);
+							System.out.println(knockback + "knockback");
+						}
+
+						@Override
+						public void onMiss() {
+						}
+					});
+
+			}
 		}
 		if(arg0.getButton()==1) //linksklick
 		{
-			leftWeapon.hit(mouseScreenPos, enemies ,new WeaponHitListener() {
+			for(int i = 0; i<4;i++) {
+				leftWeapon.hit(mouseScreenPos, enemyArea[i].getEnemies(), new WeaponHitListener() {
 
-				@Override
-				public void onHit(Vector2 knockback) {
-					player.addSpeed(knockback);
-				}
+					@Override
+					public void onHit(Vector2 knockback) {
+						player.addSpeed(knockback);
+					}
 
-				@Override
-				public void onMiss() {}
-			});
+					@Override
+					public void onMiss() {
+					}
+				});
+			}
 		}
     	
     	if(currentScreen.equals("shop")) {
