@@ -38,9 +38,9 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	
 	private Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
 	
-	private EnemyArea[] enemyArea = new EnemyArea[4];
+	private EnemyArea[]	currentArea = new EnemyArea[2];
 
-	private  ArrayList<ArrayList<EnemyArea>> Areas = new ArrayList<>();
+	private  ArrayList<EnemyArea> Areas = new ArrayList<>();
 
 		// Vector2 playerpos, Vector2 enemypos, Vector2 mauspos, double toleranzWinkel, double range, Enemy enemy, Graphics g //vllt temp
 	
@@ -261,8 +261,11 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
             }
         });
        
-        
-        
+        for(int i = 0;i<2;i++) {
+			Areas.add(new EnemyArea(i));
+			currentArea[i]=Areas.get(i);
+		}
+
     }
     
     private void resetGame() {
@@ -326,24 +329,15 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	cameraPos=cameraPos.lerp(player.transform.position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
 
 
-			enemyArea[0] = Areas.get((int)player.getPosition().x/10000).get((int)player.getPosition().y/10000);//aaaaaaaaaaaaaaaaaaaaaaahh TODO der rest muss nicht gesetzt werden sondern von Areas abgerufen werden
+			currentArea[0] = Areas.get((int)player.getPosition().x/10000);
 
-			if(((int)player.getPosition().x%10000)<5000)	enemyArea[1] = Areas.get(((int)player.getPosition().x/10000)-1).get((int)player.getPosition().y/10000);//links
-			else enemyArea[1] = Areas.get(((int)player.getPosition().x/10000)+1).get((int)player.getPosition().y/10000);//rechts
+			if((player.getPosition().x%10000)<5000)	currentArea[1] = Areas.get(((int)player.getPosition().x/10000)-1);//links
+			else currentArea[1] = Areas.get(((int)player.getPosition().x/10000)+1);//rechts
 
-			if(((int)player.getPosition().y%10000)<5000)	enemyArea[2] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)-1);//unten
-			else enemyArea[2] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)+1);
 
-			if(((int)player.getPosition().x%10000)<5000){//links
-				if(((int)player.getPosition().y%10000)<5000)	enemyArea[3] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)-1);//unten
-				else enemyArea[3] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)+1);//oben
-			}else{//rechts
-				if(((int)player.getPosition().y%10000)<5000)	enemyArea[3] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)-1);//unten
-				else enemyArea[3] = Areas.get((int)player.getPosition().x/10000).get(((int)player.getPosition().y/10000)+1);//oben
-			}
 
-			for(int i = 0; i<4;i++) {
-				enemyArea[i].update();
+			for(int i = 0; i<2;i++) {
+				currentArea[i].update();
 			}
 
         	//Das spawnen hier sollte von dem oben ersetzt werden temp ,aber TODO das oben funktioniert nicht (und ist falsch weil wenn man schon oben rechts(und lu) war ist unten rechts nicht neu obwohle es das sein sollte) und weil dann enemis leer ist geht gar nichts mehr
@@ -400,8 +394,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	else System.out.println("rightweapom ist" + rightWeapon);
         	
         	// Enemy(Vector2 objectPosition, double width, double height, int health){
-			for(int i = 0; i<4;i++) {
-				enemyArea[i].paintMe(g);
+			for(int i = 0; i<2;i++) {
+				currentArea[i].paintMe(g);
 			}
         	
         }
@@ -441,15 +435,17 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
     @Override
     public void mousePressed(MouseEvent arg0) {
-    	Vector2 mouseScreenPos = new Vector2(
-    		    arg0.getX(),
-    		    arg0.getY()
-    		).toCoordinate();
-    	System.out.println(mouseScreenPos);
-    	if(arg0.getButton()==3) //rechtsklick
+
+		Vector2 mouseScreenPos = new Vector2(
+				arg0.getX(),
+				arg0.getY()
+		).toCoordinate();
+		System.out.println(mouseScreenPos);
+		if (arg0.getButton() == 3) //rechtsklick
 		{
-			for(int i = 0; i<4;i++) {
-					rightWeapon.hit(mouseScreenPos, enemyArea[i].getEnemies(), new WeaponHitListener() {
+			if(currentScreen.equals("spiel")) {
+				for (int i = 0; i < 2; i++) {
+					rightWeapon.hit(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
 
 						@Override
 						public void onHit(Vector2 knockback) {
@@ -462,22 +458,26 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 						}
 					});
 
+				}
 			}
 		}
+
 		if(arg0.getButton()==1) //linksklick
 		{
-			for(int i = 0; i<4;i++) {
-				leftWeapon.hit(mouseScreenPos, enemyArea[i].getEnemies(), new WeaponHitListener() {
+			if(currentScreen.equals("spiel")) {
+				for (int i = 0; i < 2; i++) {
+					leftWeapon.hit(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
 
-					@Override
-					public void onHit(Vector2 knockback) {
-						player.addSpeed(knockback);
-					}
+						@Override
+						public void onHit(Vector2 knockback) {
+							player.addSpeed(knockback);
+						}
 
-					@Override
-					public void onMiss() {
-					}
-				});
+						@Override
+						public void onMiss() {
+						}
+					});
+				}
 			}
 		}
     	

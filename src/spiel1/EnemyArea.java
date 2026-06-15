@@ -4,15 +4,14 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class EnemyArea {
-    Vector2 size;
+   // Vector2 size; //temp
     int xpos;
     int ypos;
     ArrayList<Enemy> enemies = new ArrayList<>();
     ArrayList<Vector2> positions = new ArrayList<>();
-    public EnemyArea(Vector2 size, int xpos, int ypos){
-        this.size=size;
+    public EnemyArea(int xpos){
+      //  this.size=size; //temp
         this.xpos=xpos;
-        this.ypos=ypos;
     }
 
     public void GenerateEnemies(){
@@ -41,14 +40,6 @@ public class EnemyArea {
 
     public void setXpos(int xpos) {
         this.xpos = xpos;
-    }
-
-    public int getYpos() {
-        return ypos;
-    }
-
-    public void setYpos(int ypos) {
-        this.ypos = ypos;
     }
 
     protected void paintMe(Graphics g) {//TODO bild für spieler
