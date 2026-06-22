@@ -15,8 +15,8 @@ public class Bluenoise {
      */
     public static ArrayList<Vector2> generate(Vector2 linksOben, Vector2 rechtsUnten) {
         // Konfiguration: Mindestabstand (r) und Versuche (k)
-        double r = 10.0;
-        int k = 30;
+        double r = 100.0;
+        int k = 10;
 
         double width = rechtsUnten.x - linksOben.x;
         double height = rechtsUnten.y - linksOben.y;

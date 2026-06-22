@@ -260,9 +260,12 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
                 doOnTick();
             }
         });
-       
-        for(int i = 0;i<2;i++) {
+		for(int i = 0;i<2;i++) {
 			Areas.add(new EnemyArea(i));
+			Areas.get(i).GenerateEnemies();
+		}
+
+        for(int i = 0;i<2;i++) {
 			currentArea[i]=Areas.get(i);
 		}
 
@@ -277,7 +280,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     		weapons[i].reset();
     		System.out.println("waffe "+i+" geresettet");
     	}else System.out.println("waffe "+i+" ist null");//TODO cooldown bug wenn man mit cooldown stirbt kann man nicht mehr schiessen(glaube ich) aber ist nicht replezierbar
-    	
+
+		/*
     	//cooldown
     	for(Weapon weapon: weapons)weapon.stopCooldownTimer();
     	cooldown=true;
@@ -294,7 +298,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     		i++;
     		}});
     	t.start();
-    	
+    	*/
     }
     
     
@@ -331,8 +335,26 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 			currentArea[0] = Areas.get((int)player.getPosition().x/10000);
 
-			if((player.getPosition().x%10000)<5000)	currentArea[1] = Areas.get(((int)player.getPosition().x/10000)-1);//links
-			else currentArea[1] = Areas.get(((int)player.getPosition().x/10000)+1);//rechts
+			int screen =(int)  player.getPosition().x%10000;
+				System.out.println(screen);
+				if ((player.getPosition().x % 10000) < 5000)
+
+					if(((int) player.getPosition().x%10000)-1>0) {//spieler spawnt im negativen
+						System.out.println(screen-1);
+						currentArea[1] = Areas.get(screen - 1);//links //FEHLER liegt hier
+					}
+
+				else{
+						System.out.println(screen+1);
+					currentArea[1] = Areas.get(screen + 1);//rechts
+			}
+
+
+			int currscreen =(int)player.getPosition().x/10000;
+			if(currscreen>Areas.toArray().length){
+				Areas.add(new EnemyArea(currscreen));
+				Areas.get(currscreen).GenerateEnemies();
+			}
 
 
 
