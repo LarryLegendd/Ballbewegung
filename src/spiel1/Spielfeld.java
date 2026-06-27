@@ -1,25 +1,20 @@
 package spiel1;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.awt.FlowLayout;
 
 import java.util.ArrayList;
 
@@ -39,6 +34,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
 	
 	private EnemyArea[]	currentArea = new EnemyArea[2];
+	static int AreaWidth = 5000;
+	static int AreaHeight = 4000;
 
 	private  ArrayList<EnemyArea> Areas = new ArrayList<>();
 
@@ -268,7 +265,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         for(int i = 0;i<2;i++) {
 			currentArea[i]=Areas.get(i);
 		}
-
     }
     
     private void resetGame() {
@@ -280,6 +276,10 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     		weapons[i].reset();
     		System.out.println("waffe "+i+" geresettet");
     	}else System.out.println("waffe "+i+" ist null");//TODO cooldown bug wenn man mit cooldown stirbt kann man nicht mehr schiessen(glaube ich) aber ist nicht replezierbar
+
+		//Gegner initialisieren
+		currentArea[0] = Areas.get(0);
+		currentArea[1] = Areas.get(1);
 
 		/*
     	//cooldown
@@ -333,28 +333,29 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	cameraPos=cameraPos.lerp(player.transform.position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
 
 
-			currentArea[0] = Areas.get((int)player.getPosition().x/10000);
 
-			int screen =(int)  player.getPosition().x%10000;
-				System.out.println(screen);
-				if ((player.getPosition().x % 10000) < 5000)
+			int currScreenNumber =(int)player.getPosition().x/AreaWidth;//TODO irgendwann kommt nichts mehr
 
-					if(((int) player.getPosition().x%10000)-1>0) {//spieler spawnt im negativen
-						System.out.println(screen-1);
-						currentArea[1] = Areas.get(screen - 1);//links //FEHLER liegt hier
-					}
+			if(currScreenNumber+1>Areas.toArray().length-1){//immer vorausgenerieren
+				Areas.add(new EnemyArea(currScreenNumber+1));
+				Areas.get(currScreenNumber+1).GenerateEnemies();
+			}
 
-				else{
-						System.out.println(screen+1);
-					currentArea[1] = Areas.get(screen + 1);//rechts
+			if(currentArea[1].getXpos() == currScreenNumber) { //wenn der spieler auf einen neuen bereich kommt wird der alte ersetzt
+				currentArea[0] = currentArea[1];
+			}
+
+			int screen = (int) player.getPosition().x% AreaWidth;
+
+
+			if (screen < AreaWidth/2	&& 	currScreenNumber-1>0) {// spieler ist in der linken hälfte vom aktuellen gegnerbereich && es gibt einen bereich zum laden
+				currentArea[1] = Areas.get(currScreenNumber - 1);//links //FEHLER liegt hier
+			}
+			else{//der spieler geht nach rechts oder ist ganz links dann ist das ein fallback
+				currentArea[1] = Areas.get(currScreenNumber + 1);//rechts
 			}
 
 
-			int currscreen =(int)player.getPosition().x/10000;
-			if(currscreen>Areas.toArray().length){
-				Areas.add(new EnemyArea(currscreen));
-				Areas.get(currscreen).GenerateEnemies();
-			}
 
 
 
@@ -363,7 +364,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 			}
 
         	//Das spawnen hier sollte von dem oben ersetzt werden temp ,aber TODO das oben funktioniert nicht (und ist falsch weil wenn man schon oben rechts(und lu) war ist unten rechts nicht neu obwohle es das sein sollte) und weil dann enemis leer ist geht gar nichts mehr
-        	framecounter++;//TODO das soll mit einer zahl ersetzt werden die sich beim scrollen erhöht
+        	//framecounter++;//TODO das soll mit einer zahl ersetzt werden die sich beim scrollen erhöht
 
 
         	

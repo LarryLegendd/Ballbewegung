@@ -15,7 +15,7 @@ public class EnemyArea {
     }
 
     public void GenerateEnemies(){
-        for(Vector2 position : Bluenoise.generate(new Vector2(xpos*10000,ypos*10000),new Vector2((xpos+1)*10000,(ypos+1)*10000)))
+        for(Vector2 position : Bluenoise.generate(new Vector2(xpos*Spielfeld.AreaWidth,ypos*Spielfeld.AreaHeight),new Vector2((xpos+1)*Spielfeld.AreaWidth, (ypos+1)*Spielfeld.AreaWidth)))
         {
            enemies.add(new Enemy(new Transform(position),10,10,5));
         }

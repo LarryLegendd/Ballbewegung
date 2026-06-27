@@ -23,31 +23,34 @@ public class RectHitbox extends Hitbox {
 		
 		
 		public RectHitbox(Rectangle r,Transform transform) {
+
+			super(transform,(int)new Vector2(r.getWidth(),-r.getHeight()).length()+1);//rechte untere ecke ist immer am weitesten entfernt von links oben
 			lio = new Vector2(0,0);
 			reu = new Vector2(r.getWidth(),-r.getHeight());
 			reo = new Vector2(r.getWidth(),0);
 			liu = new Vector2(0,-r.getHeight());
-			this.transform=transform;
+
 		}
 		
 		public RectHitbox(GameObject g) {
+			super(g.transform,(int)new Vector2(g.getWidth(),-g.getHeight()).length()+1);//rechte untere ecke ist immer am weitesten entfernt von links oben
 			lio = new Vector2(0,0);
 			reu = new Vector2(g.getWidth(),-g.getHeight());
 			reo = new Vector2(g.getWidth(),0);
 			liu = new Vector2(0,-g.getHeight());
-			transform =g.transform;
 		}
 		
 		public RectHitbox(double width, double height,Transform transform) {
+			super(transform,(int)new Vector2(width,height).length()+1);//rechte untere ecke ist immer am weitesten entfernt von links oben
 			lio = new Vector2(0,0);
 			reu = new Vector2(width,-height);
 			reo = new Vector2(width,0);
 			liu = new Vector2(0,-height);
-			this.transform = transform;
 		}
 		
 		//für waffenhitbox
 		public RectHitbox(double width, double height,Transform transform, boolean isWeapon) {//dreht die hitbox um 90° und setzt den 0punkt auf die mitte der unteren kante
+			super(transform,(int)new Vector2(width,height).length()+1);//length ist nicht für den waffenfall nicht super akkurat, aber es muss nur die performance verbessern
 			if(isWeapon) {
 				extradrehwinkel=Math.PI/2;
 				lio = new Vector2(-width/2,height);

@@ -3,7 +3,7 @@ package spiel1;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class TriangleHitbox extends Hitbox{
+public class TriangleHitbox extends Hitbox{//erstellt eine dreieckige hitbox mit nullpunkt auf der mitte der basiskante
 	
 	private Vector2 basisl;//links unten
 	private Vector2 basisr;//rechts unten
@@ -21,6 +21,7 @@ public class TriangleHitbox extends Hitbox{
 //		spitze= new Vector2(hoehe,0).rotate(drehWinkel).add(ursprung);
 //	}
 	public TriangleHitbox(double breite, double hoehe,Transform transform) {
+		super(transform,(int)Math.max(hoehe,breite/2));//entferntester punkt
 		basisl=new Vector2(0,-breite/2);
 		basisr=new Vector2(0,breite/2);
 		//Spitze

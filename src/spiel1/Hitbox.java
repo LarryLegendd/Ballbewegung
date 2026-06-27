@@ -5,16 +5,20 @@ import java.awt.Rectangle;
 
 public abstract class Hitbox {
 	
-	
-	//TODO TODO TODO TODO 
-	//TODO die hitnoxen müssen eigene angle haben und die in der kollision richtig miteinander verrechnen (vllt auch eigene position)
-	
-	protected  double lastangle=0;
+
+	protected double lastangle=0;
 	
 	protected boolean doDraw=false;
-	
+
+	protected int size;
+
 	protected Transform transform;
-	
+
+	protected Hitbox(Transform transform, int size){
+		this.transform = transform;
+		this.size =size;
+	}
+
 	public Vector2 getPosition() {
 		return transform.position;
 	}
@@ -22,14 +26,11 @@ public abstract class Hitbox {
 		this.transform.position = position;
 	}
 	
-	
 	protected abstract int getStandardAccuracy();
 	public Vector2[] toPoints() {
 		return toPoints(getStandardAccuracy());
 	}
 	public abstract Vector2[] toPoints(int HitboxAccuracy);
-	
-	
 
 	
 	public abstract boolean collides(Vector2 point);
@@ -39,31 +40,35 @@ public abstract class Hitbox {
 	}
 	
 	public boolean collides(Hitbox hitbox) {//angle ist angle von hitbox minus angle von this(um es lokal zu machen)
-		lastangle = transform.rotation;
-		for(Vector2 vertex : hitbox.toPoints()) {
-			if (collides(vertex))	return true;
-		}
-		for(Vector2 vertex : toPoints()){//überprüfen ob es einen fenhler gibt das die gegner nicht getroffen werden können
-			if (hitbox.collides(vertex))	return true;
+		if(hitbox.getPosition().makeLocal(getPosition()).length()<this.size+hitbox.size) {// für performance nur prüfen wenn hitboxen nah genug aneinander sind
+			lastangle = transform.rotation;
+			for (Vector2 vertex : hitbox.toPoints()) {
+				if (collides(vertex)) return true;
+			}
+			for (Vector2 vertex : toPoints()) {//TODO überprüfen ob es einen fenhler gibt das die gegner nicht getroffen werden können
+				if (hitbox.collides(vertex)) return true;
+			}
 		}
 		return false;
-		
 	}
 	
 	public boolean collides(Hitbox hitbox,int hitboxAccuracy){
-		lastangle= transform.rotation;
-		for(Vector2 vertex : hitbox.toPoints(hitboxAccuracy)) {
-			if (collides(vertex))	return true;
-		}
-		for(Vector2 vertex : toPoints(hitboxAccuracy)) {
-			if (hitbox.collides(vertex))	return true;
+		if(hitbox.getPosition().makeLocal(getPosition()).length()<this.size+hitbox.size) {// für performance nur prüfen wenn hitboxen nah genug aneinander sind
+			lastangle = transform.rotation;
+			for (Vector2 vertex : hitbox.toPoints(hitboxAccuracy)) {
+				if (collides(vertex)) return true;
+			}
+			for (Vector2 vertex : toPoints(hitboxAccuracy)) {
+				if (hitbox.collides(vertex)) return true;
+			}
 		}
 		return false;
 	}
 	
 	
 	
-	
+	public int getsize(){return size;}
+
 	public void draw(boolean doDraw) {
 		this.doDraw = doDraw;
 	}
@@ -80,5 +85,5 @@ public abstract class Hitbox {
 		 
 	}
 	
-	
+
 }

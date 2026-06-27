@@ -6,12 +6,12 @@ public class KreisTeilHitbox extends Hitbox{
 	private int standardHitboxAccuracy;
 	private double range;
 	private double angle;
-	
+
 	public KreisTeilHitbox(double range, double angle,Transform transform) {
+		super(transform,(int)range+1);
 		this.range=range;
 		this.angle=angle;
-		
-		this.transform=transform;
+
 	}	
 	
 	@Override
