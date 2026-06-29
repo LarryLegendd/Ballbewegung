@@ -27,7 +27,7 @@ public class Grapplinghook extends Weapon {
 	
 	private double[][] levelArr = {
 		//	Breite,range,kb, Preis, shoottime
-			  {2, 	3, 	7.5,		3,	15},
+			  {3, 	4, 	7.5,		4,	15},
 			  {4,	6, 	8,	5,	20},
 			  {6,	9, 	9,	8,	25},
 			  {8, 	12, 10,	10,	30},

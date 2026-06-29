@@ -111,7 +111,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     * gameOver: Spiel ist beendet, wartet auf doppelklick zum neustart
     * */
 
-     
+
    
 
     private Timer t; // Timer, der in regelmäßigen Abständen die Methode doOnTick() aufruft
@@ -223,7 +223,10 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	    staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral);
 		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
 
-    	
+		for(int i = 0;i<2;i++) {
+			Areas.add(new EnemyArea(i));
+			Areas.get(i).GenerateEnemies();
+		}
         
         // Maus-Events (z.B. Klick) werden registriert und verarbeitet
         addMouseListener(this);
@@ -257,10 +260,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
                 doOnTick();
             }
         });
-		for(int i = 0;i<2;i++) {
-			Areas.add(new EnemyArea(i));
-			Areas.get(i).GenerateEnemies();
-		}
+
 
         for(int i = 0;i<2;i++) {
 			currentArea[i]=Areas.get(i);
@@ -277,7 +277,14 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     		System.out.println("waffe "+i+" geresettet");
     	}else System.out.println("waffe "+i+" ist null");//TODO cooldown bug wenn man mit cooldown stirbt kann man nicht mehr schiessen(glaube ich) aber ist nicht replezierbar
 
-		//Gegner initialisieren
+		//Gegner initialisieren & Löschen
+		Areas.clear();
+
+		for(int i = 0;i<2;i++) {
+			Areas.add(new EnemyArea(i));
+			Areas.get(i).GenerateEnemies();
+		}
+
 		currentArea[0] = Areas.get(0);
 		currentArea[1] = Areas.get(1);
 
@@ -311,7 +318,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     }
 
     public void continueGame() {
-        if (currentScreen == "spiel") { // Spiel läuft nur weiter, wenn es nicht gestoppt ist, sondern pausiert wurde
+        if (currentScreen.equals("spiel")) { // Spiel läuft nur weiter, wenn es nicht gestoppt ist, sondern pausiert wurde
             t.start();
         }
     }
