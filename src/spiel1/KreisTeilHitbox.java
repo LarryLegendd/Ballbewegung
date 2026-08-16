@@ -29,8 +29,7 @@ public class KreisTeilHitbox extends Hitbox{
 				
 			}
 			if(i%3==1) {
-				hitbox[i]=hitbox[1].lerpImHalbkreis(hitbox[2],midpoint,((double) (i - 2))/(hitboxAccuracy-3));//TODO
-				
+				hitbox[i]=hitbox[1].lerpImHalbkreis(hitbox[2],midpoint,((double) (i - 2))/(hitboxAccuracy-3));
 			}
 			if(i%3==2) {
 				hitbox[i]=hitbox[2].lerp(hitbox[0],((double) (i - 2))/(hitboxAccuracy-3));
@@ -39,7 +38,6 @@ public class KreisTeilHitbox extends Hitbox{
 		}
 		
 		return hitbox;
-		// in vector2 gibt es ne methode fürs lerpen
 		
 	}
 

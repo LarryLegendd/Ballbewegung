@@ -63,10 +63,6 @@ public class LevelReader {
 			}}
 			catch(IOException e) {
 				e.printStackTrace();
-				
-				
-				
-				
 			}
 		finally {
 			if(null!=in) {

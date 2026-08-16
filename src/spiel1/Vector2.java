@@ -145,7 +145,7 @@ public class Vector2 {
 		
 		double winkelUnterschied = Math.abs(v.subtract(center).angle()-subtract(center).angle());
 		double winkelUnterschied2 = Math.abs(v.subtract(center).angle()-subtract(center).angle()+(2*Math.PI));
-		double winkelUnterschied3 = Math.abs(v.subtract(center).angle()+(2*Math.PI)-subtract(center).angle()); //TODO das macht noch keinen sinn, weil die richtung ist relevant und ich glaube das math.abs also der betrag macht die richtung kaputt
+		double winkelUnterschied3 = Math.abs(v.subtract(center).angle()+(2*Math.PI)-subtract(center).angle()); //TODO prüfen ob das passt
 		if(winkelUnterschied>winkelUnterschied2)winkelUnterschied = winkelUnterschied2;
 		if(winkelUnterschied>winkelUnterschied3)winkelUnterschied = winkelUnterschied3;
 		
@@ -173,11 +173,11 @@ public class Vector2 {
 		return subtract(abhaengig).rotate(-andererAngle);
 	}
 	
-	private Vector2 toJP() {//JPanels haben y achse nach unten //TODO
+	private Vector2 toJP() {//JPanels haben y achse nach unten
 		return new Vector2(x,-(y-Spielfeld.screenHeight));
 	}
 	
-	public Vector2 toJPanel() {//JPanels haben y achse nach unten //TODO
+	public Vector2 toJPanel() {//JPanels haben y achse nach unten
 		return makeLocal(Spielfeld.cameraPos).toJP();
 	}
 	

@@ -128,10 +128,10 @@ public class Grapplinghook extends Weapon {
 	}
 	
 	@Override
-	public void levelUp(double money) {
+	public void levelUp(double money) { // waffe verbessern
 		System.out.println(level);
-		if(level<levelArr.length-1) {
-			if(money > getNextPrice()) {//das -1 ist weil .length quasi +1 rechnet
+		if(level<levelArr.length-1) {//das -1 ist weil .length quasi +1 rechnet
+			if(money > getNextPrice()) {
 				level++;
 		
 				updateLevel(level);

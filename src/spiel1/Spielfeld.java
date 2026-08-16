@@ -528,7 +528,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     		}
     		
     		if(arg0.getButton()==1) { //linksklick
-    			if(swordButton.press(mouseScreenPos)) {//TODO Fehler: man muss zweimal drücken vllt noch ein fehler mit auswählen
+    			if(swordButton.press(mouseScreenPos)) {
     				leftUpgradeButton.setneutral(swordButton.getneutral());
     				leftUpgradeButton.setpressed(swordButton.getpressed());
     				leftWeapon=sword;

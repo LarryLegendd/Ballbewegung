@@ -94,7 +94,7 @@ public class RectHitbox extends Hitbox {
 		
 		
 		@Override
-		public Vector2[] toPoints(int hitboxAccuracy) {//wenn es zum problem wird in collides methode in beide richtungen aufrufen
+		public Vector2[] toPoints(int hitboxAccuracy) { //gibt Punkte auf der ausenkante der Hitbox an
 			
 			/*3. Konzeptionelles Problem: toPoints() ist teuer & instabil
 Aktuell

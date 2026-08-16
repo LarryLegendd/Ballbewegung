@@ -113,8 +113,7 @@ public class TriangleHitbox extends Hitbox{//erstellt eine dreieckige hitbox mit
 	}
 	
 	@Override
-	protected int getStandardAccuracy() {
-		// TODO Auto-generated method stub
+	protected int getStandardAccuracy(){
 		return standardHitboxAccuracy;
 	}
 	

@@ -10,7 +10,7 @@ public abstract class Hitbox {
 	
 	protected boolean doDraw=false;
 
-	protected int size;
+	protected int size;   //ein Kreis um den ersten punkt der die gesamte hitbox beinhaltet. Wird zur optimierung genutzt
 
 	protected Transform transform;
 
@@ -39,8 +39,8 @@ public abstract class Hitbox {
 		return collides(new Vector2(x,y));
 	}
 	
-	public boolean collides(Hitbox hitbox) {//angle ist angle von hitbox minus angle von this(um es lokal zu machen)
-		if(hitbox.getPosition().makeLocal(getPosition()).length()<this.size+hitbox.size) {// für performance nur prüfen wenn hitboxen nah genug aneinander sind
+	public boolean collides(Hitbox hitbox) {//angle ist angle von hitbox minus angle von this (um es lokal zu machen)
+		if(hitbox.getPosition().makeLocal(getPosition()).length()<this.size+hitbox.size) {// für performance nur prüfen, wenn hitboxen nah genug aneinander sind
 			lastangle = transform.rotation;
 			for (Vector2 vertex : hitbox.toPoints()) {
 				if (collides(vertex)) return true;
@@ -53,7 +53,7 @@ public abstract class Hitbox {
 	}
 	
 	public boolean collides(Hitbox hitbox,int hitboxAccuracy){
-		if(hitbox.getPosition().makeLocal(getPosition()).length()<this.size+hitbox.size) {// für performance nur prüfen wenn hitboxen nah genug aneinander sind
+		if(hitbox.getPosition().makeLocal(getPosition()).length()<this.size+hitbox.size) {// für performance nur prüfen, wenn hitboxen nah genug aneinander sind
 			lastangle = transform.rotation;
 			for (Vector2 vertex : hitbox.toPoints(hitboxAccuracy)) {
 				if (collides(vertex)) return true;

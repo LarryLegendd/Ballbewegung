@@ -19,7 +19,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		stopcooldown = true;
 	}
 	
-	protected void show() {//vllt machen das das schwert auf cooldown in der zeit  ist TODO
+	protected void show() {//vllt machen das das schwert auf cooldown in der zeit  ist
 		showTimer = 50;
 		isShown = true;//vllt show(time to recharge) das verschwidene waffen andere cooldowns haben
 		
