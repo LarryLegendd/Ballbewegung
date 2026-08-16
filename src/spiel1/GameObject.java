@@ -1,7 +1,5 @@
 package spiel1;
 
-import java.awt.Graphics;
-//TODO setzen von der hitboxposition
 public abstract class GameObject{
     
     protected double width;
@@ -11,7 +9,7 @@ public abstract class GameObject{
     protected Transform transform;
     
     public GameObject(Transform transform, double width, double height) {//speed wird automatisch 0 quelle: https://stackoverflow.com/questions/1182153/constructor-overloading-in-java-best-practice
-    	this.transform = transform;//transform.rotation macht noch nichts visuell TODO
+    	this.transform = transform;
         this.width = width;
         this.height = height;
        

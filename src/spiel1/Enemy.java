@@ -1,7 +1,6 @@
 package spiel1;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 public class Enemy extends GameObject {
 private int health;
@@ -35,6 +34,7 @@ private int health;
 	        (int) width,
 	        (int) height
 	    );
+
 //		hitbox= getHitbox(64);
 //		for(Vector2 hitbox:hitbox){
 //			hitbox.draw(g,Color.green);

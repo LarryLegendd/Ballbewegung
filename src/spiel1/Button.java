@@ -1,6 +1,5 @@
 package spiel1;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -8,7 +7,6 @@ import javax.swing.Timer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.image.RescaleOp;
 
 public class Button extends GameObject {
