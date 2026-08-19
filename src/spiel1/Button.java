@@ -9,32 +9,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.RescaleOp;
 
-public class Button extends GameObject {
-	private BufferedImage currentImage;
+public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe erstellen lassen
+	private BufferedImage currentImage; // die bilder für die Knöpfe
     private BufferedImage pressedImage;
     private BufferedImage neutralImage;
-    
-    private Vector2 lastpos;//temp
 
-    public Button(Vector2 midpoint, double width, double height, BufferedImage pressed, BufferedImage neutral) {
-        super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height);
-        System.out.println(transform.position);
+    public Button(Vector2 midpoint, double width, double height, BufferedImage pressed, BufferedImage neutral) { // Erstellen des Knopfes mit zwei Bildern
+        super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height); //Erstellt das Gameobjekt des Buttons. Die berechnung macht den mittelpunkt zum punkt links oben
         this.pressedImage = pressed;
         this.neutralImage = neutral;
         this.currentImage = neutral;
     }
 
-    public Button(Vector2 midpoint, double width, double height, BufferedImage neutral) {
-        super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height);
-        System.out.println(transform.position);
+    public Button(Vector2 midpoint, double width, double height, BufferedImage neutral) { // Macht das gedrückte bild automatisch dunkler
+        super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height);//Erstellt das Gameobjekt des Buttons. Die berechnung macht den mittelpunkt zum punkt links oben
         this.pressedImage = darkenImage(neutral, 0.5f);
         this.neutralImage = neutral;
         this.currentImage = neutral;
     }
 
-    private BufferedImage darkenImage(BufferedImage image, float alpha) {
-        RescaleOp op = new RescaleOp(alpha, 0f, null);
-        return op.filter(image, null);
+    private BufferedImage darkenImage(BufferedImage image, float helligkeit) {
+        RescaleOp op = new RescaleOp(helligkeit, 0f, null); // Erstellt ein RescaleOp, das ist eine art filter für das bild das es vergrößern und die helligkeit ändern kann. Quelle: das was da steht wenn man drüber hovert. das heisst glaube ich offizielle java dokumentation
+        return op.filter(image, null);//nutzt die filtermethode um den verdunklungsfilter anzuwenden
     }
     
     public BufferedImage getpressed() {
@@ -51,20 +47,13 @@ public class Button extends GameObject {
     public void setpressed(BufferedImage pressed) {
     	pressedImage = pressed;
     }
-    public void setneutral(BufferedImage neutral) {
-    	neutralImage = neutral;
-    	currentImage = neutral;
-    }
+    public void setneutral(BufferedImage neutral) { neutralImage = neutral; }
     
-    public boolean press(Vector2 mouseWorld) {
-    	
-    	lastpos = transform.position;
-    	
-    	
-    	
-    	if(getHitbox().collides(mouseWorld.x,mouseWorld.y)) {
+    public boolean press(Vector2 mouseWorld) { // die methode die aufgerufen um zu prüfen Knopf gedrückt wird
+
+    	if(getHitbox().collides(mouseWorld.x,mouseWorld.y)) {// fragt in der Hitbox ab ob der button getroffen wird
     		currentImage = pressedImage;
-    		buttonSpringBack(200);
+    		buttonSpringBack(200);// setzt in 200 ms den knopf zurück
     		return true;
     	}else {
     		currentImage = neutralImage;
@@ -72,7 +61,7 @@ public class Button extends GameObject {
     	}
     }
     
-    public void buttonSpringBack(int timeInMs) {
+    public void buttonSpringBack(int timeInMs) { //erstellt einen timer um das bild des knopfes zurückzusetzen
     	Timer timer = new Timer(timeInMs, new ActionListener() {
 			
 			@Override
@@ -88,32 +77,15 @@ public class Button extends GameObject {
     @Override
     public void paintMe(Graphics g) {
     	
-    	Vector2 jPos = transform.position.toJPanel();
-    	Vector2 test = new Vector2(0 , 0);
-    	Vector2 test1 = new Vector2(100 , 100);
-//    	System.out.println(test1.toJPanel(abhaengig).y);
-    	
-    	this.getHitbox().draw(true);
-    	
-    	g.drawLine( (int) test.toJPanel().x, (int) test.toJPanel().y, (int) test1.toJPanel().x, (int) test1.toJPanel().y);
-    	//g.drawLine( 0,0,100,100);
-        g.drawImage(currentImage, (int) jPos.x, (int) jPos.y,
-    		   (int) (jPos.x+getWidth()), (int)(jPos.y+getHeight()), 
-    		   		
-    		   		0, 0, currentImage.getWidth(), currentImage.getHeight(), null);
-       //img - the specified image to be drawn. This method does nothing if img is null.
-//       dx1 - the x coordinate of the first corner of the destination rectangle.
-//       dy1 - the y coordinate of the first corner of the destination rectangle.
-       
-//       dx2 - the x coordinate of the second corner of the destination rectangle.
-//       dy2 - the y coordinate of the second corner of the destination rectangle.
-//       sx1 - the x coordinate of the first corner of the source rectangle.
-//       sy1 - the y coordinate of the first corner of the source rectangle.
-//       sx2 - the x coordinate of the second corner of the source rectangle.
-//       sy2 - the y coordinate of the second corner of the source rectangle.
-//       observer - object to be notified as more of the image is scaled and converted.
-        
-        //if(lastpos!=null)lastpos.draw(g, Color.pink);//Temp
+    	Vector2 jPos = transform.position.toJPanel(); //wandelt die position in das von JPanel benutzte format um
+
+
+        g.drawImage(currentImage, (int) jPos.x, (int) jPos.y, //position ecke links oben
+                (int) (jPos.x+getWidth()), (int)(jPos.y+getHeight()),//position ecke rechts unten (das sieht falsch aus aber man muss height addieren weil JPannel -y nach oben hat)
+                0, 0,//erste ecke vom bild, eine ecke vom bild ist immer 0 0
+                currentImage.getWidth(), currentImage.getHeight(),// zweite ecke vom bild ist die 0+Breite, 0+Höhe
+                null);// kein imageobserver
+
        
     }
 }

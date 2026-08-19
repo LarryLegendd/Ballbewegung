@@ -2,10 +2,10 @@ package spiel1;
 
 import java.awt.*;
 
-public class Enemy extends GameObject {
+public class Enemy extends GameObject {//methode um gegner zu erzeugen
 private int health;
 	public Enemy(Transform transform, double width, double height,int health){
-		super(transform, width, height);//der Spieler wird fliegend erzeugt
+		super(transform, width, height);//für erstellung von fliegende Gegner transform
 		this.health = health;
 		
 		
@@ -15,6 +15,7 @@ private int health;
 	public void schadenNehmen(int Schaden) {
 		health -=Schaden;
 	}
+
 	public boolean isDead() {
 		if(health<0) {
 			return true;//https://stackoverflow.com/questions/13205773/how-to-destroy-an-object-in-java
