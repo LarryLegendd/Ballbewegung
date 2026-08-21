@@ -1,6 +1,6 @@
 package spiel1;
 
-public abstract class GameObject{
+public abstract class GameObject{//Die oberklasse für gameobjekte
     
     protected double width;
     protected double height;
@@ -17,7 +17,6 @@ public abstract class GameObject{
     }
 
 
-    // GETTER und SETTER Methoden
     public Vector2 getPosition() {
         return transform.position;
     }
@@ -66,10 +65,10 @@ public abstract class GameObject{
     
     
     
-    public void moveGameObject(double time) {
-    	transform.speed = transform.speed.multiply(1-(0.02*time));
-    	transform.position = transform.position.add(transform.speed.multiply(time));
-        hitbox.setPosition(transform.position);
+    public void moveGameObject(double time) {// bewegt das objekt
+    	transform.speed = transform.speed.multiply(1-(0.02*time));//Luftwiederstand
+    	transform.position = transform.position.add(transform.speed.multiply(time));// bewegung mit korrektur, wenn die zeit verlangsamt ist
+        hitbox.setPosition(transform.position);// Hitboxposition aktualisieren
     }
 
     
