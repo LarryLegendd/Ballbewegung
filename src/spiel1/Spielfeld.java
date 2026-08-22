@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -117,10 +118,24 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     private Timer t; // Timer, der in regelmäßigen Abständen die Methode doOnTick() aufruft
 
     private Cursor c; // Cursor-Objekt, um den Mauszeiger zu verändern
-    
+
+	boolean isEnded= false;
+
     private int score=0;
     private int highscore=0;
-    
+
+	// definition vom rechteck das runterfällt.
+	private Vector2 endscreenPanelfinaltopLeft;
+	private Vector2 endscreenPaneltopLeft;
+	private Vector2 endscreenSpeed;
+	int framesUntillScreenIsCentered;
+	private Vector2 endscreenSize = new Vector2(screenWidth/2,screenHeight/4*3);//	Vector 2 wird nur gebraucht
+	// 																				um die beiden informationen
+	// 																				gleichtzeitig zu benutzen
+	private Vector2 EndscreenTextPos;
+
+
+
     public Spielfeld() {
         setFocusable(true);
         setPreferredSize(prefSize);
@@ -288,6 +303,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		currentArea[0] = Areas.get(0);
 		currentArea[1] = Areas.get(1);
 
+		isEnded=false;
+
 		/*
     	//cooldown
     	for(Weapon weapon: weapons)weapon.stopCooldownTimer();
@@ -376,13 +393,38 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
         	
         //wenn spieler nach unten fällt
-           if(player.getPosition().y<0) {
-        	   score= (int) player.getPosition().x;
+           if(player.getPosition().y<0&&!isEnded) {//isended das es nur einmal aufgerufen wird
+        	   score= (int) player.getPosition().x;//berechnung score
         	   if(score>highscore)highscore=score;
-        	   
-        	   
-        	   currentScreen="shop";
+
+			   isEnded=true;
+			   // definition vom rechteck das runterfällt.
+        	   endscreenPanelfinaltopLeft = new Vector2(screenWidth/4,screenHeight/8);//finale position schon in JPanel
+			   endscreenSize = new Vector2(screenWidth/2,screenHeight/4*3);//	Vector 2 wird nur gebraucht
+			   // 																			um die beiden informationen
+			   // 																			gleichtzeitig zu benutzen
+
+			   endscreenSpeed = player.getTransform().speed;
+			   endscreenSpeed = new Vector2(endscreenSpeed.x,endscreenSpeed.y);
+			   System.out.println("endscreenSpeed"+endscreenSpeed);
+			   framesUntillScreenIsCentered=200;
+			   endscreenPaneltopLeft = endscreenPanelfinaltopLeft.add(endscreenSpeed.reverse().multiply(framesUntillScreenIsCentered));
+
+
+			   // ab hier alles relativ zu endscreentopmiddle
+			   EndscreenTextPos = new Vector2(endscreenSize.x/8,endscreenSize.y/8);
+        	   // temp auskommentiert   currentScreen="shop";
+
+
            }
+		   if(isEnded){
+			  // EndscreenTextPos=EndscreenTextPos.makeGlobal(endscreenPaneltopLeft);
+			   System.out.println(framesUntillScreenIsCentered);
+			   if(framesUntillScreenIsCentered>0) endscreenPaneltopLeft = endscreenPaneltopLeft.add(endscreenSpeed);
+			   framesUntillScreenIsCentered--;
+
+		   }
+
         }
         if (currentScreen == "shop") {
         	cameraPos=new Vector2(0,0);
@@ -421,13 +463,25 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	if(rightWeapon != null) {rightWeapon.paintMe(g);
         		if(rightWeapon.getHitbox() != null) rightWeapon.getHitbox().paintMe(g);
         	}
-        	else System.out.println("rightweapom ist" + rightWeapon);
+        	else System.out.println("rightweapon ist" + rightWeapon);
         	
         	// Enemy(Vector2 objectPosition, double width, double height, int health){
 			for(int i = 0; i<2;i++) {
 				currentArea[i].paintMe(g);
 			}
-        	
+
+			if(isEnded){
+				Vector2 endscreendrawTextPos = EndscreenTextPos.makeGlobal(endscreenPaneltopLeft);
+				System.out.println("endscreenPaneltopLeft "+endscreenPaneltopLeft);
+				System.out.println("Screenposition "+ endscreendrawTextPos);
+				g2d.drawRect((int) (endscreenPaneltopLeft.x),(int)endscreenPaneltopLeft.y
+						,(int)endscreenSize.x,(int)endscreenSize.y);
+				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+(int)(score/1000),
+						(int)endscreendrawTextPos.x,(int)endscreendrawTextPos.y);//TODO da knopf hinzufügen und line seperator fixen und moneten richtig einfuegen
+				//https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
+
+			}
+
         }
         
         if(currentScreen.equals("shop")){
