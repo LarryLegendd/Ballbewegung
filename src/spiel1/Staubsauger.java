@@ -49,7 +49,7 @@ public class Staubsauger extends Weapon{
 	
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener) {
-		if(getCooldown() == false) {
+
 			
 			boolean hit = false;
 			
@@ -76,7 +76,7 @@ public class Staubsauger extends Weapon{
                 peneltyCooldown(3);
                 show();//extrazeit fürs zeichnen
             }
-		}
+
 	}
 
 	@Override

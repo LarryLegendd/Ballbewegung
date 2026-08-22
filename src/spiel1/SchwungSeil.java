@@ -133,7 +133,7 @@ public class SchwungSeil extends Weapon {
       	}
 	}
 	@Override
-	public void hitReleased() {
+	public void clickReleased() {
 		if (swingtimer != null) {
 			swingtimer.stop();
 			player.stopSwing();

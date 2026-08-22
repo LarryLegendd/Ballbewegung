@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import javax.swing.Timer;
 
-public class Grapplinghook extends Weapon {
+public class Grapplinghook extends Weapon { // die Ranziehattacke
 
 	
 	private double grappleEnemyKnockback = 6;
@@ -26,27 +26,27 @@ public class Grapplinghook extends Weapon {
 	
 	
 	private double[][] levelArr = {
-		//	Breite,range,kb, Preis, shoottime
-			  {3, 	4, 	7.5,		4,	15},
-			  {4,	6, 	8,	5,	20},
-			  {6,	9, 	9,	8,	25},
-			  {8, 	12, 10,	10,	30},
-			  {10, 	15, 11,	15,	35},
-			  {12, 	18, 12,	20, 40},
-			  {14, 	21, 13,	30,	45},
-			  {16, 	24, 14,	40,	50},
-			  {18, 	27, 15,	50,	55},
-			  {20,	 30,16,	100,60},
+		//	Breite,hoehe,kb, Preis, shoottime
+			  {3, 	4, 	7.5,	4,	15},
+			  {4,	6, 	8,		5,	20},
+			  {6,	9, 	9,		8,	25},
+			  {8, 	12, 10,		10,	30},
+			  {10, 	15, 11,		15,	35},
+			  {12, 	18, 12,		20, 40},
+			  {14, 	21, 13,		30,	45},
+			  {16, 	24, 14,		40,	50},
+			  {18, 	27, 15,		50,	55},
+			  {20,	30,	16,		100,60},
 		};
 	
-	private double basisBreite = levelArr[0][0];
-	private double range = levelArr[0][1];
+	private double basisBreite = levelArr[0][0]; // Breite der Basis vom Dreieck, das geschossen wird
+	private double hoehe = levelArr[0][1]; // Die Hoehe vom Dreieck, das geschossen wird
 	private double grappleKnockback = levelArr[0][2];
 	private int shoottime=(int)levelArr[0][4];
 	private int shoottimer;
 	private double shootspeed=20;
 	
-	private final TimeController timeController;
+	private final TimeController timeController;	//Controller um Spielfeld Methoden zu benutzen ohne die Methoden public zu machen
 	private final CameraController cameraController;
 	
 	
@@ -54,7 +54,7 @@ public class Grapplinghook extends Weapon {
 	
 	public Grapplinghook(Transform playertransform, TimeController timeController, CameraController cameraController) {
 		this.playertransform = playertransform;
-		hitbox = new TriangleHitbox(basisBreite, range, transform);
+		hitbox = new TriangleHitbox(basisBreite, hoehe, transform);
 		this.timeController = timeController;
 		this.cameraController = cameraController;
 	}
@@ -66,18 +66,26 @@ public class Grapplinghook extends Weapon {
   		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
   		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
   		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
-  		isShown=true;//muss manuel gemacht werden weil es unteschiedlich lang dauert;
+  		isShown=true;//	kann nicht mit der show() Methode aus der Oberklasse gemacht werden, da die dauer des anzeigens
+		// 				unteschiedlich lang ist, je nachdem wie weit der schuss geht
   		
-  		if(hitbox.collides(enemy.getHitbox())) {
+  		if(hitbox.collides(enemy.getHitbox())) {// wenn die hitbox der Grapplinghook mit der eines gegners kollidiert
       		enemy.schadenNehmen(1);
       		
-      		Vector2 enemydiff = enemy.transform.position.makeLocal(playertransform.position);
-      		System.out.println("enemydiff: "+enemydiff+" grappleEnemyKnockback: "+grappleEnemyKnockback);
-      		enemy.addSpeed(enemydiff.normalize().multiply(grappleEnemyKnockback).reverse());
-      		
-      		knockback = enemydiff.normalize().multiply(grappleKnockback);
-      		System.out.println("knockback: " + knockback);
-      		cameraController.shake();
+      		Vector2 enemydiff = enemy.transform.position.makeLocal(playertransform.position); //der unterschied zwischen
+			// gegner und Spielerposition wichtig für die richtung
+
+      		enemy.addSpeed(enemydiff.normalize()// 		nimmt die richtung zum spieler
+					.multiply(grappleEnemyKnockback)// 	multipliziert sie mit dem rückstoß, den der gegner kriegen soll
+					.reverse());//						und dreht es um, sodass der gegner zum spieler hinfliegt.
+
+
+      		knockback = enemydiff.normalize().multiply(grappleKnockback);// der Spielerknockback hat die gleiche
+			// 																berechnung wie der rückstoß vom Gegner
+			//																nur umgedreht und mit dem spielerrückstoß
+			//																anstatt vom gegnerrückstoß
+
+      		cameraController.shake();// schüttelt bei einem treffer den Bildschirm.
       		
       		return true;
       	}else {
@@ -85,46 +93,49 @@ public class Grapplinghook extends Weapon {
       	}
 	}
 	@Override
-	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
-		if(getCooldown() == false) {
-			setCooldown(true);
-			Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
-			playertransform.rotation = mausdiff.angle();
-			transform.position = playertransform.position;
-			transform.rotation= playertransform.rotation;
-			
-			speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
-			
-			timeController.slowTimeFor(shoottime/2);//slow für maximal die hälfte der Zeit
-			shoottimer=shoottime;
-			Timer t = new Timer(13, new ActionListener() {//schiesst über längere zeit
-				@Override
-		        public void actionPerformed(ActionEvent e) {
-					transform.position = transform.position.add(speed);
-			        
-					shoottimer--;
-					for(Enemy enemy : enemies){
-						if(shoot(enemy)) {
-							System.out.println(knockback+"knockback");
-							listener.onHit(knockback);
-							timeController.normalTime();
-							shoottimer = shoottime;
-							setCooldown(false);
-							show();//beendet nach ein bischen extrazeit den timer
-							((Timer) e.getSource()).stop();
-						}
-			            if (shoottimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
-			                listener.onMiss();
-			                shoottimer = shoottime;
-			                peneltyCooldown(30);
-			                show();//beendet nach ein bischen extrazeit den timer
-			                ((Timer) e.getSource()).stop();
-			            }
+	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){// der Listener ist gebraucht,
+		// weil der spieler nicht direkt beim losschiessen rückstoß kriegt, sondern erst wenn die Grappinghook geflogen
+		// ist und einen gegner getroffen hat.
+		
+		setCooldown(true);//startet cooldown
+		
+		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);// Richtung zur maus vom Spieler aus gesehen
+		playertransform.rotation = mausdiff.angle(); // TODO eigentlich soll sicht der spieler nicht drehen und wenn ja sicher nicht hier
+		transform.position = playertransform.position;
+		transform.rotation= playertransform.rotation;
+		
+		speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
+		
+		timeController.slowTimeFor(shoottime/2);//slow für maximal die hälfte der Zeit
+		shoottimer=shoottime;
+		Timer t = new Timer(13, new ActionListener() {//schiesst über längere zeit
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				transform.position = transform.position.add(speed);
+				
+				shoottimer--;
+				for(Enemy enemy : enemies){
+					if(shoot(enemy)) {
+						System.out.println(knockback+"knockback");
+						listener.onHit(knockback);
+						timeController.normalTime();
+						shoottimer = shoottime;
+						setCooldown(false);
+						show();//beendet nach ein bischen extrazeit den timer
+						((Timer) e.getSource()).stop();
 					}
-		        }
-		    });
-			t.start();
-		}
+					if (shoottimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
+						listener.onMiss();
+						shoottimer = shoottime;
+						peneltyCooldown(30);
+						show();//beendet nach ein bischen extrazeit den timer
+						((Timer) e.getSource()).stop();
+					}
+				}
+			}
+		});
+		t.start();
+	
 	}
 	
 	@Override
@@ -147,10 +158,10 @@ public class Grapplinghook extends Weapon {
 	
 	private void updateLevel(int level) {
 		basisBreite = levelArr[level][0];
-		range = levelArr[level][1];
+		hoehe = levelArr[level][1];
 		grappleKnockback = levelArr[level][2];
 		shoottime=(int)levelArr[level][4];
-		hitbox = new TriangleHitbox(basisBreite, range, transform);
+		hitbox = new TriangleHitbox(basisBreite, hoehe, transform);
 		System.out.println(level);
 	}
 	
@@ -179,4 +190,5 @@ public class Grapplinghook extends Weapon {
 	public Hitbox getHitbox() {
 		return hitbox;
 	}
+
 }

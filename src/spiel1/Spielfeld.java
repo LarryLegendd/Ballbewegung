@@ -475,7 +475,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		{
 			if(currentScreen.equals("spiel")) {
 				for (int i = 0; i < 2; i++) {
-					rightWeapon.hit(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
+					rightWeapon.attack(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
 
 						@Override
 						public void onHit(Vector2 knockback) {
@@ -496,7 +496,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		{
 			if(currentScreen.equals("spiel")) {
 				for (int i = 0; i < 2; i++) {
-					leftWeapon.hit(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
+					leftWeapon.attack(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
 
 						@Override
 						public void onHit(Vector2 knockback) {
@@ -592,10 +592,10 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     public void mouseReleased(MouseEvent arg0){ // wird aufgerufen, wenn die Maustaste losgelassen wird
     	if(arg0.getButton()==3) //rechtsklick
 		{
-			rightWeapon.hitReleased();
+			rightWeapon.clickReleased();
 		}
 		if(arg0.getButton()==1) { //linksklick
-			leftWeapon.hitReleased();
+			leftWeapon.clickReleased();
 		}
     }
 	@Override

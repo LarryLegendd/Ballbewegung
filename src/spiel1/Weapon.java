@@ -21,7 +21,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	
 	protected void show() {//vllt machen das das schwert auf cooldown in der zeit  ist
 		showTimer = 50;
-		isShown = true;//vllt show(time to recharge) das verschwidene waffen andere cooldowns haben
+		isShown = true;//vllt show(time to recharge) das verschiedene waffen andere cooldowns haben
 		
 	    Timer t = new Timer(13, new ActionListener() {
 	        @Override
@@ -73,8 +73,13 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		setCooldown(false);
 		isShown=false;
 	}
-	
-	public abstract void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener);
+	public void attack(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
+		if(!getCooldown()){//cooldownprüfung
+			hit(mauspos, enemies, listener);
+		}
+
+	}
+	protected abstract void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener);
 	public abstract void levelUp(double money);
 	public abstract Hitbox getHitbox();
 	public  void paintMe(Graphics g) {}
@@ -83,7 +88,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		return level;
 	}
 	
-	public void hitReleased() {};
+	public void clickReleased() {};
 }
 //TODO shotgun und man kriegt schüsse durch kills
 //TODO passive bounce rüstung als waffe probably nicht

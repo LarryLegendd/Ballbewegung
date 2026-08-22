@@ -41,48 +41,48 @@ public class Spear extends Weapon {
 	
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
-		if(getCooldown() == false) {
-			setCooldown(true);
-			boolean hit = false;
-			Vector2 knockback= new Vector2(0,0);
-			show();
-			for(Enemy enemy: enemies) {
-				Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
-				playertransform.rotation = mausdiff.angle();
-				
-				
-		//		//rendern neue makeglobal mit winkel das 
-		//    	g.drawLine((int)B1.x, (int)B1.y,(int) S.x, (int) S.y);
-		//		g.drawLine((int)B2.x, (int)B2.y,(int) S.x, (int) S.y);
-				
-				//fürs zeichen 
-				letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),playertransform.rotation);//links unten
-				letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),playertransform.rotation);//rechts unten
-				letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),playertransform.rotation);
-				//TODO irgenddwie timer das es länger da ist
-			
-				
-				if(hitbox.collides(enemy.getHitbox(),64)) {
-		    		enemy.schadenNehmen(1);
-		    		enemy.addSpeed(mausdiff.normalize().multiply(spearEnemyKnockback));
-		    		
-		    		knockback = mausdiff.normalize().multiply(spearKnockback).reverse();//das liefert die gegenrichtung.
-		    		
-		    		
-		    		
-		    		System.out.println("knockback: "+knockback);
-		    		hit =true;
-		    	}
+
+		setCooldown(true);
+		boolean hit = false;
+		Vector2 knockback= new Vector2(0,0);
+		show();
+		for(Enemy enemy: enemies) {
+			Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
+			playertransform.rotation = mausdiff.angle();
+
+
+	//		//rendern neue makeglobal mit winkel das
+	//    	g.drawLine((int)B1.x, (int)B1.y,(int) S.x, (int) S.y);
+	//		g.drawLine((int)B2.x, (int)B2.y,(int) S.x, (int) S.y);
+
+			//fürs zeichen
+			letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),playertransform.rotation);//links unten
+			letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),playertransform.rotation);//rechts unten
+			letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),playertransform.rotation);
+			//TODO irgenddwie timer das es länger da ist
+
+
+			if(hitbox.collides(enemy.getHitbox(),64)) {
+				enemy.schadenNehmen(1);
+				enemy.addSpeed(mausdiff.normalize().multiply(spearEnemyKnockback));
+
+				knockback = mausdiff.normalize().multiply(spearKnockback).reverse();//das liefert die gegenrichtung.
+
+
+
+				System.out.println("knockback: "+knockback);
+				hit =true;
 			}
-			if(hit) {
-				listener.onHit(knockback);
-				setCooldown(false);
-			}
-			else {
-				listener.onMiss();
-				peneltyCooldown(16);
-			}	
-		
+		}
+		if(hit) {
+			listener.onHit(knockback);
+			setCooldown(false);
+		}
+		else {
+			listener.onMiss();
+			peneltyCooldown(16);
+		}
+
 //		
 //		//Basisvariablen//wahrscheinlich temp
 //		Vector2 mausdiff = mauspos.subtract(playerpos);
@@ -112,7 +112,7 @@ public class Spear extends Weapon {
 //		}
 //		
 		
-		}
+
 	}
 	
 	@Override

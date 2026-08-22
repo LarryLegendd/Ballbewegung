@@ -50,7 +50,7 @@ public class Sword extends Weapon {
 	
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener) {
-		if(getCooldown() == false) {
+
 			setCooldown(true);
 			show();//anzeigen
 			for(Enemy enemy : enemies) {
@@ -87,7 +87,7 @@ public class Sword extends Weapon {
 			}
 			
 			hit = false;
-		}
+
 	}
 	
 	@Override
