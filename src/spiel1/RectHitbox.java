@@ -83,10 +83,12 @@ public class RectHitbox extends Hitbox {
 		@Override
 		public boolean collides(Vector2 point) {//theoretisch efficcienter die hitbox global abzuspeichern oder so das in collides hitbox für die anderen punkte gemerkt ist
 			lastangle = transform.rotation;//Das ist der eigene angle weil der von der anderen ist schon in topoints
-						
 			lastpos=transform.position;
+
 			lastppre = point;
+			System.out.println("button!"+transform.position.toJPanel());
 			point = point.makeLocal(transform.position).rotate(-transform.rotation+extradrehwinkel);
+
 			lastpoint=point;
 			return (point.x >= lio.x && point.x <= reu.x &&
 			        point.y <= lio.y && point.y >= reu.y);

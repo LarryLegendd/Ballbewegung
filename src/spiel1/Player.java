@@ -39,10 +39,7 @@ public class Player extends GameObject{
     	}else {
     		transform.speed= transform.speed.multiply((1-(0.005*time)));//Luftwiderstand wird verringert wenn der spieler schwingt(fühlt sich besser an)
     	}
-    	
-    		
-    	
-    	setPosition(	getPosition().add(getSpeed().multiply(time))	);
+		setPosition(	getPosition().add(getSpeed().multiply(time))	);
     }
 	
 	@Override

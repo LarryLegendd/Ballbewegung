@@ -21,9 +21,13 @@ public class Vector2 {
 	public double length() {
 		return Math.sqrt(x*x + y*y);//Satz des Pythagoras
 	}
-	
-	
-	public double angle() {//Winkel im Bogenmaß
+
+	/**
+	 * Findet den Winkel am Ursprung, wobei der erste Schenkel zu diesem Vektor führt und der zweite Schenkel durch die
+	 * positive Halbgerade der x-Achse beschrieben wird.
+	 */
+	public double angle() {
+
 		double angle = Math.atan2(y, x);
 		
 		if (angle < 0) {// winkel ist immer positiv
@@ -31,7 +35,15 @@ public class Vector2 {
 		}
 		return angle ;
 	}
-	
+
+	/**
+	 * Bei der Angle Method mit zwei Vektoren als Argumente wird der Winkel am Punkt des ausführenden Vektors gemessen.
+	 * Die mitgegebenen Vektoren dienen als Schenkel.
+	 * @param P2 Schenkel 1
+	 * @param P3 Schenkel 2
+	 *
+	 * @return Winkel im Bogenmaß
+	 */
 	public double angle(Vector2 P2, Vector2 P3) {//berechnet wird der winkel bei this zwischen P2 und P3
 		//this zum ursprung machen
 		P2 = P2.makeLocal(this);
@@ -42,8 +54,7 @@ public class Vector2 {
 //		//beide um - den winkel von P2 drehen, sodass P2 nach rechts zeigt und der winkel dazwischen nicht gestört wird
 //		P3 = P3.rotate(-P2.angle());
 //		System.out.println(P3+" der fertig transformierte punkt");
-//		
-		
+//
 		//angle von P3 finden
 		return ((P2.angle()-P3.angle())+(Math.PI*2))%(Math.PI*2);
 		

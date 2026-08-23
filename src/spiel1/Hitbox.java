@@ -22,6 +22,7 @@ public abstract class Hitbox {
 	public Vector2 getPosition() {
 		return transform.position;
 	}
+
 	public void setPosition(Vector2 position) {
 		this.transform.position = position;
 	}

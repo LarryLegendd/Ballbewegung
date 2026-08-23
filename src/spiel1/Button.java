@@ -73,7 +73,15 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
         timer.setRepeats(false); // nur einmal ausführen
         timer.start();
     }
-    
+
+    @Override
+    public void moveGameObject(double time){//für buttonjump
+        transform.speed= transform.speed.multiply((1-(0.02*time)));//Luftwiderstand
+        transform.speed=transform.speed.add(new Vector2(0,-.13).multiply(time));//Gravitation
+        transform.position=transform.position.add(transform.speed.multiply(time));
+        //setPosition(	getPosition().add(getSpeed().multiply(time))	); // TODO Beispiel für Seminararbeit vllt
+    }
+
     @Override
     public void paintMe(Graphics g) {
     	
@@ -81,7 +89,7 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
 
 
         g.drawImage(currentImage, (int) jPos.x, (int) jPos.y, //position ecke links oben
-                (int) (jPos.x+getWidth()), (int)(jPos.y+getHeight()),//position ecke rechts unten (das sieht falsch aus aber man muss height addieren weil JPannel -y nach oben hat)
+                (int) (jPos.x+getWidth()), (int)(jPos.y+getHeight()),//position ecke rechts unten (das sieht falsch aus aber man muss height addieren weil JPanel -y nach oben hat)
                 0, 0,//erste ecke vom bild, eine ecke vom bild ist immer 0 0
                 currentImage.getWidth(), currentImage.getHeight(),// zweite ecke vom bild ist die 0+Breite, 0+Höhe
                 null);// kein imageobserver

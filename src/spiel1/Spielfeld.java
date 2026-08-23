@@ -33,7 +33,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private int slowTimeRemaining;
 	
 	private Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
-	
+	private boolean drawPlayer;
+
 	private EnemyArea[]	currentArea = new EnemyArea[2];
 	static int AreaWidth = 5000;
 	static int AreaHeight = 4000;
@@ -132,8 +133,10 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private Vector2 endscreenSize = new Vector2(screenWidth/2,screenHeight/4*3);//	Vector 2 wird nur gebraucht
 	// 																				um die beiden informationen
 	// 																				gleichtzeitig zu benutzen
-	private Vector2 EndscreenTextPos;
-
+	private Vector2 endscreenTextPos;
+	private Button endscreenShopButton;
+	private Vector2 endscreenShopButtonPos;
+	private boolean endscreenPressed= false;//fixt fehler beim zweimal drücken
 
 
     public Spielfeld() {
@@ -238,6 +241,9 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	    staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral);
 		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
 
+		endscreenShopButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
+
+
 		for(int i = 0;i<2;i++) {
 			Areas.add(new EnemyArea(i));
 			Areas.get(i).GenerateEnemies();
@@ -286,6 +292,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	System.out.println("spielreset");
 
     	player.reset();
+		drawPlayer=true;
     	currentScreen = "spiel";
     	for(int i = 0; i < weapons.length; i++) if(weapons[i]!= null) {
     		weapons[i].reset();
@@ -342,9 +349,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
     // Diese Methode wird in regelmäßigen Abständen vom Timer aufgerufen und sorgt für ein Spiel update
     private void doOnTick() {
-    	
-    	
-    	
 
     	screenHeight = this.getHeight();
     	screenWidth = this.getWidth();
@@ -382,7 +386,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 
 
-
 			for(int i = 0; i<2;i++) {
 				currentArea[i].update();
 			}
@@ -398,6 +401,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	   if(score>highscore)highscore=score;
 
 			   isEnded=true;
+			   drawPlayer=false;
+			   cooldown=true;//Spieler kann nicht mehr attackieren
 			   // definition vom rechteck das runterfällt.
         	   endscreenPanelfinaltopLeft = new Vector2(screenWidth/4,screenHeight/8);//finale position schon in JPanel
 			   endscreenSize = new Vector2(screenWidth/2,screenHeight/4*3);//	Vector 2 wird nur gebraucht
@@ -405,24 +410,32 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 			   // 																			gleichtzeitig zu benutzen
 
 			   endscreenSpeed = player.getTransform().speed;
-			   endscreenSpeed = new Vector2(endscreenSpeed.x,endscreenSpeed.y);
+			   endscreenSpeed = new Vector2(endscreenSpeed.x,-endscreenSpeed.y).reverse();// wegen jpanel in die andere richtung
 			   System.out.println("endscreenSpeed"+endscreenSpeed);
 			   framesUntillScreenIsCentered=200;
 			   endscreenPaneltopLeft = endscreenPanelfinaltopLeft.add(endscreenSpeed.reverse().multiply(framesUntillScreenIsCentered));
 
 
 			   // ab hier alles relativ zu endscreentopmiddle
-			   EndscreenTextPos = new Vector2(endscreenSize.x/8,endscreenSize.y/8);
-        	   // temp auskommentiert   currentScreen="shop";
+			   endscreenTextPos = new Vector2(endscreenSize.x/8,endscreenSize.y/8);
+			   endscreenShopButtonPos =new Vector2(endscreenSize.x/8,endscreenSize.y/8*7);
+
 
 
            }
 		   if(isEnded){
 			  // EndscreenTextPos=EndscreenTextPos.makeGlobal(endscreenPaneltopLeft);
-			   System.out.println(framesUntillScreenIsCentered);
-			   if(framesUntillScreenIsCentered>0) endscreenPaneltopLeft = endscreenPaneltopLeft.add(endscreenSpeed);
-			   framesUntillScreenIsCentered--;
 
+			   if(framesUntillScreenIsCentered<100)cameraPos= new Vector2(0,-2000);//setzt die Kamera unter das Spielfeld
+
+
+			   if(framesUntillScreenIsCentered>0){
+				   endscreenPaneltopLeft = endscreenPaneltopLeft.add(endscreenSpeed);
+				   endscreenShopButton.setPosition(endscreenShopButtonPos.makeGlobal(endscreenPaneltopLeft).toCoordinate());// ist hier für Buttonjump
+
+			   }
+			   framesUntillScreenIsCentered--;
+			   if(endscreenPressed)endscreenShopButton.moveGameObject(2);//für den Buttonjump
 		   }
 
         }
@@ -454,7 +467,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	g2d.setStroke(new BasicStroke());
         	g2d.setColor(Color.black);
         	//Player
-        	player.paintMe(g);
+        	if(drawPlayer)player.paintMe(g);
         	
         	//Weapons
         	if(leftWeapon != null)leftWeapon.paintMe(g);
@@ -471,15 +484,15 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 			}
 
 			if(isEnded){
-				Vector2 endscreendrawTextPos = EndscreenTextPos.makeGlobal(endscreenPaneltopLeft);
+				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
 				System.out.println("endscreenPaneltopLeft "+endscreenPaneltopLeft);
-				System.out.println("Screenposition "+ endscreendrawTextPos);
+				System.out.println("buttonScreenposition "+ endscreenShopButton.getPosition());
 				g2d.drawRect((int) (endscreenPaneltopLeft.x),(int)endscreenPaneltopLeft.y
 						,(int)endscreenSize.x,(int)endscreenSize.y);
 				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+(int)(score/1000),
 						(int)endscreendrawTextPos.x,(int)endscreendrawTextPos.y);//TODO da knopf hinzufügen und line seperator fixen und moneten richtig einfuegen
 				//https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
-
+				endscreenShopButton.paintMe(g);
 			}
 
         }
@@ -564,11 +577,24 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 				}
 			}
 		}
-    	
+    	if(currentScreen.equals("spiel")&&isEnded){
+
+			if(endscreenShopButton.press(new Vector2(arg0).toCoordinate())&&!endscreenPressed){
+				endscreenPressed=true;
+				endscreenShopButton.addSpeed(new Vector2(Math.random()*10,Math.random()*10));
+				System.out.println("speedbutton"+endscreenShopButton.getSpeed());
+				t = new Timer(1000, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+							currentScreen = "shop";
+							endscreenPressed=false;
+							t.stop();
+					}});
+				t.start();
+			}
+		}
     	if(currentScreen.equals("shop")) {
-    		
-    		
-    		
+
     		if(startButton.press(mouseScreenPos)) {
     			resetGame();
     		}
@@ -655,17 +681,17 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	@Override
 	public void shake() {
 		
-		Timer t = new Timer(13, new ActionListener() {//schiesst über längere zeit
+		Timer t = new Timer(26, new ActionListener() {//schiesst über längere zeit
 			@Override
 	        public void actionPerformed(ActionEvent e) {
 				shaketimer--;
 			if(currentScreen=="spiel"){
-				Vector2 randompos = new Vector2((Math.random()*50)-25,(Math.random()*50)-25);
+				Vector2 randompos = new Vector2((Math.random()*100)-50,(Math.random()*100)-50);
 					System.out.println("shake"+randompos);
 					cameraPos = cameraPos.add(randompos);
 			}
 		            if (shaketimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
-		            	shaketimer=2;
+		            	shaketimer=3;
 		                ((Timer) e.getSource()).stop();
 		            }
 				}

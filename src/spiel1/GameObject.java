@@ -31,6 +31,7 @@ public abstract class GameObject{//Die oberklasse für gameobjekte
 
     public void setPosition(Vector2 objectPosition) {
         this.transform.position = objectPosition;
+        hitbox.setPosition(objectPosition);
     }
 
     public double getWidth() {
@@ -71,7 +72,6 @@ public abstract class GameObject{//Die oberklasse für gameobjekte
         hitbox.setPosition(transform.position);// Hitboxposition aktualisieren
     }
 
-    
     
     protected abstract void paintMe(java.awt.Graphics g);
 }
