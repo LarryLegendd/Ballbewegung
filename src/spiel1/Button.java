@@ -1,6 +1,6 @@
 package spiel1;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Timer;
@@ -83,12 +83,12 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
     }
 
     @Override
-    public void paintMe(Graphics g) {
+    public void paintMe(Graphics2D g2d) {
     	
     	Vector2 jPos = transform.position.toJPanel(); //wandelt die position in das von JPanel benutzte format um
 
 
-        g.drawImage(currentImage, (int) jPos.x, (int) jPos.y, //position ecke links oben
+        g2d.drawImage(currentImage, (int) jPos.x, (int) jPos.y, //position ecke links oben
                 (int) (jPos.x+getWidth()), (int)(jPos.y+getHeight()),//position ecke rechts unten (das sieht falsch aus aber man muss height addieren weil JPanel -y nach oben hat)
                 0, 0,//erste ecke vom bild, eine ecke vom bild ist immer 0 0
                 currentImage.getWidth(), currentImage.getHeight(),// zweite ecke vom bild ist die 0+Breite, 0+Höhe

@@ -106,7 +106,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		
 		speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
 		
-		timeController.slowTimeFor(shoottime/2);//slow für maximal die hälfte der Zeit
+		timeController.slowTimeFor(shoottime);//slow für den Schuss
 		shoottimer=shoottime;
 		Timer t = new Timer(13, new ActionListener() {//schiesst über längere zeit
 			@Override

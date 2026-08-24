@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Spear extends Weapon {
-	
+	//TODO hat mal sehr wenig knockback gemacht schauen was da abgeht
 	
 	private Vector2 letzteSpitze;
 	private Vector2 letzteBasis1;

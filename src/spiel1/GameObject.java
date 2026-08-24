@@ -73,5 +73,5 @@ public abstract class GameObject{//Die oberklasse für gameobjekte
     }
 
     
-    protected abstract void paintMe(java.awt.Graphics g);
+    protected abstract void paintMe(java.awt.Graphics2D g2d);
 }

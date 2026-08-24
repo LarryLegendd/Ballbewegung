@@ -1,6 +1,6 @@
 package spiel1;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
@@ -43,10 +43,10 @@ public class Player extends GameObject{
     }
 	
 	@Override
-	protected void paintMe(Graphics g) {//TODO bild für spieler
+	protected void paintMe(Graphics2D g2d) {//TODO bild für spieler
 	    Vector2 jPos = transform.position.toJPanel();
 	    
-	    g.drawOval(
+	    g2d.drawOval(
 	        (int) jPos.x,
 	        (int) (jPos.y - height), // nach oben verschieben
 	        (int) width,

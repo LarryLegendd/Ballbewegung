@@ -44,10 +44,10 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
         this.xpos = xpos;
     }
 
-    protected void paintMe(Graphics g) { // zeichnet alle Gegner
+    protected void paintMe(Graphics2D g2d) { // zeichnet alle Gegner
         for(Enemy enemy: enemies) {
-            enemy.paintMe(g);
-            enemy.getHitbox().paintMe(g);
+            enemy.paintMe(g2d);
+            enemy.getHitbox().paintMe(g2d);
         }
     }
 }

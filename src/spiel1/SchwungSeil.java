@@ -154,7 +154,7 @@ public class SchwungSeil extends Weapon {
 			hitListener = listener;
 
 			
-//			timeController.slowTimeFor(shoottime/2);//slow für maximal die hälfte der Zeit
+			timeController.slowTimeFor(shoottime);
 
 			
 			shoottimer=shoottime;
@@ -170,6 +170,7 @@ public class SchwungSeil extends Weapon {
 							if(shoot(enemy)) 
 							{
 								hitEnemy = enemy;
+								timeController.normalTime();
 								t.stop();
 								if (swingtimer != null) {
 									swingtimer.restart();
@@ -178,10 +179,11 @@ public class SchwungSeil extends Weapon {
 							
 							}
 						}
-						if (shoottimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
+						if (shoottimer <= 0) {//reset wenn timer ausgelaufen
 			                listener.onMiss();
 			                shoottimer = shoottime;
 			                peneltyCooldown(30);
+							timeController.normalTime();
 			                show();//beendet nach ein bischen extrazeit den timer
 			                ((Timer) e.getSource()).stop();
 			            }

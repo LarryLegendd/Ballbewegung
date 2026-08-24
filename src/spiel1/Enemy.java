@@ -27,9 +27,9 @@ private int health;
 	
 	
 	@Override
-	protected void paintMe(Graphics g) {
+	protected void paintMe(Graphics2D g2d) {
 	    Vector2 jPos = getPosition().toJPanel();
-	    g.drawRect(
+	    g2d.drawRect(
 	        (int) jPos.x,
 	        (int) jPos.y,
 	        (int) width,

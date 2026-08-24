@@ -11,8 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -20,9 +18,12 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
 
+import java.awt.*;
+import java.awt.RadialGradientPaint;
+
+//TODO Button bilder bei einem klick fixen
 public class Spielfeld extends JPanel implements MouseListener, TimeController, CameraController{ // JPanel ist eine Klasse, in der gezeichnet werden kann
 
 	//jpanel
@@ -31,7 +32,35 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private int shaketimer=2;
 	
 	private int slowTimeRemaining;
-	
+	Timer slowingTimer = new Timer(13, new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+
+			if (timeMultiplyer <= .25) {
+				((Timer) e.getSource()).stop();
+			}
+			timeMultiplyer-=.05;
+			System.out.println("time"+timeMultiplyer);
+		}
+	});
+
+	Timer speedUpTimer = new Timer(13, new ActionListener() {//TODO das prozentual machen
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			timeMultiplyer+=.1;
+
+			if (timeMultiplyer >= 1) {
+				timeMultiplyer=1;// da es wegen floating point error größer ist
+				((Timer) e.getSource()).stop();
+			}
+
+
+		}
+	});
+
+
 	private Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
 	private boolean drawPlayer;
 
@@ -54,9 +83,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	
 	private Weapon leftWeapon = null;
 	private Weapon rightWeapon = null;
-	
-	private boolean isTimeSlowed;
-
 
 
 	private static double timeMultiplyer = 1;
@@ -151,15 +177,18 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     }
     @Override
     public boolean isTimeSlowed() {
-    	return isTimeSlowed;
+		if(timeMultiplyer<1)return true;
+		return false;
     }
     @Override
     public void slowTime() {
-    	timeMultiplyer = .25;
+		speedUpTimer.stop();
+		slowingTimer.start();
     }
     @Override
     public void normalTime() {
-    	timeMultiplyer = 1; 
+		slowingTimer.stop();
+		speedUpTimer.start();
     	slowTimeRemaining = 0;
     }
 	public static double getTimeMultiplyer() {
@@ -294,6 +323,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     	player.reset();
 		drawPlayer=true;
     	currentScreen = "spiel";
+		normalTime();
+
     	for(int i = 0; i < weapons.length; i++) if(weapons[i]!= null) {
     		weapons[i].reset();
     		System.out.println("waffe "+i+" geresettet");
@@ -397,6 +428,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	
         //wenn spieler nach unten fällt
            if(player.getPosition().y<0&&!isEnded) {//isended das es nur einmal aufgerufen wird
+			   normalTime();
         	   score= (int) player.getPosition().x;//berechnung score
         	   if(score>highscore)highscore=score;
 
@@ -435,7 +467,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 			   }
 			   framesUntillScreenIsCentered--;
-			   if(endscreenPressed)endscreenShopButton.moveGameObject(2);//für den Buttonjump
+			   if(endscreenPressed)endscreenShopButton.moveGameObject(3);//für den Buttonjump
 		   }
 
         }
@@ -448,16 +480,49 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         repaint(); // ruft die paintComponent Methode auf, um das Spielfeld neu zu zeichnen
     }
 
+
+// quellen finden
+	public void drawSlowVignette(Graphics2D g2d, int width, int height, boolean isTimeSlowed) {
+		double slowpercentage = ((1-getTimeMultiplyer())*100);//https://stackoverflow.com/questions/16656651/does-java-have-a-clamp-function/75707634#75707634 & https://stackoverflow.com/questions/16656651/does-java-have-a-clamp-function/75707634#75707634
+		if(slowpercentage>100)slowpercentage=100;
+		if(slowpercentage<0)slowpercentage=0;
+		System.out.println("coloralpha"+ (int)(slowpercentage/100*130.3));
+		//Vignette
+		float[] fractions = {0.0f, 0.8f, 1.0f};
+		Color[] colors = {
+				new Color(0, 0, 0,0),        // durchsichtig für mitte
+				new Color(0, 30, 100,(int)(slowpercentage/100*20)),    // Leichtes Blau
+				new Color(0, 10, 50, (int)(slowpercentage/100*30))     // intensives Blau
+		};
+
+		RadialGradientPaint mask = new RadialGradientPaint(
+				new Point((int) screenWidth/2, (int) screenHeight/2),
+				(float)(width * 0.8), // Radius des Effekts
+				fractions,
+				colors
+		);
+
+		g2d.setPaint(mask);
+		g2d.fillRect(0, 0, width, height);
+		g2d.setColor(Color.BLACK);//farbe resetten
+	}
+
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g); // löscht das Spielfeld
-        
-        
 
-        Graphics2D g2d = (Graphics2D) g;
-        // Um die Kanten des Objekts zu glätten
+        Graphics2D g2d = (Graphics2D) g.create();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
+
+		// Um die Kanten des Objekts zu glätten
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if(currentScreen == "spiel") { // Spiel läuft
+			if (isTimeSlowed()) {
+				double zoomFactor = 1.125-getTimeMultiplyer()/8;//Berechnung für die Menge vom zoom
+				g2d.translate(screenWidth / 2, screenHeight / 2);//mittelpunkt von g2d versetzen, sodass zoom in der mitte ist
+				g2d.scale(zoomFactor, zoomFactor);//zoom
+				g2d.translate(-screenWidth / 2, -screenHeight / 2);//g2d zurückpositionieren
+			}
         	Vector2 bodenLinks = new Vector2(0,0).toJPanel();
         	Vector2 bodenRechts = new Vector2(99999999,0).toJPanel();
         	//Boden
@@ -467,8 +532,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	g2d.setStroke(new BasicStroke());
         	g2d.setColor(Color.black);
         	//Player
-        	if(drawPlayer)player.paintMe(g);
-        	
+        	if(drawPlayer)player.paintMe(g2d);
+
         	//Weapons
         	if(leftWeapon != null)leftWeapon.paintMe(g);
         	else System.out.println("leftweapon ist" + leftWeapon);
@@ -477,11 +542,13 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         		if(rightWeapon.getHitbox() != null) rightWeapon.getHitbox().paintMe(g);
         	}
         	else System.out.println("rightweapon ist" + rightWeapon);
-        	
+
         	// Enemy(Vector2 objectPosition, double width, double height, int health){
 			for(int i = 0; i<2;i++) {
-				currentArea[i].paintMe(g);
+				currentArea[i].paintMe(g2d);
 			}
+
+			drawSlowVignette(g2d,(int) screenWidth,(int) screenHeight,isTimeSlowed());
 
 			if(isEnded){
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
@@ -490,33 +557,35 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 				g2d.drawRect((int) (endscreenPaneltopLeft.x),(int)endscreenPaneltopLeft.y
 						,(int)endscreenSize.x,(int)endscreenSize.y);
 				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+(int)(score/1000),
-						(int)endscreendrawTextPos.x,(int)endscreendrawTextPos.y);//TODO da knopf hinzufügen und line seperator fixen und moneten richtig einfuegen
+						(int)endscreendrawTextPos.x,(int)endscreendrawTextPos.y);//TODO line seperator fixen und moneten richtig einfuegen
 				//https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
-				endscreenShopButton.paintMe(g);
+				endscreenShopButton.paintMe(g2d);
 			}
 
-        }
-        
+		}
+
         if(currentScreen.equals("shop")){
-        	
+
         	g.drawString(("Score: "+score),(int) screenWidth/2,(int) screenHeight/3);
         	g.drawString(("Highscore: "+highscore),(int) screenWidth/2,(int) screenHeight/3 -20);
-        	
-        	startButton.paintMe(g);
-        	
-        	leftUpgradeButton.paintMe(g);
-        	rightUpgradeButton.paintMe(g);
-        	
+
+        	startButton.paintMe(g2d);
+
+        	leftUpgradeButton.paintMe(g2d);
+        	rightUpgradeButton.paintMe(g2d);
+
         	g.drawString(("Level: "+leftWeapon.getLevel()),(int) leftUpgradeButton.getPosition().x,(int) leftUpgradeButton.getPosition().y+20);
         	g.drawString(("Level: "+rightWeapon.getLevel()),(int) rightUpgradeButton.getPosition().x,(int) rightUpgradeButton.getPosition().y+20);
-        	
-        	
+
+
         	//for(Button button : buttons) button.paintMe(g);
-        	swordButton.paintMe(g);
-        	spearButton.paintMe(g);
-        	grapplingButton.paintMe(g);
-        	staubsaugerButton.paintMe(g);   	
-        	schwungSeilButton.paintMe(g);
+        	swordButton.paintMe(g2d);
+        	spearButton.paintMe(g2d);
+        	grapplingButton.paintMe(g2d);
+        	staubsaugerButton.paintMe(g2d);
+        	schwungSeilButton.paintMe(g2d);
+
+			g2d.dispose();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
         }
     }
     // Diese Methoden müssen implementiert werden, da die Klasse das MouseListener Interface implementiert
