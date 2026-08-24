@@ -69,8 +69,6 @@ public class Spear extends Weapon {
 				knockback = mausdiff.normalize().multiply(spearKnockback).reverse();//das liefert die gegenrichtung.
 
 
-
-				System.out.println("knockback: "+knockback);
 				hit =true;
 			}
 		}

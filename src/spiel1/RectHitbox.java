@@ -86,7 +86,6 @@ public class RectHitbox extends Hitbox {
 			lastpos=transform.position;
 
 			lastppre = point;
-			System.out.println("button!"+transform.position.toJPanel());
 			point = point.makeLocal(transform.position).rotate(-transform.rotation+extradrehwinkel);
 
 			lastpoint=point;

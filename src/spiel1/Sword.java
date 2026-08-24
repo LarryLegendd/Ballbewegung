@@ -56,7 +56,6 @@ public class Sword extends Weapon {
 			for(Enemy enemy : enemies) {
 				Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
 				playertransform.rotation = mausdiff.angle();
-				System.out.println(enemy.getHitbox());
 				//zeichnen
 				drawEndpoint1=new Vector2(range,0).rotate(angle/2).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
 				drawEndpoint2=new Vector2(range,0).rotate(-(angle/2)).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
@@ -66,10 +65,8 @@ public class Sword extends Weapon {
 				if(hitbox.collides(enemy.getHitbox())) {
 		    		enemy.schadenNehmen(1);
 		    		enemy.addSpeed(mausdiff.normalize().multiply(swordEnemyKnockback));
-		    		System.out.println(knockback+"iansdf");
 		    		knockback = mausdiff.normalize().multiply(swordKnockback).reverse();//das liefert die gegenrichtung.
-		
-		    		System.out.println("knockback: "+knockback);
+
 		    		hit = true;
 				}
 //	temp		System.out.println(knockback+"System.out.println(knockback+\"iansdf\");System.out.println(knockback+\"iansdf\");System.out.println(knockback+\"iansdf\");");
@@ -125,7 +122,7 @@ public class Sword extends Weapon {
 			g.drawLine((int)JPlayerPos.x, (int)JPlayerPos.y,(int) JEndpoint2.x, (int) JEndpoint2.y);
 			
 			double startangle = drawEndpoint2.makeLocal(drawPlayerPos).angle();
-			System.out.println(startangle);
+			//System.out.println(startangle);
 			g2d.drawArc((int) (JPlayerPos.x-range),(int) (JPlayerPos.y-range), (int)range*2,(int) range*2, (int) Math.toDegrees(startangle),(int) Math.toDegrees(angle));
 		}
 	}

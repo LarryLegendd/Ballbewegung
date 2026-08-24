@@ -27,9 +27,9 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	
 	private double[][] levelArr = {
 		//	Breite,hoehe,kb, Preis, shoottime
-			  {3, 	4, 	7.5,	4,	15},
-			  {4,	6, 	8,		5,	20},
-			  {6,	9, 	9,		8,	25},
+			  {5, 	9, 	7.5,	4,	15},
+			  {6,	10, 	8,		5,	20},
+			  {7,	11, 	9,		8,	25},
 			  {8, 	12, 10,		10,	30},
 			  {10, 	15, 11,		15,	35},
 			  {12, 	18, 12,		20, 40},
@@ -116,7 +116,6 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 				shoottimer--;
 				for(Enemy enemy : enemies){
 					if(shoot(enemy)) {
-						System.out.println(knockback+"knockback");
 						listener.onHit(knockback);
 						timeController.normalTime();
 						shoottimer = shoottime;
