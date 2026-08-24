@@ -48,39 +48,8 @@ public class Vector2 {
 		//this zum ursprung machen
 		P2 = P2.makeLocal(this);
 		P3 = P3.makeLocal(this);
-//		System.out.println("lokal zu pointpos");
-//		System.out.println(P2+" b1");
-//		System.out.println(P3+" b2");
-//		//beide um - den winkel von P2 drehen, sodass P2 nach rechts zeigt und der winkel dazwischen nicht gestört wird
-//		P3 = P3.rotate(-P2.angle());
-//		System.out.println(P3+" der fertig transformierte punkt");
-//
-		//angle von P3 finden
-		return ((P2.angle()-P3.angle())+(Math.PI*2))%(Math.PI*2);
-		
-		// Richtungsvektoren von this zu den Punkten
-//        Vector2 v1 = P2.makeLocal(this);
-//        Vector2 v2 = P3.makeLocal(this);
-//        System.out.println("v1 "+ v1+ "v2 "+v2);
-//
-//        // Skalarprodukt
-//        double dot = v1.x * v2.x + v1.y * v2.y;
-//        System.out.println("dot "+ dot);
-//        // Längen
-//        double len1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
-//        double len2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
-//        System.out.println("len1 "+ len1+ "len2 " + len2);
-//        // Schutz
-//        if (len1 == 0 || len2 == 0) {
-//            throw new IllegalArgumentException("Punkte dürfen nicht identisch sein");
-//        }
-//
-//        // cos(theta)
-//        double cos = dot / (len1 * len2);
-//        cos = Math.max(-1.0, Math.min(1.0, cos));
-//
-//        // Winkel im Bogenmaß
-//        return Math.acos(cos);
+
+		return ((P2.angle()-P3.angle())+(Math.PI*2))%(Math.PI*2);//TODO das sieht genuently falsch aus
 	}
 		
 		

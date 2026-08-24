@@ -491,8 +491,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		float[] fractions = {0.0f, 0.8f, 1.0f};
 		Color[] colors = {
 				new Color(0, 0, 0,0),        // durchsichtig für mitte
-				new Color(0, 30, 100,(int)(slowpercentage/100*20)),    // Leichtes Blau
-				new Color(0, 10, 50, (int)(slowpercentage/100*30))     // intensives Blau
+				new Color(0, 30, 100,(int)(slowpercentage/100*40)),    // Leichtes Blau
+				new Color(0, 10, 50, (int)(slowpercentage/100*60))     // intensives Blau
 		};
 
 		RadialGradientPaint mask = new RadialGradientPaint(
