@@ -72,7 +72,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
   		if(hitbox.collides(enemy.getHitbox())) {// wenn die hitbox der Grapplinghook mit der eines gegners kollidiert
       		enemy.schadenNehmen(1);
       		
-      		Vector2 enemydiff = enemy.transform.position.makeLocal(playertransform.position); //der unterschied zwischen
+      		Vector2 enemydiff = enemy.getTransform().position.makeLocal(playertransform.position); //der unterschied zwischen
 			// gegner und Spielerposition wichtig für die richtung
 
       		enemy.addSpeed(enemydiff.normalize()// 		nimmt die richtung zum spieler

@@ -64,7 +64,7 @@ public class SchwungSeil extends Weapon {
 			double speed = playertransform.speed.length();
 			//richtung
 			// 2D Kreuzprodukt (z-Komponente)
-			double cross = hitEnemy.transform.position.makeLocal(playertransform.position).x() * playertransform.speed.y() - hitEnemy.transform.position.makeLocal(playertransform.position).y() * playertransform.speed.x();
+			double cross = hitEnemy.getTransform().position.makeLocal(playertransform.position).x() * playertransform.speed.y() - hitEnemy.getTransform().position.makeLocal(playertransform.position).y() * playertransform.speed.x();
 			
 			Vector2 dir;
 			
@@ -74,11 +74,11 @@ public class SchwungSeil extends Weapon {
 			if (cross > 0) {
 			    // gegen Uhrzeigersinn
 			    System.out.println("geguhr");
-			    dir = hitEnemy.transform.position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2);
+			    dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2);
 			} else {
 			    // im Uhrzeigersinn
 			    System.out.println("uhr");
-			    dir = hitEnemy.transform.position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2 *3);
+			    dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2 *3);
 			}
 			double speedrichtungsunterschied = Math.cos(playertransform.speed.angle()-dir.angle());
 			Vector2 zielspeed=dir.multiply(speed);
@@ -121,7 +121,7 @@ public class SchwungSeil extends Weapon {
   		if(hitbox.collides(enemy.getHitbox())) {
       		enemy.schadenNehmen(1);
       		
-      		Vector2 enemydiff = enemy.transform.position.makeLocal(playertransform.position);//temp braucht man vielleicht nicht
+      		Vector2 enemydiff = enemy.getTransform().position.makeLocal(playertransform.position);//temp braucht man vielleicht nicht
       		
       		knockback = enemydiff.normalize().multiply(grappleKnockback);
       		System.out.println("knockback: " + knockback);

@@ -33,7 +33,7 @@ public class RectHitbox extends Hitbox {
 		}
 		
 		public RectHitbox(GameObject g) {
-			super(g.transform,(int)new Vector2(g.getWidth(),-g.getHeight()).length()+1);//rechte untere ecke ist immer am weitesten entfernt von links oben
+			super(g.getTransform(),(int)new Vector2(g.getWidth(),-g.getHeight()).length()+1);//rechte untere ecke ist immer am weitesten entfernt von links oben
 			lio = new Vector2(0,0);
 			reu = new Vector2(g.getWidth(),-g.getHeight());
 			reo = new Vector2(g.getWidth(),0);

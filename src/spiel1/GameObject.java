@@ -6,7 +6,7 @@ public abstract class GameObject{//Die oberklasse für gameobjekte
     protected double height;
     //private Vector2 speed;
     private RectHitbox hitbox;
-    protected Transform transform;
+    private Transform transform;
     
     public GameObject(Transform transform, double width, double height) {//speed wird automatisch 0 quelle: https://stackoverflow.com/questions/1182153/constructor-overloading-in-java-best-practice
     	this.transform = transform;

@@ -41,7 +41,7 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
     }
     
     public Vector2 getWorldPos(){
-    	return super.transform.position;
+    	return getTransform().position;
     }
     
     public void setpressed(BufferedImage pressed) {
@@ -76,16 +76,16 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
 
     @Override
     public void moveGameObject(double time){//für buttonjump
-        transform.speed= transform.speed.multiply((1-(0.02*time)));//Luftwiderstand
-        transform.speed=transform.speed.add(new Vector2(0,-.13).multiply(time));//Gravitation
-        transform.position=transform.position.add(transform.speed.multiply(time));
+        getTransform().speed= getTransform().speed.multiply((1-(0.02*time)));//Luftwiderstand
+        getTransform().speed=getTransform().speed.add(new Vector2(0,-.13).multiply(time));//Gravitation
+        getTransform().position=getTransform().position.add(getTransform().speed.multiply(time));
         //setPosition(	getPosition().add(getSpeed().multiply(time))	); // TODO Beispiel für Seminararbeit vllt
     }
 
     @Override
     public void paintMe(Graphics2D g2d) {
     	
-    	Vector2 jPos = transform.position.toJPanel(); //wandelt die position in das von JPanel benutzte format um
+    	Vector2 jPos = getTransform().position.toJPanel(); //wandelt die position in das von JPanel benutzte format um
 
 
         g2d.drawImage(currentImage, (int) jPos.x(), (int) jPos.y(), //position ecke links oben

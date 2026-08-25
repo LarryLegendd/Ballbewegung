@@ -66,7 +66,7 @@ public class Staubsauger extends Weapon{
 					// temp die zeile kann wahrscheinlich weg außer es ist unballenced enemy.schadenNehmen(0);
 					
 					//knockback
-					Vector2 enemydiff = enemy.transform.position.makeLocal(playertransform.position);
+					Vector2 enemydiff = enemy.getTransform().position.makeLocal(playertransform.position);
 		      		enemy.addSpeed(enemydiff.normalize().multiply(enemyKnockback).reverse());
 				}
 			}

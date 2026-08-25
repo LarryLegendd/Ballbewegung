@@ -34,17 +34,17 @@ public class Player extends GameObject{
 		// temp if(transform.speed.length()<.12)transform.speed=new Vector2(0,0);//behandelt ein edge case hauptsächlich beim schwingen das die richtung sich nicht ändert ganz vllt temp wenn die schwungberechnung geändert wird
 		
     	if(isSwinging == false) {
-    		transform.speed= transform.speed.multiply((1-(0.02*time)));//normaler Luftwiderstand
-    		transform.speed=transform.speed.add(new Vector2(0,-.13).multiply(time));//Gravitation nur wenn nicht schwingt (beim schwingen seperat behandelt)
+    		getTransform().speed= getTransform().speed.multiply((1-(0.02*time)));//normaler Luftwiderstand
+			getTransform().speed= getTransform().speed.add(new Vector2(0,-.13).multiply(time));//Gravitation nur wenn nicht schwingt (beim schwingen seperat behandelt)
     	}else {
-    		transform.speed= transform.speed.multiply((1-(0.005*time)));//Luftwiderstand wird verringert wenn der spieler schwingt(fühlt sich besser an)
+			getTransform().speed= getTransform().speed.multiply((1-(0.005*time)));//Luftwiderstand wird verringert wenn der spieler schwingt(fühlt sich besser an)
     	}
 		setPosition(	getPosition().add(getSpeed().multiply(time))	);
     }
 	
 	@Override
 	protected void paintMe(Graphics2D g2d) {//TODO bild für spieler
-	    Vector2 jPos = transform.position.toJPanel();
+	    Vector2 jPos = getTransform().position.toJPanel();
 	    
 	    g2d.drawOval(
 	        (int) jPos.x(),

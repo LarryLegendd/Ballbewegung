@@ -286,11 +286,11 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         this.setCursor(c); // setCursor ist eine Methode der JPanel Klasse
         
         
-        spear=new Spear(player.transform);
-        sword=new Sword(player.transform);
-        grapple = new Grapplinghook(player.transform, this, this);//this ist der timecontroller/cameracontroller
-        staubsauger = new Staubsauger(player.transform);
-        schwungSeil = new SchwungSeil(player.transform, player, this, this);
+        spear=new Spear(player.getTransform());
+        sword=new Sword(player.getTransform());
+        grapple = new Grapplinghook(player.getTransform(), this, this);//this ist der timecontroller/cameracontroller
+        staubsauger = new Staubsauger(player.getTransform());
+        schwungSeil = new SchwungSeil(player.getTransform(), player, this, this);
         weapons = new Weapon[]{
     			sword,
     			spear,
@@ -389,7 +389,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         if (currentScreen == "spiel") { // Spiel läuft
         	//Player
         	player.moveGameObject( timeMultiplyer);
-        	cameraPos=cameraPos.lerp(player.transform.position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
+        	cameraPos=cameraPos.lerp(player.getTransform().position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
 
 
 
