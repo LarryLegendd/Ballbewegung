@@ -1,9 +1,11 @@
 package spiel1;
 
 public class Transform {
+
 	public Vector2 position;
-	public double rotation;
 	public Vector2 speed;
+
+	public double rotation;//Primitive Methode deshalb kein final
 	
 	public Transform(Vector2 position, double rotation,Vector2 speed){
 		this.position =position;

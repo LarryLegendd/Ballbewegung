@@ -486,7 +486,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		double slowpercentage = ((1-getTimeMultiplyer())*100);//https://stackoverflow.com/questions/16656651/does-java-have-a-clamp-function/75707634#75707634 & https://stackoverflow.com/questions/16656651/does-java-have-a-clamp-function/75707634#75707634
 		if(slowpercentage>100)slowpercentage=100;
 		if(slowpercentage<0)slowpercentage=0;
-		System.out.println("coloralpha"+ (int)(slowpercentage/100*130.3));
 		//Vignette
 		float[] fractions = {0.0f, 0.8f, 1.0f};
 		Color[] colors = {
@@ -552,8 +551,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 			if(isEnded){
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
-				System.out.println("endscreenPaneltopLeft "+endscreenPaneltopLeft);
-				System.out.println("buttonScreenposition "+ endscreenShopButton.getPosition());
 				g2d.drawRect((int) (endscreenPaneltopLeft.x),(int)endscreenPaneltopLeft.y
 						,(int)endscreenSize.x,(int)endscreenSize.y);
 				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+(int)(score/1000),

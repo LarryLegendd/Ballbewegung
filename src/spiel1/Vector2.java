@@ -5,8 +5,8 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
 public class Vector2 {
-	public double x;
-	public double y;
+	public final double x;
+	public final double y;
 	
 	public Vector2(double x,double y) {
 		this.x=x;
@@ -67,10 +67,8 @@ public class Vector2 {
 		return new Vector2(this.x*-1,this.y*-1);
 	}
 	
-	public Vector2 add(Vector2 b) {//addition der beiden Vectoren 
-		
+	public Vector2 add(Vector2 b) {//addition der beiden Vectoren
 		return new Vector2(this.x+b.x,this.y+b.y);
-		
 	}
 	
 	public Vector2 addX(double x) {
