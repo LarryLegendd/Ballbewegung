@@ -393,7 +393,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 
 
-			int currScreenNumber =(int)player.getPosition().x/AreaWidth;//TODO irgendwann kommt nichts mehr
+			int currScreenNumber =(int)player.getPosition().x()/AreaWidth;//TODO irgendwann kommt nichts mehr
 
 			if(currScreenNumber+1>Areas.toArray().length-1){//immer vorausgenerieren
 				Areas.add(new EnemyArea(currScreenNumber+1));
@@ -404,7 +404,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 				currentArea[0] = currentArea[1];
 			}
 
-			int screen = (int) player.getPosition().x% AreaWidth;
+			int screen = (int) player.getPosition().x() % AreaWidth;
 
 
 			if (screen < AreaWidth/2	&& 	currScreenNumber-1>0) {// spieler ist in der linken hälfte vom aktuellen gegnerbereich && es gibt einen bereich zum laden
@@ -427,9 +427,9 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
         	
         //wenn spieler nach unten fällt
-           if(player.getPosition().y<0&&!isEnded) {//isended das es nur einmal aufgerufen wird
+           if(player.getPosition().y()<0&&!isEnded) {//isended das es nur einmal aufgerufen wird
 			   normalTime();
-        	   score= (int) player.getPosition().x;//berechnung score
+        	   score= (int) player.getPosition().x();//berechnung score
         	   if(score>highscore)highscore=score;
 
 			   isEnded=true;
@@ -442,15 +442,15 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 			   // 																			gleichtzeitig zu benutzen
 
 			   endscreenSpeed = player.getTransform().speed;
-			   endscreenSpeed = new Vector2(endscreenSpeed.x,-endscreenSpeed.y).reverse();// wegen jpanel in die andere richtung
+			   endscreenSpeed = new Vector2(endscreenSpeed.x(),-endscreenSpeed.y()).reverse();// wegen jpanel in die andere richtung
 			   System.out.println("endscreenSpeed"+endscreenSpeed);
 			   framesUntillScreenIsCentered=200;
 			   endscreenPaneltopLeft = endscreenPanelfinaltopLeft.add(endscreenSpeed.reverse().multiply(framesUntillScreenIsCentered));
 
 
 			   // ab hier alles relativ zu endscreentopmiddle
-			   endscreenTextPos = new Vector2(endscreenSize.x/8,endscreenSize.y/8);
-			   endscreenShopButtonPos =new Vector2(endscreenSize.x/8,endscreenSize.y/8*7);
+			   endscreenTextPos = new Vector2(endscreenSize.x()/8,endscreenSize.y()/8);
+			   endscreenShopButtonPos =new Vector2(endscreenSize.x()/8,endscreenSize.y()/8*7);
 
 
 
@@ -527,7 +527,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	//Boden
         	g2d.setColor(Color.red);
         	g2d.setStroke(new BasicStroke(5.0f));
-        	g2d.drawLine((int) bodenLinks.x, (int) bodenLinks.y, (int) bodenRechts.x, (int) bodenRechts.y);
+        	g2d.drawLine((int) bodenLinks.x(), (int) bodenLinks.y(), (int) bodenRechts.x(), (int) bodenRechts.y());
         	g2d.setStroke(new BasicStroke());
         	g2d.setColor(Color.black);
         	//Player
@@ -551,10 +551,10 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 			if(isEnded){
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
-				g2d.drawRect((int) (endscreenPaneltopLeft.x),(int)endscreenPaneltopLeft.y
-						,(int)endscreenSize.x,(int)endscreenSize.y);
+				g2d.drawRect((int) (endscreenPaneltopLeft.x()),(int)endscreenPaneltopLeft.y()
+						,(int)endscreenSize.x(),(int)endscreenSize.y());
 				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+(int)(score/1000),
-						(int)endscreendrawTextPos.x,(int)endscreendrawTextPos.y);//TODO line seperator fixen und moneten richtig einfuegen
+						(int)endscreendrawTextPos.x(),(int)endscreendrawTextPos.y());//TODO line seperator fixen und moneten richtig einfuegen
 				//https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
 				endscreenShopButton.paintMe(g2d);
 			}
@@ -571,8 +571,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         	leftUpgradeButton.paintMe(g2d);
         	rightUpgradeButton.paintMe(g2d);
 
-        	g.drawString(("Level: "+leftWeapon.getLevel()),(int) leftUpgradeButton.getPosition().x,(int) leftUpgradeButton.getPosition().y+20);
-        	g.drawString(("Level: "+rightWeapon.getLevel()),(int) rightUpgradeButton.getPosition().x,(int) rightUpgradeButton.getPosition().y+20);
+        	g.drawString(("Level: "+leftWeapon.getLevel()),(int) leftUpgradeButton.getPosition().x(),(int) leftUpgradeButton.getPosition().y()+20);
+        	g.drawString(("Level: "+rightWeapon.getLevel()),(int) rightUpgradeButton.getPosition().x(),(int) rightUpgradeButton.getPosition().y()+20);
 
 
         	//for(Button button : buttons) button.paintMe(g);

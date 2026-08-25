@@ -118,12 +118,12 @@ public class Sword extends Weapon {
 			Vector2 JEndpoint1 = drawEndpoint1.toJPanel();
 			Vector2 JEndpoint2 = drawEndpoint2.toJPanel();
 			Vector2 JPlayerPos = drawPlayerPos.toJPanel();
-			g.drawLine((int)JPlayerPos.x, (int)JPlayerPos.y,(int) JEndpoint1.x, (int) JEndpoint1.y);
-			g.drawLine((int)JPlayerPos.x, (int)JPlayerPos.y,(int) JEndpoint2.x, (int) JEndpoint2.y);
+			g.drawLine((int)JPlayerPos.x(), (int)JPlayerPos.y(),(int) JEndpoint1.x(), (int) JEndpoint1.y());
+			g.drawLine((int)JPlayerPos.x(), (int)JPlayerPos.y(),(int) JEndpoint2.x(), (int) JEndpoint2.y());
 			
 			double startangle = drawEndpoint2.makeLocal(drawPlayerPos).angle();
 			//System.out.println(startangle);
-			g2d.drawArc((int) (JPlayerPos.x-range),(int) (JPlayerPos.y-range), (int)range*2,(int) range*2, (int) Math.toDegrees(startangle),(int) Math.toDegrees(angle));
+			g2d.drawArc((int) (JPlayerPos.x()-range),(int) (JPlayerPos.y()-range), (int)range*2,(int) range*2, (int) Math.toDegrees(startangle),(int) Math.toDegrees(angle));
 		}
 	}
 

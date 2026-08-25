@@ -75,8 +75,8 @@ public class RectHitbox extends Hitbox {
 
 		public void setRechtsUnten(Vector2 reu) {
 			this.reu = reu;
-			reo = new Vector2(reu.x,0);//nicht getestet
-			liu = new Vector2(0,reu.y);
+			reo = new Vector2(reu.x(),0);//nicht getestet
+			liu = new Vector2(0,reu.y());
 		}
 
 		
@@ -89,8 +89,8 @@ public class RectHitbox extends Hitbox {
 			point = point.makeLocal(transform.position).rotate(-transform.rotation+extradrehwinkel);
 
 			lastpoint=point;
-			return (point.x >= lio.x && point.x <= reu.x &&
-			        point.y <= lio.y && point.y >= reu.y);
+			return (point.x() >= lio.x() && point.x() <= reu.x() &&
+			        point.y() <= lio.y() && point.y() >= reu.y());
 		}
 		
 		
@@ -171,7 +171,7 @@ Kollision = reine Geometrie*/
 					point.toJPanel().draw(g);
 				 }
 				 
-				 g.drawRect( (int) lio.toJPanel().x, (int) lio.toJPanel().y, (int) reu.toJPanel().x, (int) reu.toJPanel().y);
+				 g.drawRect( (int) lio.toJPanel().x(), (int) lio.toJPanel().y(), (int) reu.toJPanel().x(), (int) reu.toJPanel().y());
 				 if(lastpoint!=null) {
 					 lastpoint.toJPanel().draw(g);
 					// lastppre.draw(g, Color.green);

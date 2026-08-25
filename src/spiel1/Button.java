@@ -51,7 +51,7 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
     
     public boolean press(Vector2 mouseWorld) { // die methode die aufgerufen um zu prüfen Knopf gedrückt wird
 
-    	if(getHitbox().collides(mouseWorld.x,mouseWorld.y)) {// fragt in der Hitbox ab ob der button getroffen wird
+    	if(getHitbox().collides(mouseWorld.x(),mouseWorld.y())) {// fragt in der Hitbox ab ob der button getroffen wird
     		currentImage = pressedImage;
     		buttonSpringBack(200);// setzt in 200 ms den knopf zurück
     		return true;
@@ -88,8 +88,8 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
     	Vector2 jPos = transform.position.toJPanel(); //wandelt die position in das von JPanel benutzte format um
 
 
-        g2d.drawImage(currentImage, (int) jPos.x, (int) jPos.y, //position ecke links oben
-                (int) (jPos.x+getWidth()), (int)(jPos.y+getHeight()),//position ecke rechts unten (das sieht falsch aus aber man muss height addieren weil JPanel -y nach oben hat)
+        g2d.drawImage(currentImage, (int) jPos.x(), (int) jPos.y(), //position ecke links oben
+                (int) (jPos.x()+getWidth()), (int)(jPos.y()+getHeight()),//position ecke rechts unten (das sieht falsch aus aber man muss height addieren weil JPanel -y nach oben hat)
                 0, 0,//erste ecke vom bild, eine ecke vom bild ist immer 0 0
                 currentImage.getWidth(), currentImage.getHeight(),// zweite ecke vom bild ist die 0+Breite, 0+Höhe
                 null);// kein imageobserver

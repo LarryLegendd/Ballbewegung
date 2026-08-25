@@ -5,7 +5,7 @@ public class Transform {
 	public Vector2 position;
 	public Vector2 speed;
 
-	public double rotation;//Primitive Methode deshalb kein final
+	public double rotation;
 	
 	public Transform(Vector2 position, double rotation,Vector2 speed){
 		this.position =position;

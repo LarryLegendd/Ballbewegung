@@ -47,8 +47,8 @@ public class Player extends GameObject{
 	    Vector2 jPos = transform.position.toJPanel();
 	    
 	    g2d.drawOval(
-	        (int) jPos.x,
-	        (int) (jPos.y - height), // nach oben verschieben
+	        (int) jPos.x(),
+	        (int) (jPos.y() - height), // nach oben verschieben
 	        (int) width,
 	        (int) height
 	    );

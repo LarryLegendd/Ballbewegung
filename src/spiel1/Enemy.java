@@ -30,8 +30,8 @@ private int health;
 	protected void paintMe(Graphics2D g2d) {
 	    Vector2 jPos = getPosition().toJPanel();
 	    g2d.drawRect(
-	        (int) jPos.x,
-	        (int) jPos.y,
+	        (int) jPos.x(),
+	        (int) jPos.y(),
 	        (int) width,
 	        (int) height
 	    );

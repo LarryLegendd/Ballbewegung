@@ -147,8 +147,8 @@ public class Spear extends Weapon {
 //			System.out.println(letzteSpitze+" Lastpeek");
 //			System.out.println(hitbox.getSpitze()+" spitze");
 //			System.out.println(hitbox.getPosition()+" position");
-			g.drawLine((int)JBasis1.x,(int)JBasis1.y, (int) JSpitze.x, (int) JSpitze.y);
-			g.drawLine((int)JBasis2.x,(int)JBasis2.y, (int) JSpitze.x, (int) JSpitze.y);
+			g.drawLine((int)JBasis1.x(),(int)JBasis1.y(), (int) JSpitze.x(), (int) JSpitze.y());
+			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JSpitze.x(), (int) JSpitze.y());
 		}
 	}
 

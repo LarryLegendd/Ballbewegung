@@ -64,7 +64,7 @@ public class SchwungSeil extends Weapon {
 			double speed = playertransform.speed.length();
 			//richtung
 			// 2D Kreuzprodukt (z-Komponente)
-			double cross = hitEnemy.transform.position.makeLocal(playertransform.position).x * playertransform.speed.y - hitEnemy.transform.position.makeLocal(playertransform.position).y * playertransform.speed.x;
+			double cross = hitEnemy.transform.position.makeLocal(playertransform.position).x() * playertransform.speed.y() - hitEnemy.transform.position.makeLocal(playertransform.position).y() * playertransform.speed.x();
 			
 			Vector2 dir;
 			
@@ -235,10 +235,10 @@ public class SchwungSeil extends Weapon {
 //			System.out.println(letzteSpitze+" Lastpeek");
 //			System.out.println(hitbox.getSpitze()+" spitze");
 //			System.out.println(hitbox.getPosition()+" position");
-			g.drawLine((int)JBasis1.x,(int)JBasis1.y, (int) JSpitze.x, (int) JSpitze.y);
-			g.drawLine((int)JBasis2.x,(int)JBasis2.y, (int) JSpitze.x, (int) JSpitze.y);
-			g.drawLine((int)JBasis2.x,(int)JBasis2.y, (int) JBasis1.x, (int) JBasis1.y);
-			g.drawLine((int)Jmidpoint.x,(int)Jmidpoint.y, (int) Jplayerpos.x, (int) Jplayerpos.y);
+			g.drawLine((int)JBasis1.x(),(int)JBasis1.y(), (int) JSpitze.x(), (int) JSpitze.y());
+			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JSpitze.x(), (int) JSpitze.y());
+			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JBasis1.x(), (int) JBasis1.y());
+			g.drawLine((int)Jmidpoint.x(),(int)Jmidpoint.y(), (int) Jplayerpos.x(), (int) Jplayerpos.y());
 		}
 	}
 
