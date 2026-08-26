@@ -151,7 +151,7 @@ public record Vector2(double x,double y) {
 		return makeLocal(Spielfeld.cameraPos).toJP();
 	}
 	
-	public Vector2 toCoordinate() {
+	public Vector2 toCoordinate() {// Wandelt von JPanel zu Koordianten um
 	    Vector2 v = new Vector2(x, Spielfeld.screenHeight - y);
 	    return  v.makeGlobal(Spielfeld.cameraPos);
 	}

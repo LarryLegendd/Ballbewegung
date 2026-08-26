@@ -78,8 +78,7 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
     public void moveGameObject(double time){//für buttonjump
         getTransform().speed= getTransform().speed.multiply((1-(0.02*time)));//Luftwiderstand
         getTransform().speed=getTransform().speed.add(new Vector2(0,-.13).multiply(time));//Gravitation
-        getTransform().position=getTransform().position.add(getTransform().speed.multiply(time));
-        //setPosition(	getPosition().add(getSpeed().multiply(time))	); // TODO Beispiel für Seminararbeit vllt
+        getTransform().position = getTransform().position.add(getTransform().speed.multiply(time));//position verändern
     }
 
     @Override
