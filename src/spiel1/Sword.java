@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 public class Sword extends Weapon {
-	
+	//TODO manchmal kann man trotz cooldown klicken und es wird angezeigt
 	private KreisTeilHitbox hitbox;
 	
 	private double swordEnemyKnockback = 4;
@@ -51,7 +51,7 @@ public class Sword extends Weapon {
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener) {
 
-			setCooldown(true);
+
 			show();//anzeigen
 			for(Enemy enemy : enemies) {
 				Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
@@ -75,8 +75,7 @@ public class Sword extends Weapon {
 			
 			if(hit)	{
 				listener.onHit(knockback);
-		//temp		System.out.println(knockback);
-				setCooldown(false);
+				//kein Cooldown wenn Gegner getroffen wird
 			}
 			else{
 				listener.onMiss();

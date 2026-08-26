@@ -138,60 +138,61 @@ public class SchwungSeil extends Weapon {
 			swingtimer.stop();
 			player.stopSwing();
 		}
-		setCooldown(false);
+		peneltyCooldown(10);
 		isShown=false;
 	}
 	
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){//TODO wenn es nicht zu schwer ist,das es mit dem gegner mitgeht
-		if(getCooldown() == false) {
-			setCooldown(true);
-			Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
-			playertransform.rotation = mausdiff.angle();
-			transform.position = playertransform.position;
-			transform.rotation= playertransform.rotation;
-			transform.speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
-			hitListener = listener;
 
-			
-			timeController.slowTimeFor(shoottime);
 
-			
-			shoottimer=shoottime;
-			t = 	new Timer(13, new ActionListener() {//schiesst über längere zeit
-				@Override
-			    public void actionPerformed(ActionEvent e) {
-						transform.position = transform.position.add(transform.speed);
-				        
-						shoottimer--;
-												
-						for(Enemy enemy : enemies)
+		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
+		playertransform.rotation = mausdiff.angle();
+		transform.position = playertransform.position;
+		transform.rotation= playertransform.rotation;
+		transform.speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
+		hitListener = listener;
+
+
+		timeController.slowTimeFor(shoottime);
+
+		startCooldown();// startet Cooldown während geschossen wird
+
+		shoottimer=shoottime;
+		t = 	new Timer(13, new ActionListener() {//schiesst über längere zeit
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					transform.position = transform.position.add(transform.speed);
+
+					shoottimer--;
+
+					for(Enemy enemy : enemies)
+					{
+						if(shoot(enemy))
 						{
-							if(shoot(enemy)) 
-							{
-								hitEnemy = enemy;
-								timeController.normalTime();
-								t.stop();
-								if (swingtimer != null) {
-									swingtimer.restart();
-								}
-								
-							
-							}
-						}
-						if (shoottimer <= 0) {//reset wenn timer ausgelaufen
-			                listener.onMiss();
-			                shoottimer = shoottime;
-			                peneltyCooldown(30);
+							hitEnemy = enemy;
 							timeController.normalTime();
-			                show();//beendet nach ein bischen extrazeit den timer
-			                ((Timer) e.getSource()).stop();
-			            }
-					
-			        }
-			    });
-			t.start();
-		}
+							t.stop();
+							if (swingtimer != null) {
+								swingtimer.restart();
+							}
+
+
+						}
+					}
+					if (shoottimer <= 0) {//reset wenn timer ausgelaufen
+						listener.onMiss();
+						shoottimer = shoottime;
+						peneltyCooldown(30);
+						timeController.normalTime();
+						show();//beendet nach ein bischen extrazeit den timer
+						((Timer) e.getSource()).stop();
+					}
+
+				}
+			});
+		t.start();
+
 	}
 	
 	@Override
@@ -251,7 +252,7 @@ public class SchwungSeil extends Weapon {
 	public void reset() {
 		swingtimer.stop();
 		player.stopSwing();
-		setCooldown(false);
+		stopCooldown();
 		isShown=false;
 	}
 }

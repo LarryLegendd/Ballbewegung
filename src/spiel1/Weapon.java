@@ -13,12 +13,18 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	protected int showTimer = 50;//vllt braucht man das garnicht weil das in show scchon geregelt ist temp
 	protected int cooldownTimer;
 	private boolean stopcooldown;
+	private boolean cooldown;
 	protected Transform playertransform;
 	protected int level;
+
 	public void stopCooldownTimer() {
 		stopcooldown = true;
 	}
-	
+	public void stopCooldown(){
+		stopCooldownTimer();
+		cooldown=false;
+	}
+
 	protected void show() {//vllt machen das das schwert auf cooldown in der zeit  ist
 		showTimer = 50;
 		isShown = true;//vllt show(time to recharge) das verschiedene waffen andere cooldowns haben
@@ -39,9 +45,9 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	    t.start();
 	}
 	
-	protected void peneltyCooldown(int millis) {
-		cooldownTimer=millis;
-		setCooldown(true);
+	protected void peneltyCooldown(int ticks) {
+		cooldownTimer=ticks;
+		startCooldown();
 		Timer t = new Timer(13, new ActionListener() {
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
@@ -52,7 +58,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	        	}
 	            cooldownTimer--;
 	            if (cooldownTimer <= 0) {
-	                setCooldown(false);
+	                cooldown=false;
 	                ((Timer) e.getSource()).stop();
 	                cooldownTimer = 0;
 	            }
@@ -62,21 +68,24 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	}
 	
 	
-	protected void setCooldown(boolean b) {
-		Spielfeld.cooldown=b;
+	protected void startCooldown() {
+		cooldown=true;
 	}
 	protected boolean getCooldown() {
-		return Spielfeld.cooldown;
+		return cooldown;
 	}
 	
 	public void reset() {
-		setCooldown(false);
-		isShown=false;
+		cooldown = false;
+		stopCooldownTimer();
+		isShown = false;
 	}
 	public void attack(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
-		if(!getCooldown()){//cooldownprüfung
+
+		if(!cooldown){//cooldownprüfung
 			hit(mauspos, enemies, listener);
 		}
+
 
 	}
 	protected abstract void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener);

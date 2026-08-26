@@ -42,7 +42,6 @@ public class Spear extends Weapon {
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
 
-		setCooldown(true);
 		boolean hit = false;
 		Vector2 knockback= new Vector2(0,0);
 		show();
@@ -73,8 +72,8 @@ public class Spear extends Weapon {
 			}
 		}
 		if(hit) {
-			listener.onHit(knockback);
-			setCooldown(false);
+			listener.onHit(knockback);// kein Cooldown bei Treffer
+
 		}
 		else {
 			listener.onMiss();

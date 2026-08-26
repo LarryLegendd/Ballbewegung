@@ -5,15 +5,9 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
 public record Vector2(double x,double y) {
-	//public final double x;
-	//public final double y;
-	
 
-	
 	public Vector2(MouseEvent arg0) {
 		this((double) arg0.getX(),(double) arg0.getY());
-		//x = arg0.getX();
-		//y = arg0.getY();
 	}
 
 	public double length() {

@@ -97,7 +97,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		// weil der spieler nicht direkt beim losschiessen rückstoß kriegt, sondern erst wenn die Grappinghook geflogen
 		// ist und einen gegner getroffen hat.
 		
-		setCooldown(true);//startet cooldown
+		startCooldown();//startet cooldown
 		
 		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);// Richtung zur maus vom Spieler aus gesehen
 		playertransform.rotation = mausdiff.angle(); // TODO eigentlich soll sicht der spieler nicht drehen und wenn ja sicher nicht hier
@@ -119,7 +119,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 						listener.onHit(knockback);
 						timeController.normalTime();
 						shoottimer = shoottime;
-						setCooldown(false);
+						stopCooldown();
 						show();//beendet nach ein bischen extrazeit den timer
 						((Timer) e.getSource()).stop();
 					}

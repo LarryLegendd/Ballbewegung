@@ -41,7 +41,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 				((Timer) e.getSource()).stop();
 			}
 			timeMultiplyer-=.05;
-			System.out.println("time"+timeMultiplyer);
 		}
 	});
 
@@ -61,18 +60,18 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	});
 
 
-	private Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
+	private final Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
 	private boolean drawPlayer;
 
 	private EnemyArea[]	currentArea = new EnemyArea[2];
-	static int AreaWidth = 5000;
+	static int AreaWidth = 3000;
 	static int AreaHeight = 4000;
 
 	private  ArrayList<EnemyArea> Areas = new ArrayList<>();
 
 		// Vector2 playerpos, Vector2 enemypos, Vector2 mauspos, double toleranzWinkel, double range, Enemy enemy, Graphics g //vllt temp
 	
-	public static boolean cooldown;
+
 	
 	private Sword sword;
 	private Spear spear;
@@ -89,17 +88,17 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	
 	//camera für scrollen (links unten die ecke ist die kamerapos
 	static Vector2 cameraPos= new Vector2(0,0);
-	private double cameraPosMaxY;
-	private double cameraPosMaxX;
+
 	
 	public static double screenHeight;//wird in SpielFenster gesetzt
 	public static double screenWidth;
 
-	//temp
-	private int framecounter = 0;
+	//debug only
+	private long timeAtLastFrame = System.currentTimeMillis();
 	
 	static int money = 1000;//vllt nicht static weil es so schon mitgegeben wird
-    
+
+
 	
 	//Buttons
     Button startButton;
@@ -342,25 +341,6 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		currentArea[1] = Areas.get(1);
 
 		isEnded=false;
-
-		/*
-    	//cooldown
-    	for(Weapon weapon: weapons)weapon.stopCooldownTimer();
-    	cooldown=true;
-    	System.out.println(cooldown);
-    	t = new Timer(13, new ActionListener() {
-    		@Override
-		    public void actionPerformed(ActionEvent e) {//für einen frame cooldown, dass der startklick kein hit ist //temp  TODO das funktioniert nicht
-    			int i=0;
-    			System.out.println(cooldown);
-    		if(i>1) {
-    			cooldown = false;
-    			t.stop();
-    		}
-    		i++;
-    		}});
-    	t.start();
-    	*/
     }
     
     
@@ -381,12 +361,14 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     // Diese Methode wird in regelmäßigen Abständen vom Timer aufgerufen und sorgt für ein Spiel update
     private void doOnTick() {
 
+
+
     	screenHeight = this.getHeight();
     	screenWidth = this.getWidth();
     	
     	
     	
-        if (currentScreen == "spiel") { // Spiel läuft
+        if (currentScreen.equals("spiel")) { // Spiel läuft
         	//Player
         	player.moveGameObject( timeMultiplyer);
         	cameraPos=cameraPos.lerp(player.getTransform().position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
@@ -434,7 +416,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 			   isEnded=true;
 			   drawPlayer=false;
-			   cooldown=true;//Spieler kann nicht mehr attackieren
+			   weapons[1].startCooldown();//Spieler kann nicht mehr attackieren
 			   // definition vom rechteck das runterfällt.
         	   endscreenPanelfinaltopLeft = new Vector2(screenWidth/4,screenHeight/8);//finale position schon in JPanel
 			   endscreenSize = new Vector2(screenWidth/2,screenHeight/4*3);//	Vector 2 wird nur gebraucht
@@ -471,13 +453,14 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		   }
 
         }
-        if (currentScreen == "shop") {
+        if (currentScreen.equals( "shop")) {
         	cameraPos=new Vector2(0,0);
         }
-        
-       
-        
+
+
+
         repaint(); // ruft die paintComponent Methode auf, um das Spielfeld neu zu zeichnen
+
     }
 
 
@@ -508,6 +491,12 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 
     public void paintComponent(Graphics g) {
+
+		System.out.println((System.currentTimeMillis()-timeAtLastFrame)+ " tume");
+		timeAtLastFrame = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
+
+
         super.paintComponent(g); // löscht das Spielfeld
 
         Graphics2D g2d = (Graphics2D) g.create();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
@@ -515,7 +504,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		// Um die Kanten des Objekts zu glätten
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if(currentScreen == "spiel") { // Spiel läuft
+        if(currentScreen.equals("spiel")) { // Spiel läuft
 			if (isTimeSlowed()) {
 				double zoomFactor = 1.125-getTimeMultiplyer()/8;//Berechnung für die Menge vom zoom
 				g2d.translate(screenWidth / 2, screenHeight / 2);//mittelpunkt von g2d versetzen, sodass zoom in der mitte ist
@@ -535,12 +524,12 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
         	//Weapons
         	if(leftWeapon != null)leftWeapon.paintMe(g);
-        	else System.out.println("leftweapon ist" + leftWeapon);
+        	else System.out.println("leftweapon ist null");
         	if(leftWeapon.getHitbox() != null) leftWeapon.getHitbox().paintMe(g);
         	if(rightWeapon != null) {rightWeapon.paintMe(g);
         		if(rightWeapon.getHitbox() != null) rightWeapon.getHitbox().paintMe(g);
         	}
-        	else System.out.println("rightweapon ist" + rightWeapon);
+        	else System.out.println("rightweapon ist null");
 
         	// Enemy(Vector2 objectPosition, double width, double height, int health){
 			for(int i = 0; i<2;i++) {
@@ -553,7 +542,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
 				g2d.drawRect((int) (endscreenPaneltopLeft.x()),(int)endscreenPaneltopLeft.y()
 						,(int)endscreenSize.x(),(int)endscreenSize.y());
-				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+(int)(score/1000),
+				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+(score/1000),
 						(int)endscreendrawTextPos.x(),(int)endscreendrawTextPos.y());//TODO line seperator fixen und moneten richtig einfuegen
 				//https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
 				endscreenShopButton.paintMe(g2d);
@@ -584,6 +573,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 			g2d.dispose();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
         }
+		System.out.println((System.currentTimeMillis()-currentTime)+ " time");
     }
     // Diese Methoden müssen implementiert werden, da die Klasse das MouseListener Interface implementiert
     // Es werden nur die Methoden genutzt, die benötigt werden. Die anderen bleiben leer.
@@ -597,16 +587,12 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     public void mouseExited(MouseEvent arg0) {}
 
     @Override
-    public void mousePressed(MouseEvent arg0) {
+    public void mousePressed(MouseEvent arg0) {//TODO machen das die inputs in DoOnTick behandelt werden.
 
-		Vector2 mouseScreenPos = new Vector2(
-				arg0.getX(),
-				arg0.getY()
-		).toCoordinate();
-		System.out.println(mouseScreenPos);
-		if (arg0.getButton() == 3) //rechtsklick
-		{
-			if(currentScreen.equals("spiel")) {
+		Vector2 mouseScreenPos = new Vector2(arg0).toCoordinate();
+		if (currentScreen.equals("spiel")) {
+			if (arg0.getButton() == 3) //rechtsklick
+			{
 				for (int i = 0; i < 2; i++) {
 					rightWeapon.attack(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
 
@@ -620,14 +606,11 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 						public void onMiss() {
 						}
 					});
-
 				}
 			}
-		}
 
-		if(arg0.getButton()==1) //linksklick
-		{
-			if(currentScreen.equals("spiel")) {
+			if (arg0.getButton() == 1) //linksklick
+			{
 				for (int i = 0; i < 2; i++) {
 					leftWeapon.attack(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
 
@@ -637,8 +620,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 						}
 
 						@Override
-						public void onMiss() {
-						}
+						public void onMiss() {}
 					});
 				}
 			}
@@ -731,6 +713,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     			}
     		}
     	}
+
     	
     }
 
@@ -751,7 +734,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 			@Override
 	        public void actionPerformed(ActionEvent e) {
 				shaketimer--;
-			if(currentScreen=="spiel"){
+			if(currentScreen.equals("spiel")){
 				Vector2 randompos = new Vector2((Math.random()*100)-50,(Math.random()*100)-50);
 					System.out.println("shake"+randompos);
 					cameraPos = cameraPos.add(randompos);
