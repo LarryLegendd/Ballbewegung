@@ -41,7 +41,7 @@ public abstract class Hitbox {
 	}
 	
 	public boolean collides(Hitbox hitbox) {//angle ist angle von hitbox minus angle von this (um es lokal zu machen)
-		if(hitbox.getPosition().makeLocal(getPosition()).length()<this.size+hitbox.size) {// für performance nur prüfen, wenn hitboxen nah genug aneinander sind
+		if(hitbox.getPosition().distanceTo(getPosition())<this.size+hitbox.size) {// für performance nur prüfen, wenn hitboxen nah genug aneinander sind
 			lastangle = transform.rotation;
 			for (Vector2 vertex : hitbox.toPoints()) {
 				if (collides(vertex)) return true;
