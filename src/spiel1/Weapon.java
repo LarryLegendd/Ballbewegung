@@ -81,12 +81,9 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		isShown = false;
 	}
 	public void attack(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
-
 		if(!cooldown){//cooldownprüfung
 			hit(mauspos, enemies, listener);
 		}
-
-
 	}
 	protected abstract void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener);
 	public abstract void levelUp(double money);
@@ -99,6 +96,5 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	
 	public void clickReleased() {};
 }
-//TODO shotgun und man kriegt schüsse durch kills
-//TODO passive bounce rüstung als waffe probably nicht
+//TODO eine nichts mehr machen klasse machen
 

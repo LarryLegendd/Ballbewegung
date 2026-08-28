@@ -44,7 +44,6 @@ public record Vector2(double x,double y) {
 		return ((P2.angle()-P3.angle())+(Math.PI*2))%(Math.PI*2);//TODO das sieht genuently falsch aus
 	}
 		
-		
 	public Vector2 normalize() {//Quelle: https://ceur-ws.org/Vol-1337/paper28.pdf dadurch bin ich auf die idee von normalize gekommen
 		double angle = angle();		//polar machen
 		
