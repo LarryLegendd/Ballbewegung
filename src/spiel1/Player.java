@@ -8,16 +8,16 @@ import java.io.IOException;
 
 public class Player extends GameObject{
 	
-	private Vector2 standardSpeed;
+	private final Vector2 startSpeed;
 	private boolean isSwinging;
 	
 	public Player(Transform transform, double width, double height){
 		super(transform, width, height);//der Spieler wird fliegend erzeugt
-		standardSpeed=transform.speed;
+		startSpeed=transform.speed;
 	}
 	
 	public void reset() {
-		setSpeed(standardSpeed);//springt nach oben
+		setSpeed(startSpeed);//springt nach oben
 		setPosition(new Vector2(10,Spielfeld.screenHeight/2));
 		stopSwing();
 	}
@@ -47,8 +47,8 @@ public class Player extends GameObject{
 	    Vector2 jPos = getTransform().position.toJPanel();
 	    
 	    g2d.drawOval(
-	        (int) jPos.x(),
-	        (int) (jPos.y() - height), // nach oben verschieben
+	        (int) (jPos.x()- width/2),
+	        (int) (jPos.y() - height/2), // nach oben verschieben
 	        (int) width,
 	        (int) height
 	    );
