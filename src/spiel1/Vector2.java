@@ -143,7 +143,7 @@ public record Vector2(double x,double y) {
 	}
 	
 	private Vector2 toJP() {//JPanels haben y achse nach unten
-		return new Vector2(x,-(y-Spielfeld.screenHeight));
+		return new Vector2(x,Spielfeld.screenHeight-y);
 	}
 	
 	public Vector2 toJPanel() {//JPanels haben y achse nach unten

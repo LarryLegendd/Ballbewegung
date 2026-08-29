@@ -64,8 +64,8 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 	private boolean drawPlayer;
 
 	private EnemyArea[]	currentArea = new EnemyArea[2];
-	static int AreaWidth = 3000;
-	static int AreaHeight = 4000;
+	static final int AreaWidth = 3000;
+	static final int AreaHeight = 4000;
 
 	private  ArrayList<EnemyArea> Areas = new ArrayList<>();
 
