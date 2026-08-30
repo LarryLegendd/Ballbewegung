@@ -105,8 +105,17 @@ public record Vector2(double x,double y) {
 	public Vector2 getPointBetween(Vector2 v) {
 	    return this.add(v).multiply(0.5); 
 	}
-	
+
+	/**Die Lerp Methode findet einen Punkt der auf einem Teil der Strecke zwischen zweier Punkte this und v liegt.
+	 *
+	 * @param v
+	 * @param x
+	 */
 	public Vector2 lerp(Vector2 v, double x) {//x soll zwischen 0 und 1 sein wenn man z.b. 3/5 macht muss man aufpassen das man das castet weil sonst auf 0 für ein int gerundet wird
+		//Die Lineare Interpolation wird umgesetzt, indem zuerst der Vektor thisV zwischen zwischen den beiden Punkten
+		// gebildet wird. Dieser wird dann mit faktor x multipliziert, hierbei sollte x zwischen 0 und 1 sein um ein
+		// Ergebnis zu erhalten das zwischen den Punkten liegt. Anschließend wird Der erhaltene vektor auf den Punkt this
+		// addiert um das Endergebnis zu erhalten.
 		return this.add(v.subtract(this).multiply(x));
 	}
 	

@@ -389,7 +389,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 			int screen = (int) player.getPosition().x() % AreaWidth;
 
 
-			if (screen < AreaWidth/2	&& 	currScreenNumber-1>0) {// spieler ist in der linken hälfte vom aktuellen gegnerbereich && es gibt einen bereich zum laden
+			if (screen < (AreaWidth/2)	&& 	(currScreenNumber-1)>0) {// spieler ist in der linken hälfte vom aktuellen gegnerbereich && es gibt einen bereich zum laden
 				currentArea[1] = Areas.get(currScreenNumber - 1);//links //FEHLER liegt hier
 			}
 			else{//der spieler geht nach rechts oder ist ganz links dann ist das ein fallback
