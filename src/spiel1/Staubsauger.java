@@ -90,13 +90,13 @@ public class Staubsauger extends Weapon{
 			}else System.out.println("insufficient funds");//TODO das im spiel anzeigen lassen
 		}else System.out.println("maximales level wurde ereicht");
 	}
-	
+	@Override
 	public double getNextPrice() {
 		if(level<levelArr.length)return levelArr[level+1][3];
 		else return 0;
 	}
-	
-	private void updateLevel(int level) {
+	@Override
+	protected void updateLevel(int level) {
 		breite = levelArr[level][0];
 		range = levelArr[level][1];
 		enemyKnockback = levelArr[level][2];

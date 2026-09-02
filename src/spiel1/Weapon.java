@@ -16,7 +16,6 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	private boolean cooldown;
 	protected Transform playertransform;
 	protected int level;
-
 	public void stopCooldownTimer() {
 		stopcooldown = true;
 	}
@@ -37,7 +36,6 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	            if (showTimer <= 0) {
 	                if(isShown ==true) isShown = false;//falls es schon geändert wurde
 	                ((Timer) e.getSource()).stop();
-	                showTimer = 50; // optional: Reset für nächsten Gebrauch
 	            }
 	        }
 	    });
@@ -80,15 +78,24 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		stopCooldownTimer();
 		isShown = false;
 	}
+
+	/**Es wird um eine Attacke einer Waffe auszuführen immer die attack Methode in der Oberklasse Weapon aufgerufen. Diese attack Methode prüft den Cooldown und wenn die Waffe attackieren darf wird die abstrakte hit Methode Aufgerufen, die von der eigentlichen Waffe ausgeführt wird.
+	 *
+	 * @param mauspos
+	 * @param enemies
+	 * @param listener
+	 */
 	public void attack(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
 		if(!cooldown){//cooldownprüfung
 			hit(mauspos, enemies, listener);
 		}
 	}
 	protected abstract void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener);
+	public abstract double getNextPrice();
 	public abstract void levelUp(double money);
+	protected abstract void updateLevel(int level);
 	public abstract Hitbox getHitbox();
-	public  void paintMe(Graphics g) {}
+	public void paintMe(Graphics g) {}
 	
 	public  int getLevel() {
 		return level;

@@ -41,11 +41,10 @@ public class Player extends GameObject{
     	}
 		setPosition(	getPosition().add(getSpeed().multiply(time))	);
     }
-	
+
 	@Override
 	protected void paintMe(Graphics2D g2d) {//TODO bild für spieler
 	    Vector2 jPos = getTransform().position.toJPanel();
-	    
 	    g2d.drawOval(
 	        (int) (jPos.x()- width/2),
 	        (int) (jPos.y() - height/2), // nach oben verschieben

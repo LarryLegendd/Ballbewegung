@@ -13,7 +13,7 @@ public class Sword extends Weapon {
 	//TODO manchmal kann man trotz cooldown klicken und es wird angezeigt
 	private KreisTeilHitbox hitbox;
 	
-	private double swordEnemyKnockback = 4;
+	private final double swordEnemyKnockback = 4;
 	
 	//rendern
 	private Vector2 drawEndpoint1;
@@ -51,16 +51,17 @@ public class Sword extends Weapon {
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener) {
 
+		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
+		playertransform.rotation = mausdiff.angle();
 
-			show();//anzeigen
+		//zeichnen
+		drawEndpoint1=new Vector2(range,0).rotate(angle/2).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
+		drawEndpoint2=new Vector2(range,0).rotate(-(angle/2)).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
+		drawPlayerPos= new Vector2(0,0).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
+
+		show();//anzeigen
 			for(Enemy enemy : enemies) {
-				Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
-				playertransform.rotation = mausdiff.angle();
-				//zeichnen
-				drawEndpoint1=new Vector2(range,0).rotate(angle/2).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
-				drawEndpoint2=new Vector2(range,0).rotate(-(angle/2)).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
-				drawPlayerPos= new Vector2(0,0).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
-				
+
 				//colidieren
 				if(hitbox.collides(enemy.getHitbox())) {
 		    		enemy.schadenNehmen(1);
@@ -68,6 +69,7 @@ public class Sword extends Weapon {
 		    		knockback = mausdiff.normalize().multiply(swordKnockback).reverse();//das liefert die gegenrichtung.
 
 		    		hit = true;
+					break;// das break ist debateable weil der schaden von den Gegnern nicht akkurat berechnet wird
 				}
 //	temp		System.out.println(knockback+"System.out.println(knockback+\"iansdf\");System.out.println(knockback+\"iansdf\");System.out.println(knockback+\"iansdf\");");
 //			System.out.println(hit+"git");
@@ -90,20 +92,21 @@ public class Sword extends Weapon {
 	public void levelUp(double money) {
 		if(level<levelArr.length-1) {
 			if(money > getNextPrice()) {//das -1 ist weil .length quasi +1 rechnet
+				// TODO geld abziehen
 				level++;
 		
 				updateLevel(level);
 			}else System.out.println("insufficient funds");//TODO das im spiel anzeigen lassen
 		}else System.out.println("maximales level wurde ereicht");
 	}
-	
+	@Override
 	public double getNextPrice() {
 		if(level<levelArr.length)return levelArr[level+1][3];
 		else return 0;
 	}
 	
-	
-	private void updateLevel(int level) {
+	@Override
+	protected void updateLevel(int level) {
 		angle = levelArr[level][0];
 		range = levelArr[level][1];
 		swordKnockback = levelArr[level][2];

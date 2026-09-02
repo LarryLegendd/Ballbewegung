@@ -123,13 +123,13 @@ public class Spear extends Weapon {
 		}else System.out.println("maximales level wurde ereicht");
 	}
 	
-	
+	@Override
 	public double getNextPrice() {
 		if(level<levelArr.length)return levelArr[level+1][3];
 		else return 0;
 	}
-	
-	private void updateLevel(int level) {
+	@Override
+	protected void updateLevel(int level) {
 		basisBreite = levelArr[level][0];
 		range = levelArr[level][1];
 		spearKnockback = levelArr[level][2];
