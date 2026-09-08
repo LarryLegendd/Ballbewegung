@@ -7,14 +7,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -24,8 +20,9 @@ import java.awt.*;
 import java.awt.RadialGradientPaint;
 
 //TODO Button bilder bei einem klick fixen
-public class Spielfeld extends JPanel implements MouseListener, TimeController, CameraController{ // JPanel ist eine Klasse, in der gezeichnet werden kann
-
+public class Spielfeld extends JPanel implements MouseListener, MouseMotionListener, TimeController, CameraController{ // JPanel ist eine Klasse, in der gezeichnet werden kann
+//TODO auf thread bassierten timer umstellen.
+	//TODO timer umstellen.
 	//jpanel
 	private final Dimension prefSize = new Dimension(1920,1080);
 	
@@ -128,8 +125,9 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     Button schwungSeilButton;
     private BufferedImage schwungSeilButtonNeutral;
     private BufferedImage schwungSeilButtonPressed;
-	
-    private Button[] buttons = {swordButton, spearButton, grapplingButton, staubsaugerButton,schwungSeilButton};
+
+	private Button[] selectionButtons= {swordButton,spearButton,grapplingButton,staubsaugerButton,schwungSeilButton};
+    private Button[] buttons;
 
 	private String currentScreen= "spiel"; // aktueller Bildschirmstatus
     /*
@@ -263,14 +261,14 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 		leftUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3,prefSize.getHeight()/2),200,20,swordButtonPressed,swordButtonNeutral);
 		rightUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3*2,prefSize.getHeight()/2),200,20,spearButtonPressed,spearButtonNeutral);
 		
-		swordButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*2),200,20,swordButtonPressed,swordButtonNeutral);
-		spearButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*3),200,20,spearButtonPressed,spearButtonNeutral);
-	    grapplingButton		= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*4),200,20,grapplingButtonPressed,grapplingButtonNeutral);
-	    staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral);
-		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
+		swordButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*2),200,20,swordButtonPressed,swordButtonNeutral);
+		spearButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*3),200,20,spearButtonPressed,spearButtonNeutral);
+	    grapplingButton		= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*4),200,20,grapplingButtonPressed,grapplingButtonNeutral);
+	    staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral);
+		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
 
-		endscreenShopButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(buttons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
-
+		endscreenShopButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
+		buttons = new Button[]{startButton, leftUpgradeButton, rightUpgradeButton, swordButton, spearButton, grapplingButton, staubsaugerButton, schwungSeilButton, endscreenShopButton};
 
 		for(int i = 0;i<2;i++) {
 			Areas.add(new EnemyArea(i));
@@ -279,8 +277,14 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
         
         // Maus-Events (z.B. Klick) werden registriert und verarbeitet
         addMouseListener(this);
-        
-        // Mauszeiger wird zu Fadenkreuz
+
+
+		addMouseMotionListener(this) ;
+
+
+
+
+		// Mauszeiger wird zu Fadenkreuz
         c = new Cursor(Cursor.CROSSHAIR_CURSOR); // erzeugen eines Cursor-Objektes
         this.setCursor(c); // setCursor ist eine Methode der JPanel Klasse
         
@@ -463,6 +467,23 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
     }
 
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {//für hovern
+		Vector2 mausPos= new Vector2(e).toCoordinate();
+
+		for(Button button : buttons)
+		if (button.getHitbox().collides(mausPos)) {
+			button.rotate(Math.PI/32);
+		}else{
+			button.rotate(0);
+		}
+	}
+
 
 // quellen finden
 	public void drawSlowVignette(Graphics2D g2d, int width, int height, boolean isTimeSlowed) {
@@ -538,7 +559,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
 			drawSlowVignette(g2d,(int) screenWidth,(int) screenHeight,isTimeSlowed());
 
-			if(isEnded){
+			if(isEnded){//TODO Weapon show beenden
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
 				g2d.drawRect((int) (endscreenPaneltopLeft.x()),(int)endscreenPaneltopLeft.y()
 						,(int)endscreenSize.x(),(int)endscreenSize.y());
@@ -581,7 +602,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
     public void mouseClicked(MouseEvent arg0) {}
 
     @Override
-    public void mouseEntered(MouseEvent arg0) {}
+    public void mouseEntered(MouseEvent arg0){}
 
     @Override
     public void mouseExited(MouseEvent arg0) {}
@@ -716,6 +737,7 @@ public class Spielfeld extends JPanel implements MouseListener, TimeController, 
 
     	
     }
+
 
     @Override
     public void mouseReleased(MouseEvent arg0){ // wird aufgerufen, wenn die Maustaste losgelassen wird

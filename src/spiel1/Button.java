@@ -13,7 +13,7 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
 	private BufferedImage currentImage; // die bilder für die Knöpfe
     private BufferedImage pressedImage;
     private BufferedImage neutralImage;
-
+    private double visualAngle;
     public Button(Vector2 midpoint, double width, double height, BufferedImage pressed, BufferedImage neutral) { // Erstellen des Knopfes mit zwei Bildern
         super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height); //Erstellt das Gameobjekt des Buttons. Die berechnung macht den mittelpunkt zum punkt links oben
         this.pressedImage = pressed;
@@ -81,9 +81,18 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
         getTransform().position = getTransform().position.add(getTransform().speed.multiply(time));//position verändern
     }
 
+    /**dreht den Knopf visuell, verändert die hitbox aber nicht
+     *
+     */
+    public void rotate(double angle){
+        visualAngle=angle;
+    }
+
     @Override
     public void paintMe(Graphics2D g2d) {
-    	
+        g2d.translate(getPosition().addX(width/2).toJPanel().x(),getPosition().addY(height/2).toJPanel().y());//um die mitte drehen
+        g2d.rotate(-visualAngle);
+        g2d.translate(-getPosition().addX(width/2).toJPanel().x(),-getPosition().addY(height/2).toJPanel().y());
     	Vector2 jPos = getTransform().position.toJPanel(); //wandelt die position in das von JPanel benutzte format um
 
 
@@ -93,6 +102,8 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
                 currentImage.getWidth(), currentImage.getHeight(),// zweite ecke vom bild ist die 0+Breite, 0+Höhe
                 null);// kein imageobserver
 
-       
+        g2d.translate(getPosition().addX(width/2).toJPanel().x(),getPosition().addY(height/2).toJPanel().y());// wieder zurückdrehen
+        g2d.rotate(visualAngle);
+        g2d.translate(-getPosition().addX(width/2).toJPanel().x(),-getPosition().addY(height/2).toJPanel().y());
     }
 }

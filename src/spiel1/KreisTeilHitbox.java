@@ -25,15 +25,12 @@ public class KreisTeilHitbox extends Hitbox{
 		if(hitboxAccuracy>3)for(int i=3;i<hitboxAccuracy;i++) {
 			if(i%3==0) {
 				hitbox[i]=hitbox[0].lerp(hitbox[1],((double) (i - 2))/(hitboxAccuracy-3));
-
-				
 			}
 			if(i%3==1) {
 				hitbox[i]=hitbox[1].lerpImHalbkreis(hitbox[2],midpoint,((double) (i - 2))/(hitboxAccuracy-3));
 			}
 			if(i%3==2) {
 				hitbox[i]=hitbox[2].lerp(hitbox[0],((double) (i - 2))/(hitboxAccuracy-3));
-				
 			}
 		}
 		
