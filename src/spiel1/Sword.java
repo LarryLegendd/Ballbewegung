@@ -59,7 +59,7 @@ public class Sword extends Weapon {
 		drawEndpoint2=new Vector2(range,0).rotate(-(angle/2)).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
 		drawPlayerPos= new Vector2(0,0).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
 
-		show();//anzeigen
+		show();//anzeigen //LAG HIER!!!
 			for(Enemy enemy : enemies) {
 
 				//colidieren
@@ -74,7 +74,9 @@ public class Sword extends Weapon {
 //	temp		System.out.println(knockback+"System.out.println(knockback+\"iansdf\");System.out.println(knockback+\"iansdf\");System.out.println(knockback+\"iansdf\");");
 //			System.out.println(hit+"git");
 			}
-			
+
+
+		//ab hier consistent 31-32lag
 			if(hit)	{
 				listener.onHit(knockback);
 				//kein Cooldown wenn Gegner getroffen wird

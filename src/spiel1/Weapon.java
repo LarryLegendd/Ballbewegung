@@ -5,64 +5,39 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.Timer;
 
 public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht mann kann toleranzwinkel in dreieck und rechteck zu basisbreite hacken aber ist das sinnvoll? oberklasse macht keinen sinn da verschiedene arten von hitbox(siehe dreieck) ERgebnis:macht sinn weil levelsystem
 	//rendern	
 	protected boolean isShown=false;
-	protected int showTimer = 50;//vllt braucht man das garnicht weil das in show scchon geregelt ist temp
-	protected int cooldownTimer;
-	private boolean stopcooldown;
-	private boolean cooldown;
+
+	private boolean cooldown;//TODO Warum funktioniert das?
 	protected Transform playertransform;
 	protected int level;
+	private final Timer showTimer =new Timer(500,()->{
+			isShown = false;
+			return false;//beenden vom Timer
+	},true);
+	private Timer cooldownTimer = new Timer(0,()->{return false;});//um nullpointer zu verhindern einen temporären timer erzeugen
 	public void stopCooldownTimer() {
-		stopcooldown = true;
+		cooldownTimer.setFinished();
 	}
 	public void stopCooldown(){
 		stopCooldownTimer();
 		cooldown=false;
 	}
 
-	protected void show() {//vllt machen das das schwert auf cooldown in der zeit  ist
-		showTimer = 50;
-		isShown = true;//vllt show(time to recharge) das verschiedene waffen andere cooldowns haben
-		
-	    Timer t = new Timer(13, new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            showTimer--;
-
-	            if (showTimer <= 0) {
-	                if(isShown ==true) isShown = false;//falls es schon geändert wurde
-	                ((Timer) e.getSource()).stop();
-	            }
-	        }
-	    });
-
-	    t.start();
+	protected void show() {
+		isShown = true;//vllt show(time)
+		TimerManager.addTimer(showTimer);
 	}
 	
-	protected void peneltyCooldown(int ticks) {
-		cooldownTimer=ticks;
+	protected void peneltyCooldown(int millis) {
 		startCooldown();
-		Timer t = new Timer(13, new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	        	if(stopcooldown) {
-	        		((Timer) e.getSource()).stop();
-	                cooldownTimer = 0;
-	                stopcooldown = false;
-	        	}
-	            cooldownTimer--;
-	            if (cooldownTimer <= 0) {
-	                cooldown=false;
-	                ((Timer) e.getSource()).stop();
-	                cooldownTimer = 0;
-	            }
-	        }
+		cooldownTimer = new Timer(millis, () -> {
+	       		cooldown=false;
+				return false;
 	    });
-		t.start();
+		TimerManager.addTimer(cooldownTimer);
 	}
 	
 	

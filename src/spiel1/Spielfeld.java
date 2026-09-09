@@ -18,43 +18,39 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.RadialGradientPaint;
-
+//TODO schauen was mit der spielerrotation bei weapons abgeht
 //TODO Button bilder bei einem klick fixen
 public class Spielfeld extends JPanel implements MouseListener, MouseMotionListener, TimeController, CameraController{ // JPanel ist eine Klasse, in der gezeichnet werden kann
 //TODO auf thread bassierten timer umstellen.
 	//TODO timer umstellen.
+	//TODO Endscreenbutton ist verschoben
 	//jpanel
 	private final Dimension prefSize = new Dimension(1920,1080);
 	
 	private int shaketimer=2;
-	
-	private int slowTimeRemaining;
-	Timer slowingTimer = new Timer(13, new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
 
-
-			if (timeMultiplyer <= .25) {
-				((Timer) e.getSource()).stop();
-			}
+	Timer slowingTimer = new Timer(13, ()-> {
+		System.out.println("slowdown" + timeMultiplyer);
+		if (timeMultiplyer <= .25) {
+			timeMultiplyer=.25;
+			return false;
+		}else{
 			timeMultiplyer-=.05;
+			return true;
 		}
-	});
 
-	Timer speedUpTimer = new Timer(13, new ActionListener() {//TODO das prozentual machen
-		@Override
-		public void actionPerformed(ActionEvent e) {
+	},true);
 
+	Timer speedUpTimer = new Timer(13,()-> {
+		System.out.println("SpeedUp "+timeMultiplyer);
+		if (timeMultiplyer >= 1) {
+			timeMultiplyer=1;// da es wegen floating point error größer ist
+			return false;
+		}else{
 			timeMultiplyer+=.1;
-
-			if (timeMultiplyer >= 1) {
-				timeMultiplyer=1;// da es wegen floating point error größer ist
-				((Timer) e.getSource()).stop();
-			}
-
-
+			return true;
 		}
-	});
+	},true);
 
 
 	private final Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
@@ -139,7 +135,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
    
 
-    private Timer t; // Timer, der in regelmäßigen Abständen die Methode doOnTick() aufruft
+    private javax.swing.Timer t; // Timer, der in regelmäßigen Abständen die Methode doOnTick() aufruft
 
     private Cursor c; // Cursor-Objekt, um den Mauszeiger zu verändern
 
@@ -161,7 +157,19 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	private Vector2 endscreenShopButtonPos;
 	private boolean endscreenPressed= false;//fixt fehler beim zweimal drücken
 
+	private Timer slowTimer = new Timer(0,()->{return false;});//um nullpointer zu verhindern einen temporären timer erzeugen//genutzt um Zeit für bestimmte zeit zu verlangsammen
+	private Timer shakeTimer = new Timer(26, ()->{//Timer für den Schüttel Effekt
 
+			shaketimer--;
+			if(currentScreen.equals("spiel")){//nur im Spiel shake verwenden, da im shop die Kamera unbewegt sein soll
+				Vector2 randompos = new Vector2((Math.random()*100)-50,(Math.random()*100)-50);
+				cameraPos = cameraPos.add(randompos);
+			}
+			if (shaketimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
+				shaketimer=3;
+				return false;
+			}else return true;
+	},true);
     public Spielfeld() {
         setFocusable(true);
         setPreferredSize(prefSize);
@@ -172,44 +180,41 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         // Veränderungen passieren.
 
     }
+
     @Override
     public boolean isTimeSlowed() {
 		if(timeMultiplyer<1)return true;
 		return false;
     }
+
     @Override
     public void slowTime() {
-		speedUpTimer.stop();
-		slowingTimer.start();
+		System.out.println("Time is slow");
+		speedUpTimer.setFinished();//nicht mehr auf normale zeit setzen
+		TimerManager.addTimer(slowingTimer);//verlangsamen
     }
+
     @Override
     public void normalTime() {
-		slowingTimer.stop();
-		speedUpTimer.start();
-    	slowTimeRemaining = 0;
+		System.out.println("Time is normal");
+		slowingTimer.setFinished();//aufhören mit verlangsamen
+		TimerManager.addTimer(speedUpTimer);//wieder beschleungigen
+    	slowTimer.setFinished();//wenn auf zeit geslowed wurde die Zeit resetten
     }
 	public static double getTimeMultiplyer() {
 		return timeMultiplyer;
 	}
     @Override
-    public void slowTimeFor(int millis){//TODO das es so rein und rausfaded
-    	slowTimeRemaining = millis;
-    	slowTime();
-    	Timer t = new Timer(13, new ActionListener() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            slowTimeRemaining--;
+    public void slowTimeFor(int millis){
+		slowTime();
 
-	            if (slowTimeRemaining <= 0) {
-	                normalTime();
-	                ((Timer) e.getSource()).stop();
-	            }
-	        }
-	    });
-
-	    t.start();
+		slowTimer = new Timer(millis,()->{//setzt nach einer angegebenen zeit die verlangsamung zurück
+			//normalTime();
+			return false;
+		});
+		TimerManager.addTimer(slowTimer);
     }
-    
+
     
     @Override
     public double getTimeSpeed() {
@@ -308,7 +313,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         currentScreen="shop";
         
         // Erzeugen eines Timers
-        t = new Timer(13, new ActionListener() { // Timer, der alle timeSpeed ms die Methode doOnTick() aufruft normal ~60fps
+        t = new javax.swing.Timer(13, new ActionListener() { // Timer, der alle timeSpeed ms die Methode doOnTick() aufruft normal ~60fps
             public void actionPerformed(ActionEvent e) {
                 doOnTick();
             }
@@ -370,7 +375,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     	screenHeight = this.getHeight();
     	screenWidth = this.getWidth();
     	
-    	
+    	TimerManager.update(13*getTimeSpeed());
     	
         if (currentScreen.equals("spiel")) { // Spiel läuft
         	//Player
@@ -468,6 +473,11 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     }
 
 	@Override
+	public void shake() {
+		TimerManager.addTimer(shakeTimer);
+	}
+
+	@Override
 	public void mouseDragged(MouseEvent e) {
 
 	}
@@ -513,7 +523,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
     public void paintComponent(Graphics g) {
 
-		System.out.println((System.currentTimeMillis()-timeAtLastFrame)+ " tume");
+		if(System.currentTimeMillis()-timeAtLastFrame>17)System.out.println((System.currentTimeMillis()-timeAtLastFrame)+ " lag");
 		timeAtLastFrame = System.currentTimeMillis();
 		long currentTime = System.currentTimeMillis();
 
@@ -594,7 +604,6 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 			g2d.dispose();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
         }
-		System.out.println((System.currentTimeMillis()-currentTime)+ " time");
     }
     // Diese Methoden müssen implementiert werden, da die Klasse das MouseListener Interface implementiert
     // Es werden nur die Methoden genutzt, die benötigt werden. Die anderen bleiben leer.
@@ -652,14 +661,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 				endscreenPressed=true;
 				endscreenShopButton.addSpeed(new Vector2(Math.random()*10,Math.random()*10));
 				System.out.println("speedbutton"+endscreenShopButton.getSpeed());
-				t = new Timer(1000, new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
+				TimerManager.addTimer(new Timer(1000,() -> {
 							currentScreen = "shop";
 							endscreenPressed=false;
-							t.stop();
-					}});
-				t.start();
+							return false;
+				}));
+
 			}
 		}
     	if(currentScreen.equals("shop")) {
@@ -749,27 +756,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 			leftWeapon.clickReleased();
 		}
     }
-	@Override
-	public void shake() {
-		
-		Timer t = new Timer(26, new ActionListener() {//schiesst über längere zeit
-			@Override
-	        public void actionPerformed(ActionEvent e) {
-				shaketimer--;
-			if(currentScreen.equals("spiel")){
-				Vector2 randompos = new Vector2((Math.random()*100)-50,(Math.random()*100)-50);
-					System.out.println("shake"+randompos);
-					cameraPos = cameraPos.add(randompos);
-			}
-		            if (shaketimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
-		            	shaketimer=3;
-		                ((Timer) e.getSource()).stop();
-		            }
-				}
-	   	    });
-		t.start();
-		
-	}
+
 	//TODO spielführung also ein tutorial das man lernt was man machen muss
 	//TODO gut komentierter quellcode
 	/*allgemeiner überblick

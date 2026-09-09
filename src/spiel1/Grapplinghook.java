@@ -1,11 +1,7 @@
 package spiel1;
 
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
-import javax.swing.Timer;
 
 public class Grapplinghook extends Weapon { // die Ranziehattacke
 
@@ -23,7 +19,8 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	private Transform  transform = new Transform(new Vector2(0,0));
 	
 	private Vector2 speed;
-	
+
+
 	
 	private double[][] levelArr = {
 		//	Breite,hoehe,kb, Preis, shoottime
@@ -43,7 +40,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	private double hoehe = levelArr[0][1]; // Die Hoehe vom Dreieck, das geschossen wird
 	private double grappleKnockback = levelArr[0][2];
 	private int shoottime=(int)levelArr[0][4];
-	private int shoottimer;
+	private int currentshoottime;
 	private double shootspeed=20;
 	
 	private final TimeController timeController;	//Controller um Spielfeld Methoden zu benutzen ohne die Methoden public zu machen
@@ -105,36 +102,32 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		transform.rotation= playertransform.rotation;
 		
 		speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
-		
-		timeController.slowTimeFor(shoottime);//slow für den Schuss
-		shoottimer=shoottime;
-		Timer t = new Timer(13, new ActionListener() {//schiesst über längere zeit
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				transform.position = transform.position.add(speed);
-				
-				shoottimer--;
-				for(Enemy enemy : enemies){
-					if(shoot(enemy)) {
-						listener.onHit(knockback);
-						timeController.normalTime();
-						shoottimer = shoottime;
-						stopCooldown();
-						show();//beendet nach ein bischen extrazeit den timer
-						((Timer) e.getSource()).stop();
-					}
-					if (shoottimer <= 0) {//reset wenn timer ausgelaufen oder getroffen
-						listener.onMiss();
-						shoottimer = shoottime;
-						peneltyCooldown(30);
-						show();//beendet nach ein bischen extrazeit den timer
-						((Timer) e.getSource()).stop();
-					}
+		timeController.slowTimeFor((shoottime*13));//slow für den Schuss TODO: Interesannt ist slowTime funktioniert erst beim zweiten mal aufrufen, auch wenn ich slowtimefor weglasse.
+		currentshoottime =shoottime;
+		Timer shootTimer = new Timer(13, () -> {//schiesst über längere zeit
+			transform.position = transform.position.add(speed);//Der enterhaken bewegt sich
+
+			currentshoottime--;//timer, das nach einer bestimmten flugzeit der schuss beendet wird.
+			for(Enemy enemy : enemies){
+				if(shoot(enemy)) {//prüft ob gegner getroffen werden
+					listener.onHit(knockback);//SpielerKnockback
+					timeController.normalTime();//Zeitverlangsamung vorzeitig beenden
+					currentshoottime = shoottime;
+					stopCooldown();
+					show();//beendet nach ein bischen extrazeit das anzeigen
+					return false;
+				}
+				if (currentshoottime <= 0) {//reset wenn timer ausgelaufen oder getroffen
+					listener.onMiss();//kein SpielerKnockback
+					currentshoottime = shoottime;
+					peneltyCooldown(30);
+					show();//beendet nach ein bischen extrazeit den timer
+					return false;
 				}
 			}
+			return true;
 		});
-		t.start();
-	
+		TimerManager.addTimer(shootTimer);
 	}
 	
 	@Override

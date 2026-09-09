@@ -29,8 +29,7 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
     }
 
     public ArrayList<Enemy> getEnemies() {
-        return enemies;
-    }
+        return enemies;}
 
     public void setEnemies(ArrayList<Enemy> enemies) {
         this.enemies = enemies;
