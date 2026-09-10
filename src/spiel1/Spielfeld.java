@@ -39,7 +39,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 			return true;
 		}
 
-	},true);
+	});
 
 	Timer speedUpTimer = new Timer(13,()-> {
 		System.out.println("SpeedUp "+timeMultiplyer);
@@ -50,7 +50,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 			timeMultiplyer+=.1;
 			return true;
 		}
-	},true);
+	});
 
 
 	private final Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
@@ -169,7 +169,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 				shaketimer=3;
 				return false;
 			}else return true;
-	},true);
+	});
     public Spielfeld() {
         setFocusable(true);
         setPreferredSize(prefSize);
@@ -190,6 +190,9 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     @Override
     public void slowTime() {
 		System.out.println("Time is slow");
+		System.out.println("slowingTimer finished BEFORE add: "
+				+ slowingTimer.isFinished());
+
 		speedUpTimer.setFinished();//nicht mehr auf normale zeit setzen
 		TimerManager.addTimer(slowingTimer);//verlangsamen
     }
@@ -197,7 +200,10 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     @Override
     public void normalTime() {
 		System.out.println("Time is normal");
+		System.out.println("BEFORE setFinished: " + slowingTimer.isFinished());
 		slowingTimer.setFinished();//aufhören mit verlangsamen
+		System.out.println("AFTER setFinished: " + slowingTimer.isFinished());
+
 		TimerManager.addTimer(speedUpTimer);//wieder beschleungigen
     	slowTimer.setFinished();//wenn auf zeit geslowed wurde die Zeit resetten
     }
@@ -209,7 +215,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		slowTime();
 
 		slowTimer = new Timer(millis,()->{//setzt nach einer angegebenen zeit die verlangsamung zurück
-			//normalTime();
+			normalTime();
 			return false;
 		});
 		TimerManager.addTimer(slowTimer);
@@ -331,6 +337,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     	player.reset();
 		drawPlayer=true;
     	currentScreen = "spiel";
+		System.out.println("normalTime in der resetGame Methode aufgerufen");
 		normalTime();
 
     	for(int i = 0; i < weapons.length; i++) if(weapons[i]!= null) {
@@ -370,7 +377,10 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     // Diese Methode wird in regelmäßigen Abständen vom Timer aufgerufen und sorgt für ein Spiel update
     private void doOnTick() {
 
-
+		System.out.println(
+				"getTimeSpeed=" + getTimeSpeed() +
+						" delta=" + (13 * getTimeSpeed())
+		);
 
     	screenHeight = this.getHeight();
     	screenWidth = this.getWidth();
@@ -419,6 +429,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	
         //wenn spieler nach unten fällt
            if(player.getPosition().y()<0&&!isEnded) {//isended das es nur einmal aufgerufen wird
+			   System.out.println("normalTime in der Endscreen Methode ausgeführt");
 			   normalTime();
         	   score= (int) player.getPosition().x();//berechnung score
         	   if(score>highscore)highscore=score;

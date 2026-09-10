@@ -16,7 +16,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	private final Timer showTimer =new Timer(500,()->{
 			isShown = false;
 			return false;//beenden vom Timer
-	},true);
+	});
 	private Timer cooldownTimer = new Timer(0,()->{return false;});//um nullpointer zu verhindern einen temporären timer erzeugen
 	public void stopCooldownTimer() {
 		cooldownTimer.setFinished();
