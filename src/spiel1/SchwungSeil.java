@@ -2,7 +2,6 @@ package spiel1;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -45,7 +44,7 @@ public class SchwungSeil extends Weapon {
 	private int shoottimer;
 	private double shootspeed=20;
 	
-	private final TimeController timeController;
+	private TimeController timeController=null;
 	private final CameraController cameraController;
 	
 	private TriangleHitbox hitbox;
@@ -54,10 +53,8 @@ public class SchwungSeil extends Weapon {
 	
 	private Player player;
 
-	private Timer swingtimer = 	new Timer(13, new ActionListener(){//schiesst über längere zeit
-		@Override
-	    public void actionPerformed(ActionEvent e) {
-			
+	private Timer swingtimer = 	new Timer(13,() -> {//schiesst über längere zeit
+
 			playertransform = player.getTransform();
 			
 			//richtung korrigieren
@@ -73,11 +70,9 @@ public class SchwungSeil extends Weapon {
 			
 			if (cross > 0) {
 			    // gegen Uhrzeigersinn
-			    System.out.println("geguhr");
 			    dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2);
 			} else {
 			    // im Uhrzeigersinn
-			    System.out.println("uhr");
 			    dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2 *3);
 			}
 			double speedrichtungsunterschied = Math.cos(playertransform.speed.angle()-dir.angle());
@@ -93,11 +88,11 @@ public class SchwungSeil extends Weapon {
 			zielspeed=zielspeed.add(teilgrav);//gravitation
 			
 			Vector2 speeddifference = zielspeed.subtract(playertransform.speed).multiply(speedrichtungsunterschied);
-			hitListener.onHit(speeddifference);//////////temp-->new Vector2(0,0));//temp 
-			//hitListener.onHit(playertransform.speed=playertransform.speed.add(new Vector2(0,.13).multiply(timeController.getTimeSpeed())));//Gravitation entgegenwirken
-
+			hitListener.onHit(speeddifference);
+			return true;
+	});
 			
-		}});
+
 	
 	Timer t;
 	
@@ -116,7 +111,7 @@ public class SchwungSeil extends Weapon {
   		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
   		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
   		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
-  		isShown=true;//muss manuell(nicht mit show()) gemacht werden weil es unteschiedlich lang dauert;
+  		show();//muss manuell(nicht mit showTimer()) gemacht werden weil es unterschiedlich lang dauert;
   		
   		if(hitbox.collides(enemy.getHitbox())) {
       		enemy.schadenNehmen(1);
@@ -135,11 +130,11 @@ public class SchwungSeil extends Weapon {
 	@Override
 	public void clickReleased() {
 		if (swingtimer != null) {
-			swingtimer.stop();
+			swingtimer.setFinished();
 			player.stopSwing();
 		}
 		peneltyCooldown(10);
-		isShown=false;
+		hide();
 	}
 	
 	@Override
@@ -159,39 +154,37 @@ public class SchwungSeil extends Weapon {
 		startCooldown();// startet Cooldown während geschossen wird
 
 		shoottimer=shoottime;
-		t = 	new Timer(13, new ActionListener() {//schiesst über längere zeit
-			@Override
-			public void actionPerformed(ActionEvent e) {
-					transform.position = transform.position.add(transform.speed);
+		t = 	new Timer(13, () -> {//schiesst über längere zeit
+			transform.position = transform.position.add(transform.speed);
 
-					shoottimer--;
+			shoottimer--;
 
-					for(Enemy enemy : enemies)
-					{
-						if(shoot(enemy))
-						{
-							hitEnemy = enemy;
-							timeController.normalTime();
-							t.stop();
-							if (swingtimer != null) {
-								swingtimer.restart();
-							}
+			for(Enemy enemy : enemies)
+			{
+				if(shoot(enemy))
+				{
+					hitEnemy = enemy;
+					timeController.normalTime();
 
-
-						}
+					if (swingtimer != null) {
+						TimerManager.addTimer(swingtimer);
 					}
-					if (shoottimer <= 0) {//reset wenn timer ausgelaufen
-						listener.onMiss();
-						shoottimer = shoottime;
-						peneltyCooldown(30);
-						timeController.normalTime();
-						show();//beendet nach ein bischen extrazeit den timer
-						((Timer) e.getSource()).stop();
-					}
+					return false;
 
 				}
-			});
-		t.start();
+			}
+			if (shoottimer <= 0) {//reset wenn timer ausgelaufen
+				listener.onMiss();
+				shoottimer = shoottime;
+				peneltyCooldown(30);
+				timeController.normalTime();
+				if(isShown())showTimer();//beendet nach ein bischen extrazeit den timer. Nur showtimer wenn nicht manuell beendet
+				return false;
+			}
+
+			return true;
+		});
+		TimerManager.addTimer(t);
 
 	}
 	
@@ -226,7 +219,7 @@ public class SchwungSeil extends Weapon {
 	public void paintMe(Graphics g) {
 		if(hitbox!=null)hitbox.paintMe(g);
 		else System.out.println("hitbox ist null");
-		if(isShown&&letzteBasis1!=null) {
+		if(isShown()&&letzteBasis1!=null) {
 			
 			Vector2 JBasis1=letzteBasis1.toJPanel();
 			Vector2 JBasis2=letzteBasis2.toJPanel();
@@ -250,9 +243,9 @@ public class SchwungSeil extends Weapon {
 	
 	@Override
 	public void reset() {
-		swingtimer.stop();
+		swingtimer.setFinished();
 		player.stopSwing();
 		stopCooldown();
-		isShown=false;
+		hide();
 	}
 }

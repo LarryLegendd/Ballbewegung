@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht mann kann toleranzwinkel in dreieck und rechteck zu basisbreite hacken aber ist das sinnvoll? oberklasse macht keinen sinn da verschiedene arten von hitbox(siehe dreieck) ERgebnis:macht sinn weil levelsystem
 	//rendern	
-	protected boolean isShown=false;
+	private boolean isShown=false; //private, weil es dann zentral steuerbar ist.
 
-	private boolean cooldown;//TODO Warum funktioniert das?
+	private static boolean cooldown;
 	protected Transform playertransform;
 	protected int level;
 	private final Timer showTimer =new Timer(500,()->{
@@ -26,11 +26,6 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		cooldown=false;
 	}
 
-	protected void show() {
-		isShown = true;//vllt show(time)
-		TimerManager.addTimer(showTimer);
-	}
-	
 	protected void peneltyCooldown(int millis) {
 		startCooldown();
 		cooldownTimer = new Timer(millis, () -> {
@@ -39,8 +34,24 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	    });
 		TimerManager.addTimer(cooldownTimer);
 	}
-	
-	
+
+	protected void showTimer() {
+		isShown = true;//vllt show(time)
+		TimerManager.addTimer(showTimer);
+	}
+	protected boolean isShown(){
+		return isShown;
+	}
+
+	public void hide(){
+		showTimer.setFinished();
+		isShown=false;
+	}
+
+	protected void show(){
+		isShown=true;
+	}
+
 	protected void startCooldown() {
 		cooldown=true;
 	}
@@ -78,5 +89,3 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	
 	public void clickReleased() {};
 }
-//TODO eine nichts mehr machen klasse machen
-

@@ -63,9 +63,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
   		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
   		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
   		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
-  		isShown=true;//	kann nicht mit der show() Methode aus der Oberklasse gemacht werden, da die dauer des anzeigens
-		// 				unteschiedlich lang ist, je nachdem wie weit der schuss geht
-  		
+
   		if(hitbox.collides(enemy.getHitbox())) {// wenn die hitbox der Grapplinghook mit der eines gegners kollidiert
       		enemy.schadenNehmen(1);
       		
@@ -104,6 +102,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
 		timeController.slowTimeFor((shoottime*13));//slow für den Schuss TODO: Interesannt ist slowTime funktioniert erst beim zweiten mal aufrufen, auch wenn ich slowtimefor weglasse.
 		currentshoottime =shoottime;
+		show();//nicht mit showTimer, weil die Zeit bei einem Treffer unterschiedlich lang ist
 		Timer shootTimer = new Timer(13, () -> {//schiesst über längere zeit
 			transform.position = transform.position.add(speed);//Der enterhaken bewegt sich
 
@@ -114,14 +113,14 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 					timeController.normalTime();//Zeitverlangsamung vorzeitig beenden
 					currentshoottime = shoottime;
 					stopCooldown();
-					show();//beendet nach ein bischen extrazeit das anzeigen
+					if(isShown())showTimer();//beendet nach ein bischen extrazeit das anzeigen. If falls extern show beendet wurde
 					return false;
 				}
 				if (currentshoottime <= 0) {//reset wenn timer ausgelaufen oder getroffen
 					listener.onMiss();//kein SpielerKnockback
 					currentshoottime = shoottime;
 					peneltyCooldown(30);
-					show();//beendet nach ein bischen extrazeit den timer
+					if(isShown())showTimer();//beendet nach ein bischen extrazeit den timer
 					return false;
 				}
 			}
@@ -161,7 +160,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	public void paintMe(Graphics g) {
 		if(hitbox!=null)hitbox.paintMe(g);
 		else System.out.println("hitbox ist null");
-		if(isShown&&letzteBasis1!=null) {
+		if(isShown()&&letzteBasis1!=null) {
 			
 			Vector2 JBasis1=letzteBasis1.toJPanel();
 			Vector2 JBasis2=letzteBasis2.toJPanel();

@@ -59,7 +59,7 @@ public class Sword extends Weapon {
 		drawEndpoint2=new Vector2(range,0).rotate(-(angle/2)).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
 		drawPlayerPos= new Vector2(0,0).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
 
-		show();//anzeigen //LAG HIER!!!
+		showTimer();//anzeigen
 			for(Enemy enemy : enemies) {
 
 				//colidieren
@@ -118,7 +118,7 @@ public class Sword extends Weapon {
 	@Override
 	public void paintMe(Graphics g){
 		Graphics2D g2d = (Graphics2D) g; 
-		if(isShown&&drawEndpoint1!=null) {
+		if(isShown()&&drawEndpoint1!=null) {
 			Vector2 JEndpoint1 = drawEndpoint1.toJPanel();
 			Vector2 JEndpoint2 = drawEndpoint2.toJPanel();
 			Vector2 JPlayerPos = drawPlayerPos.toJPanel();

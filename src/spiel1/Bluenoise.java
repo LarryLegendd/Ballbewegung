@@ -8,11 +8,12 @@ public class Bluenoise {
     private static final Random random = new Random();
 
     /**
-     * Generiert Blue Noise Punkte in einem definierten Rechteck.
+     * Generiert Blue Noise Punkte in einem definierten Rechteck via Poisson Disk sampeling.
      * @param linksOben Der Startpunkt (Min X, Min Y)
      * @param rechtsUnten Der Endpunkt (Max X, Max Y)
      * @return Eine ArrayList mit Vector2 Objekten
      */
+
     public static ArrayList<Vector2> generate(Vector2 linksOben, Vector2 rechtsUnten) {
         // Konfiguration: Mindestabstand (r) und Versuche (k)
         double r = 300.0;

@@ -44,7 +44,7 @@ public class Spear extends Weapon {
 
 		boolean hit = false;
 		Vector2 knockback= new Vector2(0,0);
-		show();
+		showTimer();
 		for(Enemy enemy: enemies) {
 			Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
 			playertransform.rotation = mausdiff.angle();
@@ -138,7 +138,7 @@ public class Spear extends Weapon {
 	
 	@Override
 	public void paintMe(Graphics g) {
-		if(isShown&& letzteBasis1 != null) {
+		if(isShown()&& letzteBasis1 != null) {
 			
 			Vector2 JBasis1=letzteBasis1.toJPanel();
 			Vector2 JBasis2=letzteBasis2.toJPanel();
