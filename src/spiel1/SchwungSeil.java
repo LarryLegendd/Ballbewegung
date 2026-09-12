@@ -2,8 +2,6 @@ package spiel1;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class SchwungSeil extends Weapon {
 
@@ -21,7 +19,7 @@ public class SchwungSeil extends Weapon {
 	private Transform  transform = new Transform(new Vector2(0,0));
 	
 	private Transform playertransform;
-	
+	private Transform originTransform;
 		
 	private double[][] levelArr = {
 		//	Breite,range,kb, Preis, shoottime
@@ -52,44 +50,48 @@ public class SchwungSeil extends Weapon {
 	private Enemy hitEnemy;
 	
 	private Player player;
+	private PointingJoint handjoint;
 
 	private Timer swingtimer = 	new Timer(13,() -> {//schiesst über längere zeit
 
-			playertransform = player.getTransform();
-			
-			//richtung korrigieren
-			double speed = playertransform.speed.length();
-			//richtung
-			// 2D Kreuzprodukt (z-Komponente)
-			double cross = hitEnemy.getTransform().position.makeLocal(playertransform.position).x() * playertransform.speed.y() - hitEnemy.getTransform().position.makeLocal(playertransform.position).y() * playertransform.speed.x();
-			
-			Vector2 dir;
-			
-			
-			player.startSwing();
-			
-			if (cross > 0) {
-			    // gegen Uhrzeigersinn
-			    dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2);
-			} else {
-			    // im Uhrzeigersinn
-			    dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2 *3);
-			}
-			double speedrichtungsunterschied = Math.cos(playertransform.speed.angle()-dir.angle());
-			Vector2 zielspeed=dir.multiply(speed);
-			
-			//berechnung von dem teil der Gravitation der in die richtige richtung geht
-			Vector2 gravdown = new Vector2(0,-.13).multiply(timeController.getTimeSpeed());
-			
-			double gravitationeffizienz = Math.cos(gravdown.rotate(-dir.angle()).angle());//wie viel von der gravitation wirkt(0 - 1)
-			//							
-			Vector2 teilgrav = gravdown.rotate(Math.PI/2).multiply(gravitationeffizienz).rotate(dir.angle());//teil der gravitation der in die richtige richtung geht
-			
-			zielspeed=zielspeed.add(teilgrav);//gravitation
-			
-			Vector2 speeddifference = zielspeed.subtract(playertransform.speed).multiply(speedrichtungsunterschied);
-			hitListener.onHit(speeddifference);
-			return true;
+
+				playertransform = player.getTransform();
+
+
+				//richtung korrigieren
+				double speed = playertransform.speed.length();
+				//richtung
+				// 2D Kreuzprodukt (z-Komponente)
+				double cross = hitEnemy.getTransform().position.makeLocal(playertransform.position).x() * playertransform.speed.y() - hitEnemy.getTransform().position.makeLocal(playertransform.position).y() * playertransform.speed.x();
+
+				Vector2 dir;
+
+
+				player.startSwing();
+
+				if (cross > 0) {
+					// gegen Uhrzeigersinn
+					dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2);
+				} else {
+					// im Uhrzeigersinn
+					dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2 * 3);
+				}
+				double speedrichtungsunterschied = Math.cos(playertransform.speed.angle() - dir.angle());
+				Vector2 zielspeed = dir.multiply(speed);
+
+				//berechnung von dem teil der Gravitation der in die richtige richtung geht
+				Vector2 gravdown = new Vector2(0, -.13).multiply(timeController.getTimeSpeed());
+
+				double gravitationeffizienz = Math.cos(gravdown.rotate(-dir.angle()).angle());//wie viel von der gravitation wirkt(0 - 1)
+
+				Vector2 teilgrav = gravdown.rotate(Math.PI / 2).multiply(gravitationeffizienz).rotate(dir.angle());//teil der gravitation der in die richtige richtung geht
+
+				zielspeed = zielspeed.add(teilgrav);//gravitation
+
+				Vector2 speeddifference = zielspeed.subtract(playertransform.speed).multiply(speedrichtungsunterschied);
+				hitListener.onHit(speeddifference);
+				return true;
+
 	});
 			
 
@@ -102,6 +104,9 @@ public class SchwungSeil extends Weapon {
 		this.timeController = timeController;
 		this.cameraController = cameraController;
 		this.player = player;
+		handjoint = player.findPointing();
+		System.out.println(handjoint);
+		originTransform = player.findPointing().getTransform();
 	}
 	
 	
@@ -143,8 +148,8 @@ public class SchwungSeil extends Weapon {
 
 		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
 		playertransform.rotation = mausdiff.angle();
-		transform.position = playertransform.position;
-		transform.rotation= playertransform.rotation;
+		transform.position = originTransform.position;
+		transform.rotation= originTransform.rotation;
 		transform.speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
 		hitListener = listener;
 
@@ -225,7 +230,7 @@ public class SchwungSeil extends Weapon {
 			Vector2 JBasis2=letzteBasis2.toJPanel();
 			Vector2 JSpitze=letzteSpitze.toJPanel();
 			Vector2 Jmidpoint=midpoint.toJPanel();
-			Vector2 Jplayerpos=playertransform.position.toJPanel();
+			Vector2 Jplayerpos= originTransform.position.toJPanel();
 //			System.out.println(letzteSpitze+" Lastpeek");
 //			System.out.println(hitbox.getSpitze()+" spitze");
 //			System.out.println(hitbox.getPosition()+" position");

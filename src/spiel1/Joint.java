@@ -4,8 +4,8 @@ import java.awt.*;
 
 public class Joint extends GameObject {
     protected Joint[] connectedJoints;
-    private double distance;
-    private Vector2 lastOriginPos;//fürs zeichnen
+    protected double distance;
+    protected Vector2 lastOriginPos;//fürs zeichnen
     private Vector2 offsetSpeed;
 
     /**
@@ -33,9 +33,19 @@ public class Joint extends GameObject {
         this.distance = distance;
         this.offsetSpeed=new Vector2(0,0);
     }
+    /**
+     * für end Joint
+     * @param distance
+     */
+    public Joint(double distance){
+        super(new Transform (new Vector2(0,0)),1,1);//die Initiale Position wird durch distance im ersten Frame gesetzt
+        this.connectedJoints= new Joint[] {};//leeres Array
+        this.distance = distance;
+        this.offsetSpeed=new Vector2(0,0);
+    }
 
     /**
-     * für Offset joint. offsetSpeed sollte unter .13 gehalten werden, da es sonst stärker ist als die gravitation
+     * für Offset joint.
      * @param connectedJoints
      * @param distance
      * @param offsetSpeed
@@ -60,21 +70,39 @@ public class Joint extends GameObject {
         getTransform().speed= getTransform().speed.multiply((1-(0.52*time)));//Luftwiderstand
         getTransform().speed= getTransform().speed.add(new Vector2(0,-.13).multiply(time));
         getTransform().position=getPosition().add(getSpeed().multiply(time));
-        System.out.println(getPosition().makeLocal(originTransform.position));
 
         //fügt den offset hinzu
         getTransform().position = getPosition().makeLocal(getTransform().position,getTransform().rotation).add(offsetSpeed).makeGlobal(getTransform().position,getTransform().rotation);
 
         // setzt das Object auf den richtigen Abstand, behält dabei den Winkel bei
-        getTransform().position = getPosition().makeLocal(originTransform.position).normalize().multiply(distance).makeGlobal(originTransform.position);lastOriginPos=originTransform.position;
+        getTransform().position = getPosition().makeLocal(originTransform.position).normalize().multiply(distance).makeGlobal(originTransform.position);
+        lastOriginPos=originTransform.position;
         getTransform().rotation = getPosition().makeLocal(originTransform.position).angle();
 
 
         for(Joint joint : connectedJoints) joint.moveJoint(getTransform(),time);// am ende die anderen Joints aufrufen, dadurch bewegt sich zuerst der nächste joint vom origin, und die anderen folgen.
     }
+    public PointingJoint findPointing(){
+        System.out.println(" this.getClass() "+this.getClass()+" PointingJoint.class "+PointingJoint.class);
+        if(this instanceof PointingJoint){
+            return (PointingJoint) this;
+        }
+        for(Joint joint:connectedJoints){
+            if(joint.findPointing() instanceof PointingJoint)return joint.findPointing();
+        }
+        return null;
+    }
+
+    @Override
+    public String toString(){
+        String message = "Joint mit länge "+ distance+"\n    ";
+        for(Joint joint:connectedJoints)message = (message+joint.toString());
+        return message;
+    }
+
     @Override
     protected void paintMe(Graphics2D g2d) {
-        g2d.drawLine((int) lastOriginPos.toJPanel().x(),(int) lastOriginPos.toJPanel().y(),(int) getPosition().toJPanel().x(),(int) getPosition().toJPanel().y());
+        if(lastOriginPos!=null)g2d.drawLine((int) lastOriginPos.toJPanel().x(),(int) lastOriginPos.toJPanel().y(),(int) getPosition().toJPanel().x(),(int) getPosition().toJPanel().y());
         for(Joint joint : connectedJoints)joint.paintMe(g2d);//andere joints zeichnenx
     }
 }

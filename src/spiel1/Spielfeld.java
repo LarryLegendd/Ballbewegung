@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,9 +51,13 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		}
 	});
 
-
-	private final Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10,new Joint[]{new Joint(new Joint[] {new Joint(new Joint[] {	new Joint(new Joint[] {},20,new Vector2(-13,0)),	new Joint(new Joint[] {},20,new Vector2(13,0))	},20),	new Joint(new Joint[] {},20,new Vector2(-13,0)),	new Joint(new Joint[] {},20,new Vector2(13,0))	},5)});
+	private PointingJoint pointingJoint = new PointingJoint(new Joint[]{},20,new Vector2(0,0));
+	private final Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10,new Joint[]{new Joint(new Joint[] {new Joint(new Joint[] {	new Joint(new Joint[] {},18,new Vector2(-13,0)),	new Joint(new Joint[] {},18,new Vector2(13,0))	},18),	pointingJoint,	new Joint(new Joint[] {},18,new Vector2(13,0))	},6)});
 	private boolean drawPlayer;
+
+	private RoundJoint kopfJoint = new RoundJoint(10);
+
+	private Joint mausZeiger = new Joint(new Joint[]{	new Joint(new Joint[]{	new Joint(new Joint[]{	kopfJoint},6)	,	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[]{	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[] {},18,new Vector2(13,0))	},18)	,},18)	},0)	;
 
 	private EnemyArea[]	currentArea = new EnemyArea[2];
 	static final int AreaWidth = 3000;
@@ -79,7 +84,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	
 	//camera für scrollen (links unten die ecke ist die kamerapos
 	static Vector2 cameraPos= new Vector2(0,0);
-
+	private Vector2 mausPos=new Vector2(0,0);
 	
 	public static double screenHeight;//wird in SpielFenster gesetzt
 	public static double screenWidth;
@@ -290,11 +295,11 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         this.setCursor(c); // setCursor ist eine Methode der JPanel Klasse
         
         
-        spear=new Spear(player.getTransform());
-        sword=new Sword(player.getTransform());
-        grapple = new Grapplinghook(player.getTransform(), this, this);//this ist der timecontroller/cameracontroller
-        staubsauger = new Staubsauger(player.getTransform());
-        schwungSeil = new SchwungSeil(player.getTransform(), player, this, this);
+        spear=new Spear(pointingJoint.getTransform());
+        sword=new Sword(pointingJoint.getTransform());
+        grapple = new Grapplinghook(pointingJoint.getTransform(), this, this);//this ist der timecontroller/cameracontroller
+        staubsauger = new Staubsauger(pointingJoint.getTransform());
+        schwungSeil = new SchwungSeil(pointingJoint.getTransform(), player, this, this);
         weapons = new Weapon[]{
     			sword,
     			spear,
@@ -461,6 +466,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         }
         if (currentScreen.equals( "shop")) {
         	cameraPos=new Vector2(0,0);
+			mausZeiger.moveJoint(new Transform(mausPos),1);
         }
 
 
@@ -481,13 +487,17 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 	@Override
 	public void mouseMoved(MouseEvent e) {//für hovern
-		Vector2 mausPos= new Vector2(e).toCoordinate();
-
+		mausPos= new Vector2(e).toCoordinate();
+		pointingJoint.setPointingPosition(mausPos);
 		for(Button button : buttons)
 		if (button.getHitbox().collides(mausPos)) {
 			button.rotate(Math.PI/32);
 		}else{
 			button.rotate(0);
+		}
+		if(currentScreen.equals("shop")){
+			//mausZeiger.setPosition(mausPos);
+			mausZeiger.moveJoint(new Transform(mausPos),2);
 		}
 	}
 
@@ -578,6 +588,9 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		}
 
         if(currentScreen.equals("shop")){
+
+			mausZeiger.paintMe(g2d);
+			System.out.println(mausZeiger);
 
         	g.drawString(("Score: "+score),(int) screenWidth/2,(int) screenHeight/3);
         	g.drawString(("Highscore: "+highscore),(int) screenWidth/2,(int) screenHeight/3 -20);
