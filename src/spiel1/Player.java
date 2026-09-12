@@ -6,13 +6,13 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
-public class Player extends GameObject{
+public class Player extends Joint{
 	
 	private final Vector2 startSpeed;
 	private boolean isSwinging;
-	
-	public Player(Transform transform, double width, double height){
-		super(transform, width, height);//der Spieler wird fliegend erzeugt
+
+	public Player(Transform transform, double width, double height,Joint[] connectedJoints){
+		super(transform, width, height, connectedJoints);//der Spieler wird fliegend erzeugt
 		startSpeed=transform.speed;
 	}
 	
@@ -39,7 +39,9 @@ public class Player extends GameObject{
     	}else {
 			getTransform().speed= getTransform().speed.multiply((1-(0.005*time)));//Luftwiderstand wird verringert wenn der spieler schwingt(fühlt sich besser an)
     	}
-		setPosition(	getPosition().add(getSpeed().multiply(time))	);
+		getTransform().position	= getPosition().add(getSpeed().multiply(time))	;
+
+		for(Joint joint : connectedJoints) joint.moveJoint(getTransform(),time);//Rest von den Joints bewegen
     }
 
 	@Override
@@ -51,5 +53,6 @@ public class Player extends GameObject{
 	        (int) width,
 	        (int) height
 	    );
+		for(Joint joint : connectedJoints) joint.paintMe(g2d);
 	}
 }

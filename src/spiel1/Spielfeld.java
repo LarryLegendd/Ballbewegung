@@ -51,7 +51,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	});
 
 
-	private final Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10);
+	private final Player player = new Player(new Transform(new Vector2(1000,250),0, new Vector2(40,30)), 10, 10,new Joint[]{new Joint(new Joint[] {new Joint(new Joint[] {	new Joint(new Joint[] {},20,new Vector2(-13,0)),	new Joint(new Joint[] {},20,new Vector2(13,0))	},20),	new Joint(new Joint[] {},20,new Vector2(-13,0)),	new Joint(new Joint[] {},20,new Vector2(13,0))	},5)});
 	private boolean drawPlayer;
 
 	private EnemyArea[]	currentArea = new EnemyArea[2];
