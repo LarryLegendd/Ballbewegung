@@ -7,6 +7,7 @@ public class Joint extends GameObject {
     protected double distance;
     protected Vector2 lastOriginPos;//fürs zeichnen
     private Vector2 offsetSpeed;
+    private boolean globalOffset;
 
     /**
      * für den Hauptjoint
@@ -45,7 +46,7 @@ public class Joint extends GameObject {
     }
 
     /**
-     * für Offset joint.
+     * für lokalen Offset joint.
      * @param connectedJoints
      * @param distance
      * @param offsetSpeed
@@ -55,6 +56,20 @@ public class Joint extends GameObject {
         this.connectedJoints= connectedJoints;
         this.distance = distance;
         this.offsetSpeed = offsetSpeed;
+        globalOffset= false;
+    }
+    /**
+     * für globalenOffset joint.
+     * @param connectedJoints
+     * @param offsetSpeed
+     * @param distance
+     */
+    public Joint(Joint[] connectedJoints,Vector2 offsetSpeed,double distance){
+        super(new Transform (new Vector2(0,0)),1,1);//die Initiale Position wird durch distance im ersten Frame gesetzt
+        this.connectedJoints= connectedJoints;
+        this.distance = distance;
+        this.offsetSpeed = offsetSpeed;
+        globalOffset= true;
     }
 
     public void moveJoint(Transform originTransform, double time) {
@@ -68,17 +83,19 @@ public class Joint extends GameObject {
 
         //Bewegung mit Gravitation
         getTransform().speed= getTransform().speed.multiply((1-(0.52*time)));//Luftwiderstand
-        getTransform().speed= getTransform().speed.add(new Vector2(0,-.13).multiply(time));
+        getTransform().speed= getTransform().speed.add(new Vector2(0,-.25).multiply(time));//verstärkte gravitation
         getTransform().position=getPosition().add(getSpeed().multiply(time));
 
         //fügt den offset hinzu
-        getTransform().position = getPosition().makeLocal(getTransform().position,getTransform().rotation).add(offsetSpeed).makeGlobal(getTransform().position,getTransform().rotation);
+        if(!globalOffset) getTransform().position = getPosition().makeLocal(getTransform().position,getTransform().rotation).add(offsetSpeed).makeGlobal(getTransform().position,getTransform().rotation);
+        else getTransform().position = getPosition().add(offsetSpeed);
 
         // setzt das Object auf den richtigen Abstand, behält dabei den Winkel bei
         getTransform().position = getPosition().makeLocal(originTransform.position).normalize().multiply(distance).makeGlobal(originTransform.position);
         lastOriginPos=originTransform.position;
         getTransform().rotation = getPosition().makeLocal(originTransform.position).angle();
 
+        System.out.println("speed "+getTransform().speed);
 
         for(Joint joint : connectedJoints) joint.moveJoint(getTransform(),time);// am ende die anderen Joints aufrufen, dadurch bewegt sich zuerst der nächste joint vom origin, und die anderen folgen.
     }

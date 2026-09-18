@@ -25,6 +25,16 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 //TODO auf thread bassierten timer umstellen.
 	//TODO timer umstellen.
 	//TODO Endscreenbutton ist verschoben
+
+
+	// Transparent 16 x 16 pixel cursor image.
+	BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+
+	//blank cursor.
+	Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(//https://stackoverflow.com/questions/1984071/how-to-hide-cursor-in-a-swing-application
+			cursorImg, new Point(0, 0), "blank cursor");
+
+
 	//jpanel
 	private final Dimension prefSize = new Dimension(1920,1080);
 	
@@ -56,8 +66,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	private boolean drawPlayer;
 
 	private RoundJoint kopfJoint = new RoundJoint(10);
-
-	private Joint mausZeiger = new Joint(new Joint[]{	new Joint(new Joint[]{	new Joint(new Joint[]{	kopfJoint},6)	,	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[]{	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[] {},18,new Vector2(13,0))	},18)	,},18)	},0)	;
+	private Joint halsJoint = new Joint(new Joint[] {kopfJoint},new Vector2(0,1),6);
+	private Joint mausZeiger = new Joint(new Joint[]{	new Joint(new Joint[]{	halsJoint	,	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[]{	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[] {},18,new Vector2(13,0))	},18)	,},18)	},0)	;
 
 	private EnemyArea[]	currentArea = new EnemyArea[2];
 	static final int AreaWidth = 3000;
@@ -291,8 +301,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 
 		// Mauszeiger wird zu Fadenkreuz
-        c = new Cursor(Cursor.CROSSHAIR_CURSOR); // erzeugen eines Cursor-Objektes
-        this.setCursor(c); // setCursor ist eine Methode der JPanel Klasse
+       // c = new Cursor(blankCursor);//CROSSHAIR_CURSOR); // erzeugen eines Cursor-Objektes
+        this.setCursor(blankCursor); // setCursor ist eine Methode der JPanel Klasse
         
         
         spear=new Spear(pointingJoint.getTransform());
@@ -375,7 +385,10 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     	
     	TimerManager.update(13*getTimeSpeed());
     	
-        if (currentScreen.equals("spiel")) { // Spiel läuft
+        if (currentScreen.equals("spiel")) { // Spiel läuft //TODO eine one time methode, die beim wechseln von modi aufgerufen wird
+
+			this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+
         	//Player
         	player.moveGameObject( timeMultiplyer);
         	cameraPos=cameraPos.lerp(player.getTransform().position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
@@ -465,6 +478,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
         }
         if (currentScreen.equals( "shop")) {
+			this.setCursor(blankCursor);
         	cameraPos=new Vector2(0,0);
 			mausZeiger.moveJoint(new Transform(mausPos),1);
         }
@@ -589,9 +603,6 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
         if(currentScreen.equals("shop")){
 
-			mausZeiger.paintMe(g2d);
-			System.out.println(mausZeiger);
-
         	g.drawString(("Score: "+score),(int) screenWidth/2,(int) screenHeight/3);
         	g.drawString(("Highscore: "+highscore),(int) screenWidth/2,(int) screenHeight/3 -20);
 
@@ -611,6 +622,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	staubsaugerButton.paintMe(g2d);
         	schwungSeilButton.paintMe(g2d);
 
+			mausZeiger.paintMe(g2d);
 			g2d.dispose();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
         }
     }
