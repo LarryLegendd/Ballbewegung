@@ -73,7 +73,7 @@ public class Joint extends GameObject {
     }
 
     public void moveJoint(Transform originTransform, double time) {
-        if(distance<0)System.err.println("moveJoint should not be called at the head joint or distance is negative");
+        if(distance<0)System.err.println("moveJoint should not be called at the head joint or distance is negative");//at vllt durch on ersetzen TODO
         for(Joint joint : connectedJoints){
             //addiert die Differenz der Geschwindigkeiten von diesem Gelenk und den Anderen gelenken zu seiner eigenen Geschwindigkeit, um alle Kräfte zu Berücksichtigen
             getTransform().speed = getSpeed().add(joint.getSpeed().makeLocal(getSpeed())).multiply(1);//alle Geschwindigkeiten Addieren

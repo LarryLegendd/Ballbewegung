@@ -3,6 +3,14 @@ package spiel1;
 public class PointingJoint extends Joint{
 
     private Vector2 pointingAt;
+
+    /**
+     * Dieses Gelenk hat keine Physikalische berechnung, sondern zeigt nur zur mitgegebenen Position.
+     *
+     * @param connectedJoints
+     * @param distance
+     * @param pointingAt
+     */
     public PointingJoint(Joint[] connectedJoints,double distance, Vector2 pointingAt){
        super(connectedJoints,distance);
        this.pointingAt=pointingAt;
