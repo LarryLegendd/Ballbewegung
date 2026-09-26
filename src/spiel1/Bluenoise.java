@@ -2,7 +2,7 @@ package spiel1;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random; // quelle ki.com und wenn das keine quelle ist dann kommt es aus meinem gehirn
+import java.util.Random;
 
 public class Bluenoise {
     private static final Random random = new Random();
@@ -13,11 +13,11 @@ public class Bluenoise {
      * @param rechtsUnten Der Endpunkt (Max X, Max Y)
      * @return Eine ArrayList mit Vector2 Objekten
      */
-
     public static ArrayList<Vector2> generate(Vector2 linksOben, Vector2 rechtsUnten) {
-        // Konfiguration: Mindestabstand (r) und Versuche (k)
-        double r = 300.0;
-        int k = 3;
+        // Konfiguration für organische Verteilung
+        double r = 220.0;       // Der harte Mindestabstand (Gegner überlappen nicht)
+        int k = 20;            // Genügend Versuche, um Abbrüche zu verhindern
+        double jitter = 90.0;  // Das "Chaos" - bricht die Regelmäßigkeit auf
 
         double width = rechtsUnten.x() - linksOben.x();
         double height = rechtsUnten.y() - linksOben.y();
@@ -26,7 +26,6 @@ public class Bluenoise {
         int cols = (int) Math.ceil(width / cellSize);
         int rows = (int) Math.ceil(height / cellSize);
 
-        // Gitter zur schnellen Nachbarschaftsprüfung
         int[][] grid = new int[cols][rows];
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) grid[i][j] = -1;
@@ -35,7 +34,6 @@ public class Bluenoise {
         ArrayList<Vector2> points = new ArrayList<>();
         ArrayList<Vector2> activeList = new ArrayList<>();
 
-        // Ersten Punkt im relativen Bereich setzen
         Vector2 first = new Vector2(linksOben.x() + random.nextDouble() * width,
                 linksOben.y() + random.nextDouble() * height);
         addPoint(first, linksOben, points, activeList, grid, cellSize);
@@ -46,9 +44,9 @@ public class Bluenoise {
             boolean found = false;
 
             for (int i = 0; i < k; i++) {
-                // Punkt im Ring zwischen r und 2r generieren
                 double angle = 2 * Math.PI * random.nextDouble();
-                double radius = r * (random.nextDouble() + 1);
+                // Suchbereich leicht erweitert für unregelmäßigere Platzierung
+                double radius = r * (1.0 + random.nextDouble() * 0.8);
                 Vector2 candidate = new Vector2(center.x() + radius * Math.cos(angle),
                         center.y() + radius * Math.sin(angle));
 
@@ -63,7 +61,26 @@ public class Bluenoise {
                 activeList.remove(randomIndex);
             }
         }
-        return points;
+
+        // --- DER JITTER-TRICK ---
+        // Verpasst jedem Gegner nachträglich etwas Chaos, ohne das Grid zu verletzen
+        ArrayList<Vector2> jitteredPoints = new ArrayList<>();
+        for (Vector2 p : points) {
+            double shiftX = (random.nextDouble() * 2 - 1) * jitter;
+            double shiftY = (random.nextDouble() * 2 - 1) * jitter;
+
+            // Neuen Punkt erstellen und innerhalb der Map-Grenzen halten
+            double newX = Math.max(linksOben.x(), Math.min(rechtsUnten.x() - 1, p.x() + shiftX));
+            double newY = Math.max(linksOben.y(), Math.min(rechtsUnten.y() - 1, p.y() + shiftY));
+
+            jitteredPoints.add(new Vector2(newX, newY));
+        }
+
+        // Optionale Ausdünnung: Löscht zufällig 15% der Gegner, um natürliche Freiflächen/Löcher zu erzeugen
+        jitteredPoints.removeIf(p -> random.nextDouble() < 0.15);
+
+        System.out.println("Bluenoise generated: " + jitteredPoints.size() + " points");
+        return jitteredPoints;
     }
 
     private static void addPoint(Vector2 p, Vector2 start, List<Vector2> points, List<Vector2> active, int[][] grid, double cellSize) {
@@ -71,6 +88,10 @@ public class Bluenoise {
         active.add(p);
         int col = (int) ((p.x() - start.x()) / cellSize);
         int row = (int) ((p.y() - start.y()) / cellSize);
+
+        col = Math.max(0, Math.min(col, grid.length - 1));
+        row = Math.max(0, Math.min(row, grid[0].length - 1));
+
         grid[col][row] = points.size() - 1;
     }
 
@@ -79,6 +100,9 @@ public class Bluenoise {
 
         int col = (int) ((p.x() - min.x()) / cellSize);
         int row = (int) ((p.y() - min.y()) / cellSize);
+
+        col = Math.max(0, Math.min(col, grid.length - 1));
+        row = Math.max(0, Math.min(row, grid[0].length - 1));
 
         for (int i = Math.max(0, col - 2); i <= Math.min(grid.length - 1, col + 2); i++) {
             for (int j = Math.max(0, row - 2); j <= Math.min(grid[0].length - 1, row + 2); j++) {

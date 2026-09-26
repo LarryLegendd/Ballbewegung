@@ -17,10 +17,14 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
     }
 
     public void GenerateEnemies(){//füllt den bereich mit gegnern
+        int enemieCount = 0;//temp
         for(Vector2 position : Bluenoise.generate(new Vector2(xpos*Spielfeld.AreaWidth,ypos*Spielfeld.AreaHeight),new Vector2((xpos+1)*Spielfeld.AreaWidth, (ypos+1)*Spielfeld.AreaWidth)))
         {
            enemies.add(new Enemy(new Transform(position),15,15,5));
+           enemieCount++;
         }
+
+        System.out.println("enemies generated in area at "+xpos + " Anzahl an Gegnern: " +enemieCount);
     }
 
     public void update(){//aktualisiert positionen und lebensstatus der gegner
@@ -29,7 +33,8 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
     }
 
     public ArrayList<Enemy> getEnemies() {
-        return enemies;}
+        return enemies;
+    }
 
     public void setEnemies(ArrayList<Enemy> enemies) {
         this.enemies = enemies;

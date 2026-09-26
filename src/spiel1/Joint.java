@@ -95,8 +95,6 @@ public class Joint extends GameObject {
         lastOriginPos=originTransform.position;
         getTransform().rotation = getPosition().makeLocal(originTransform.position).angle();
 
-        System.out.println("speed "+getTransform().speed);
-
         for(Joint joint : connectedJoints) joint.moveJoint(getTransform(),time);// am ende die anderen Joints aufrufen, dadurch bewegt sich zuerst der nächste joint vom origin, und die anderen folgen.
     }
     public PointingJoint findPointing(){

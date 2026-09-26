@@ -25,7 +25,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 //TODO auf thread bassierten timer umstellen.
 	//TODO timer umstellen.
 	//TODO Endscreenbutton ist verschoben
-
+//TODO maybe gibt es ein problem bei gegnerhits an der grenze
 
 	// Transparent 16 x 16 pixel cursor image.
 	BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
@@ -395,7 +395,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 
 
-			int currScreenNumber =(int)player.getPosition().x()/AreaWidth;//TODO irgendwann kommt nichts mehr
+			int currScreenNumber =(int)player.getPosition().x()/AreaWidth;
 
 			if(currScreenNumber+1>Areas.toArray().length-1){//immer vorausgenerieren
 				Areas.add(new EnemyArea(currScreenNumber+1));
@@ -409,7 +409,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 			int screen = (int) player.getPosition().x() % AreaWidth;
 
 
-			if (screen < (AreaWidth/2)	&& 	(currScreenNumber-1)>0) {// spieler ist in der linken hälfte vom aktuellen gegnerbereich && es gibt einen bereich zum laden
+			if (screen < (AreaWidth/2)	&& 	(currScreenNumber-1)>=0) {// spieler ist in der linken hälfte vom aktuellen gegnerbereich && es gibt einen bereich zum laden
 				currentArea[1] = Areas.get(currScreenNumber - 1);//links //FEHLER liegt hier
 			}
 			else{//der spieler geht nach rechts oder ist ganz links dann ist das ein fallback
