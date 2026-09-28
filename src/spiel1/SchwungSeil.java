@@ -27,7 +27,7 @@ public class SchwungSeil extends Weapon {
 	 */
 	private boolean waitforStop;
 		
-	private double[][] levelArr = {
+	private double[][] levelArr = {//TODO warum gibt es hier knockback und vllt stattdesen luftwiederstand einführen
 		//	Breite,range,kb, Preis, shoottime
 			  {2, 	3, 	5,		3,	5},
 			  {4,	6, 	5.3,	5,	10},
