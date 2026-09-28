@@ -45,7 +45,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 			timeMultiplyer=.25;
 			return false;
 		}else{
-			timeMultiplyer-=.05;
+			timeMultiplyer-=.1;
 			return true;
 		}
 
@@ -449,7 +449,6 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 			   endscreenSpeed = player.getTransform().speed;
 			   endscreenSpeed = new Vector2(endscreenSpeed.x(),-endscreenSpeed.y()).reverse();// wegen jpanel in die andere richtung
-			   System.out.println("endscreenSpeed"+endscreenSpeed);
 			   framesUntillScreenIsCentered=200;
 			   endscreenPaneltopLeft = endscreenPanelfinaltopLeft.add(endscreenSpeed.reverse().multiply(framesUntillScreenIsCentered));
 
@@ -576,12 +575,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
         	//Weapons
         	if(leftWeapon != null)leftWeapon.paintMe(g);
-        	else System.out.println("leftweapon ist null");
+        	else System.err.println("leftweapon ist null");
         	if(leftWeapon.getHitbox() != null) leftWeapon.getHitbox().paintMe(g);
         	if(rightWeapon != null) {rightWeapon.paintMe(g);
         		if(rightWeapon.getHitbox() != null) rightWeapon.getHitbox().paintMe(g);
         	}
-        	else System.out.println("rightweapon ist null");
+        	else System.err.println("rightweapon ist null");
 
 			for(int i = 0; i<2;i++) {
 				currentArea[i].paintMe(g2d);
@@ -769,7 +768,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
     @Override
     public void mouseReleased(MouseEvent arg0){ // wird aufgerufen, wenn die Maustaste losgelassen wird
-    	if(arg0.getButton()==3) //rechtsklick
+
+		if(arg0.getButton()==3) //rechtsklick
 		{
 			rightWeapon.clickReleased();
 		}

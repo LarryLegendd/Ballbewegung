@@ -97,13 +97,14 @@ public class Joint extends GameObject {
 
         for(Joint joint : connectedJoints) joint.moveJoint(getTransform(),time);// am ende die anderen Joints aufrufen, dadurch bewegt sich zuerst der nächste joint vom origin, und die anderen folgen.
     }
+
     public PointingJoint findPointing(){
         System.out.println(" this.getClass() "+this.getClass()+" PointingJoint.class "+PointingJoint.class);
         if(this instanceof PointingJoint){
             return (PointingJoint) this;
         }
         for(Joint joint:connectedJoints){
-            if(joint.findPointing() instanceof PointingJoint)return joint.findPointing();
+            if(joint.findPointing() != null)return joint.findPointing();
         }
         return null;
     }
