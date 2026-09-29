@@ -5,29 +5,25 @@ import java.util.ArrayList;
 
 public class SchwungSeil extends Weapon {
 
-	
-	private double grappleEnemyKnockback = 6;
-	
 	//Variablen fürs zeichen
 	private Vector2 letzteSpitze;
 	private Vector2 letzteBasis1;
 	private Vector2 letzteBasis2;
 	private Vector2 midpoint;
-	
-	private Vector2 knockback;
+
 	
 	private Transform  transform = new Transform(new Vector2(0,0));
 	
 	private Transform playertransform;
 	private Transform originTransform;
-	private boolean shouldStop;
+	private boolean shouldStop;//TODO funktioniert noch nicht bei spammen
 	/**
 	 * wenn daneben geschossen wird, ohne das es vom Spieler beendet werden soll wird sich gemerkt, dass ein stop
 	 * noch zusätzlich abgewartet werden muss
 	 */
 	private boolean waitforStop;
 		
-	private double[][] levelArr = {//TODO warum gibt es hier knockback und vllt stattdesen luftwiederstand einführen
+	private final double[][] levelArr = {//TODO warum gibt es hier knockback und vllt stattdesen luftwiederstand einführen
 		//	Breite,range,kb, Preis, shoottime
 			  {2, 	3, 	5,		3,	5},
 			  {4,	6, 	5.3,	5,	10},
@@ -43,12 +39,11 @@ public class SchwungSeil extends Weapon {
 	
 	private double basisBreite = levelArr[0][0];
 	private double range = levelArr[0][1];
-	private double grappleKnockback = levelArr[0][2];
 	private int shoottime=(int)levelArr[0][4];
 	private int shoottimer;
 	private double shootspeed=20;
 	
-	private TimeController timeController=null;
+	private TimeController timeController;
 	private final CameraController cameraController;
 	
 	private TriangleHitbox hitbox;
@@ -56,9 +51,8 @@ public class SchwungSeil extends Weapon {
 	private Enemy hitEnemy;
 	
 	private Player player;
-	private PointingJoint handjoint;
 
-	private Timer swingtimer = 	new Timer(13,() -> {//Timer für das schwingen vom Spieler
+	private Timer swingtimer = 	new Timer(13,() -> {//Timer für das Schwingen vom Spieler
 
 		if (shouldStop) {
 			player.stopSwing();
@@ -91,12 +85,12 @@ public class SchwungSeil extends Weapon {
 		double speedrichtungsunterschied = Math.cos(playertransform.speed.angle() - dir.angle());
 		Vector2 zielspeed = dir.multiply(speed);
 
-		//berechnung von dem teil der Gravitation der in die richtige richtung geht
+		//berechnung von dem Teil der Gravitation der in die richtige richtung geht
 		Vector2 gravdown = new Vector2(0, -.13).multiply(timeController.getTimeSpeed());
 
 		double gravitationeffizienz = Math.cos(gravdown.rotate(-dir.angle()).angle());//wie viel von der gravitation wirkt(0 - 1)
 
-		Vector2 teilgrav = gravdown.rotate(Math.PI / 2).multiply(gravitationeffizienz).rotate(dir.angle());//teil der gravitation der in die richtige richtung geht
+		Vector2 teilgrav = gravdown.rotate(Math.PI / 2).multiply(gravitationeffizienz).rotate(dir.angle());//Teil der gravitation der in die richtige richtung geht
 
 		zielspeed = zielspeed.add(teilgrav);//gravitation
 
@@ -116,7 +110,6 @@ public class SchwungSeil extends Weapon {
 		this.timeController = timeController;
 		this.cameraController = cameraController;
 		this.player = player;
-		handjoint = player.findPointing();
 		originTransform = player.findPointing().getTransform();
 	}
 	
@@ -127,14 +120,10 @@ public class SchwungSeil extends Weapon {
   		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
   		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
   		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
-  		show();//muss manuell(nicht mit showTimer()) gemacht werden weil es unterschiedlich lang dauert;
+  		show();//muss manuell (nicht mit showTimer()) gemacht werden weil es unterschiedlich lang dauert;
   		
   		if(hitbox.collides(enemy.getHitbox())) {
       		enemy.schadenNehmen(1);
-      		
-      		Vector2 enemydiff = enemy.getTransform().position.makeLocal(playertransform.position);//temp braucht man vielleicht nicht
-      		
-      		knockback = enemydiff.normalize().multiply(grappleKnockback);
       		cameraController.shake();
       		
       		return true;
@@ -186,7 +175,7 @@ public class SchwungSeil extends Weapon {
 				shoottimer = shoottime;
 				peneltyCooldown(30);
 				timeController.normalTime();
-				if(isShown()) showTimer();//beendet nach ein bischen extrazeit den timer. Nur showtimer wenn nicht manuell beendet
+				if(isShown()) showTimer();//beendet nach ein bisschen extrazeit den timer. Nur showtimer, wenn nicht manuell beendet
 				if(shouldStop ==false) waitforStop=true;
 				shouldStop = false;
 				return false;
@@ -213,7 +202,7 @@ public class SchwungSeil extends Weapon {
 		
 				updateLevel(level);
 			}else System.out.println("insufficient funds");//TODO das im spiel anzeigen lassen
-		}else System.out.println("maximales level wurde ereicht");
+		}else System.out.println("maximales level wurde erreicht");
 	}
 	
 	@Override
@@ -225,7 +214,6 @@ public class SchwungSeil extends Weapon {
 	protected void updateLevel(int level) {
 		basisBreite = levelArr[level][0];
 		range = levelArr[level][1];
-		grappleKnockback = levelArr[level][2];
 		shoottime=(int)levelArr[level][4];
 		hitbox = new TriangleHitbox(basisBreite, range, transform);
 		System.out.println(level);
@@ -242,9 +230,6 @@ public class SchwungSeil extends Weapon {
 			Vector2 JSpitze=letzteSpitze.toJPanel();
 			Vector2 Jmidpoint=midpoint.toJPanel();
 			Vector2 Jplayerpos= originTransform.position.toJPanel();
-//			System.out.println(letzteSpitze+" Lastpeek");
-//			System.out.println(hitbox.getSpitze()+" spitze");
-//			System.out.println(hitbox.getPosition()+" position");
 			g.drawLine((int)JBasis1.x(),(int)JBasis1.y(), (int) JSpitze.x(), (int) JSpitze.y());
 			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JSpitze.x(), (int) JSpitze.y());
 			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JBasis1.x(), (int) JBasis1.y());
