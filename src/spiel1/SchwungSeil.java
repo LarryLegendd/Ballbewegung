@@ -144,9 +144,7 @@ public class SchwungSeil extends Weapon {
 	}
 
 	@Override
-	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){//TODO wenn es nicht zu schwer ist,das es mit dem gegner mitgeht
-
-
+	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
 		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
 		playertransform.rotation = mausdiff.angle();
 		transform.position = originTransform.position;

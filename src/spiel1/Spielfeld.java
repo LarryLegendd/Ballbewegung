@@ -22,10 +22,9 @@ import java.awt.RadialGradientPaint;
 //TODO schauen was mit der spielerrotation bei weapons abgeht
 //TODO Button bilder bei einem klick fixen
 public class Spielfeld extends JPanel implements MouseListener, MouseMotionListener, TimeController, CameraController{ // JPanel ist eine Klasse, in der gezeichnet werden kann
-//TODO auf thread bassierten timer umstellen.
-	//TODO timer umstellen.
-	//TODO Endscreenbutton ist verschoben
-//TODO maybe gibt es ein problem bei gegnerhits an der grenze
+	//TODO maybe gibt es ein problem bei gegnerhits an der grenze
+	//TODO hits prüfen
+	//TODO Cooldowns fixen
 
 	// Transparent 16 x 16 pixel cursor image.
 	BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);

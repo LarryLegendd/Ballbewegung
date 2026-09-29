@@ -4,7 +4,10 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
-
+//TODO den löschen):
+/**
+ * nicht Verwendet
+*/
 public class Staubsauger extends Weapon{
 	//Zieht den gegner an ohne den spieler zu verändern
 	
@@ -105,10 +108,8 @@ public class Staubsauger extends Weapon{
 	}
 	@Override
 	public Hitbox getHitbox() {
-		// TODO Auto-generated method stub
-		return null;
+		return hitbox;
 	}
-//TODO vllt schütteln
 	
 	@Override
 	public void paintMe(Graphics g) {

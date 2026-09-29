@@ -45,7 +45,6 @@ public class SpielFenster extends JFrame{ //Durch Ableiten von JFrame werden z.B
         //Spielfeld erzeugen
         spielfeld = new Spielfeld();
 
-        registerWindowListener();    // WindowListener registrieren (z.B. Schließen des Fensters)
         registerComponentListener();	// für Bildschirmgroeße ändert sich
 
         add(spielfeld);  //Hinzufügen des Spielfeldes zum SpielFenster ; (add() erben alle von Container)
@@ -56,9 +55,7 @@ public class SpielFenster extends JFrame{ //Durch Ableiten von JFrame werden z.B
         this.setResizable(true);
         this.setVisible(true);
 
-      
-        
-        
+
         repaint();
     }
        
@@ -74,28 +71,4 @@ public class SpielFenster extends JFrame{ //Durch Ableiten von JFrame werden z.B
             }
         });		
 	}
-
-
-
-	private void registerWindowListener() {
-        addWindowListener(new WindowAdapter() {
-            //Hier wird von der abstrakten Klasse WindowAdapter, einer abstrakten Klasse,
-            //abgeleitet, die Fensterereignisse empfängt.
-            //Es müssen nur benötigte Methoden der Klasse ausprogrammiert werden (sonst bleiben sie leer).
-            @Override
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-                // TODO hier werden wir später unser Spiel pausieren
-            }
-            @Override
-            public void windowActivated(WindowEvent e) {
-                // TODO hier werden wir später unser Spiel wieder fortsetzen
-            }
-        });
-    }
-
-
 }

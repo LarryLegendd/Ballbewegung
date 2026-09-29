@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Spear extends Weapon {
-	//TODO hat mal sehr wenig knockback gemacht schauen was da abgeht
 	
 	private Vector2 letzteSpitze;
 	private Vector2 letzteBasis1;
@@ -58,8 +57,6 @@ public class Spear extends Weapon {
 			letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),playertransform.rotation);//links unten
 			letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),playertransform.rotation);//rechts unten
 			letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),playertransform.rotation);
-			//TODO irgenddwie timer das es länger da ist
-
 
 			if(hitbox.collides(enemy.getHitbox(),64)) {
 				enemy.schadenNehmen(1);
@@ -79,37 +76,6 @@ public class Spear extends Weapon {
 			listener.onMiss();
 			peneltyCooldown(16);
 		}
-
-//		
-//		//Basisvariablen//wahrscheinlich temp
-//		Vector2 mausdiff = mauspos.subtract(playerpos);
-//		double mausangle = mausdiff.angle();
-//		
-//		boolean hit = false;
-//		
-//
-//		
-//		//dreiec- eckpunkt bestimmung
-//		//basis eckpunkte
-//		Vector2 B1=new Vector2(0,basisBreite/2).rotate(mausangle).add(playerpos);//richtige länge und dann drehen und dann auf spieler verschieben
-//		Vector2 B2=new Vector2(0,-basisBreite/2).rotate(mausangle).add(playerpos);
-//		//Spitze
-//		Vector2 S= new Vector2(range,0).rotate(mausangle).add(playerpos);
-//		if(enemy.getPosition().distanceTo(playerpos)<range+Math.sqrt(enemy.getWidth()*enemy.getWidth() + enemy.getHeight()*enemy.getHeight())){//optimierung das nur nah genuge gegner geprüft werden
-//		//Hitbox
-//			Vector2[] hitbox = enemy.getHitbox().toPoints(64);
-//			for(Vector2 hitboxPos : hitbox) {
-//				if(hitboxPos.angle(B1, B2) > Math.PI  ||  hitboxPos.angle(S, B1) > Math.PI  ||  hitboxPos.angle(B2, S) > Math.PI ) {
-//				}
-//				else {
-//					hit=true ;
-//				break;
-//				}
-//			}
-//		}
-//		
-		
-
 	}
 	
 	@Override

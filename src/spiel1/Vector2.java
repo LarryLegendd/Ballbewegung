@@ -41,7 +41,7 @@ public record Vector2(double x,double y) {
 		P2 = P2.makeLocal(this);
 		P3 = P3.makeLocal(this);
 
-		return ((P2.angle()-P3.angle())+(Math.PI*2))%(Math.PI*2);//TODO das sieht genuently falsch aus
+		return ((P2.angle()-P3.angle())+(Math.PI*2))%(Math.PI*2);//TODO das sieht falsch aus
 	}
 		
 	public Vector2 normalize() {//Quelle: https://ceur-ws.org/Vol-1337/paper28.pdf dadurch bin ich auf die idee von normalize gekommen
@@ -123,7 +123,7 @@ public record Vector2(double x,double y) {
 		
 		double winkelUnterschied = Math.abs(v.subtract(center).angle()-subtract(center).angle());
 		double winkelUnterschied2 = Math.abs(v.subtract(center).angle()-subtract(center).angle()+(2*Math.PI));
-		double winkelUnterschied3 = Math.abs(v.subtract(center).angle()+(2*Math.PI)-subtract(center).angle()); //TODO prüfen ob das passt
+		double winkelUnterschied3 = Math.abs(v.subtract(center).angle()+(2*Math.PI)-subtract(center).angle());
 		if(winkelUnterschied>winkelUnterschied2)winkelUnterschied = winkelUnterschied2;
 		if(winkelUnterschied>winkelUnterschied3)winkelUnterschied = winkelUnterschied3;
 		

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 public class Sword extends Weapon {
-	//TODO manchmal kann man trotz cooldown klicken und es wird angezeigt
 	private KreisTeilHitbox hitbox;
 	
 	private final double swordEnemyKnockback = 4;

@@ -46,7 +46,7 @@ public abstract class Hitbox {
 			for (Vector2 vertex : hitbox.toPoints()) {
 				if (collides(vertex)) return true;
 			}
-			for (Vector2 vertex : toPoints()) {//TODO überprüfen ob es einen fenhler gibt das die gegner nicht getroffen werden können
+			for (Vector2 vertex : toPoints()) {
 				if (hitbox.collides(vertex)) return true;
 			}
 		}

@@ -100,7 +100,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		transform.rotation= playertransform.rotation;
 		
 		speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
-		timeController.slowTimeFor((shoottime*13));//slow für den Schuss TODO: Interesannt ist slowTime funktioniert erst beim zweiten mal aufrufen, auch wenn ich slowtimefor weglasse.
+		timeController.slowTimeFor((shoottime*13));//slow für den Schuss
 		currentshoottime =shoottime;
 		show();//nicht mit showTimer, weil die Zeit bei einem Treffer unterschiedlich lang ist
 		Timer shootTimer = new Timer(13, () -> {//schiesst über längere zeit

@@ -95,67 +95,33 @@ public class RectHitbox extends Hitbox {
 		
 		
 		@Override
-		public Vector2[] toPoints(int hitboxAccuracy) { //gibt Punkte auf der ausenkante der Hitbox an
-			
-			/*3. Konzeptionelles Problem: toPoints() ist teuer & instabil
-Aktuell
+		public Vector2[] toPoints(int hitboxAccuracy) { //gibt Punkte auf der außenkante der Hitbox an
+			if(hitboxAccuracy<4)hitboxAccuracy=4;
+			Vector2[] hitbox = new Vector2[hitboxAccuracy];
+			//Eckpunkte definieren
+			hitbox[0]=lio.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
+			hitbox[1]=reo.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
+			hitbox[2]=liu.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
+			hitbox[3]=reu.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
 
-toPoints() erzeugt jedes Mal neue Punkte
-
-lerp + rotate + print
-
-wird in Schleifen mehrfach aufgerufen
-
-❌ Das skaliert schlecht und macht Debugging schwer.
-
-Besseres Modell
-
-Hitbox ist lokal
-
-Transformation passiert einmal pro Frame
-
-Empfehlung
-Vector2[] getWorldPoints(Vector2 position, double angle)
-
-
-statt:
-
-collides(point, position, angle)
-
-
-Dann:
-
-Transformation außerhalb
-
-Kollision = reine Geometrie*/
-				if(hitboxAccuracy<4)hitboxAccuracy=4;
-				Vector2[] hitbox = new Vector2[hitboxAccuracy];//irgendwo ist ein fehler das die punkte innerhalb generieren TODO
-				hitbox[0]=lio.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
-				hitbox[1]=reo.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
-				hitbox[2]=liu.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
-				hitbox[3]=reu.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
-				if(hitboxAccuracy>4)for(int i=4;i<hitboxAccuracy;i++) {
-					if(i%4==0) {
-						hitbox[i]=hitbox[0].lerp(hitbox[1],((double) (i - 3))/(hitboxAccuracy-4));
-
-//						hitbox[i].print(i+":");
-					}
-					if(i%4==1) {
-						hitbox[i]=hitbox[2].lerp(hitbox[0],((double) (i - 3))/(hitboxAccuracy-4));
-//						hitbox[i].print(i+":");
-					}
-					if(i%4==2) {
-						hitbox[i]=hitbox[2].lerp(hitbox[3],((double) (i - 3))/(hitboxAccuracy-4));
-//						hitbox[i].print(i+":");
-					}
-					if(i%4==3) {
-						hitbox[i]=hitbox[1].lerp(hitbox[3],((double) (i - 4))/(hitboxAccuracy-4));
-//						hitbox[i].print(i+":");
-					}
+			//Zwischenpunkte durch lerp definieren
+			if(hitboxAccuracy>4)for(int i=4;i<hitboxAccuracy;i++) {
+				if(i%4==0) {
+					hitbox[i]=hitbox[0].lerp(hitbox[1],((double) (i - 3))/(hitboxAccuracy-4));
 				}
-				
-				return hitbox;
+				if(i%4==1) {
+					hitbox[i]=hitbox[2].lerp(hitbox[0],((double) (i - 3))/(hitboxAccuracy-4));
+				}
+				if(i%4==2) {
+					hitbox[i]=hitbox[2].lerp(hitbox[3],((double) (i - 3))/(hitboxAccuracy-4));
+				}
+				if(i%4==3) {
+					hitbox[i]=hitbox[1].lerp(hitbox[3],((double) (i - 4))/(hitboxAccuracy-4));
+				}
 			}
+
+			return hitbox;
+		}
 		
 		@Override
 		protected int getStandardAccuracy() {
@@ -164,7 +130,6 @@ Kollision = reine Geometrie*/
 
 		@Override
 		public void paintMe(Graphics g) {
-			 
 			 if(doDraw) //wenn aktiviert zeichnen
 			 {
 				 for(Vector2 point : toPoints()) {

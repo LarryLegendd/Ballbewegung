@@ -45,7 +45,7 @@ public class Player extends Joint{
     }
 
 	@Override
-	protected void paintMe(Graphics2D g2d) {//TODO bild für spieler
+	protected void paintMe(Graphics2D g2d) {
 	    Vector2 jPos = getTransform().position.toJPanel();
 	    g2d.drawOval(
 	        (int) (jPos.x()- width/2),
