@@ -16,15 +16,16 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
         this.xpos=xpos;
     }
 
-    public void GenerateEnemies(){//füllt den bereich mit gegnern
-        int enemieCount = 0;//temp
-        for(Vector2 position : Bluenoise.generate(new Vector2(xpos*Spielfeld.AreaWidth,ypos*Spielfeld.AreaHeight),new Vector2((xpos+1)*Spielfeld.AreaWidth, (ypos+1)*Spielfeld.AreaWidth)))
+    public void generateEnemies(){//füllt den bereich mit gegnern
+        double mindestAbstand;
+        if(xpos>10){
+            mindestAbstand=220*1.0*(xpos/10.0);//midestabstand zwischen gegner vergrößern wenn weiter rechts um schwieriger zu machen
+        }else mindestAbstand= 150;
+        for(Vector2 position : Bluenoise.generate(new Vector2(xpos*Spielfeld.AreaWidth,ypos*Spielfeld.AreaHeight),new Vector2((xpos+1)*Spielfeld.AreaWidth, (ypos+1)*Spielfeld.AreaWidth),mindestAbstand))
         {
            enemies.add(new Enemy(new Transform(position),15,15,5));
-           enemieCount++;
         }
 
-        System.out.println("enemies generated in area at "+xpos + " Anzahl an Gegnern: " +enemieCount);
     }
 
     public void update(){//aktualisiert positionen und lebensstatus der gegner

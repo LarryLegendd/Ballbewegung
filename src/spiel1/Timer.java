@@ -7,9 +7,6 @@ public class Timer {
     private final BooleanSupplier event;
     private boolean isFinished;
 
-    String name;
-
-
     /**
      * return true für restart vom Timer nach eventtrigger
      * return false für beenden von Timer nach eventtrigger
@@ -21,7 +18,6 @@ public class Timer {
         maxTime=length;
         time=length;
         this.event = event;
-        this.name=name;
     }
 
     public boolean isFinished() {
@@ -31,7 +27,7 @@ public class Timer {
     public void update(double deltaTime){//zählt timer runter
         time-=deltaTime;
         if(time<=0){
-            isFinished=!event.getAsBoolean(); //führt das event aus und läuft weiter wenn true returnt wird
+            isFinished=!event.getAsBoolean(); //führt das event aus und läuft weiter, wenn true returnt wird
             time=maxTime;//für timer die mehrfach durchlaufen
         }
     }

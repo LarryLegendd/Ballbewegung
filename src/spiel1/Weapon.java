@@ -77,8 +77,20 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		}
 	}
 	protected abstract void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener);
-	public abstract double getNextPrice();
-	public abstract void levelUp(double money);
+	public abstract double getNextPrice();//muss double sein wegen levelarray
+	public int levelUp(int money){
+		int price = (int) getNextPrice();
+		System.out.println(level);
+		if(price != -1) {//-1 wird von getnextprice ausgegeben, wenn das levelarray zuende ist.
+			System.out.println(price+" price");
+			if(money > price) {
+				level++;
+				updateLevel(level);
+				return price;
+			}else System.out.println("insufficient funds");//TODO das im spiel anzeigen lassen
+		}else System.out.println("maximales level wurde ereicht");
+		return 0;
+	}
 	protected abstract void updateLevel(int level);
 	public abstract Hitbox getHitbox();
 	public void paintMe(Graphics g) {}

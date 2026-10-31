@@ -77,13 +77,14 @@ public class SchwungSeil extends Weapon {
 
 		if (cross > 0) {
 			// gegen Uhrzeigersinn
+			//normierter Vektor, der in die Richtung zeigt, in die der Spieler schwingen soll
 			dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2);
 		} else {
 			// im Uhrzeigersinn
 			dir = hitEnemy.getTransform().position.makeLocal(playertransform.position).normalize().rotate(Math.PI / 2 * 3);
 		}
-		double speedrichtungsunterschied = Math.cos(playertransform.speed.angle() - dir.angle());
-		Vector2 zielspeed = dir.multiply(speed);
+		double speedrichtungsunterschied = Math.cos(playertransform.speed.angle() - dir.angle());//gibt an welcher anteil der richtung in die richtige richtung zeigt.
+		Vector2 zielspeed = dir.multiply(speed); // die geschwindigkeit des spielers in die richtung des schwingens drehen. zielspeed ist die richtung in die der spieler sich bewegen soll. Dabei wird die komplette geschwindigkeit in die richtung des schwingens umgesetzt. das wäre richtig, wenn der spieler den kreis der durch das schwingen erzeugt weid tangiert, ist aber komplett falsch wenn der spieler normal zu diesem kreis auf den kreis zukommt.
 
 		//berechnung von dem Teil der Gravitation der in die richtige richtung geht
 		Vector2 gravdown = new Vector2(0, -.13).multiply(timeController.getTimeSpeed());
@@ -94,14 +95,14 @@ public class SchwungSeil extends Weapon {
 
 		zielspeed = zielspeed.add(teilgrav);//gravitation
 
-		Vector2 speeddifference = zielspeed.subtract(playertransform.speed).multiply(speedrichtungsunterschied);
-		hitListener.onHit(speeddifference);
-		return true;
+		Vector2 speeddifference = zielspeed.subtract(playertransform.speed).multiply(speedrichtungsunterschied); //nimmt den unterschied, von dem wie der spieler fliegen soll und dem wie er fliegt und multipliziert diesen mit dem "wirkungsgrad", der durch den winkel bestimmt  wurde
+		hitListener.onHit(speeddifference);//Geschwindigkeit um spieler addieren
+		return true;//timer wiederholen
 
 	});
-			
 
-	
+
+
 	Timer t;
 	
 	public SchwungSeil(Transform playertransform, Player player, TimeController timeController, CameraController cameraController) {
@@ -194,21 +195,11 @@ public class SchwungSeil extends Weapon {
 		}else waitforStop = false;
 	}
 
-	@Override
-	public void levelUp(double money) {
-		if(level<levelArr.length-1) {
-			if(money > getNextPrice()) {//das -1 ist weil .length quasi +1 rechnet
-				level++;
-		
-				updateLevel(level);
-			}else System.out.println("insufficient funds");//TODO das im spiel anzeigen lassen
-		}else System.out.println("maximales level wurde erreicht");
-	}
 	
 	@Override
 	public double getNextPrice() {
-		if(level<levelArr.length)return levelArr[level+1][3];
-		else return 0;
+		if(level+1<levelArr.length)return levelArr[level+1][3];
+		else return -1;
 	}
 	@Override
 	protected void updateLevel(int level) {

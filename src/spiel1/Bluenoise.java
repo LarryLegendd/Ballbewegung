@@ -12,10 +12,12 @@ public class Bluenoise {
      * @param linksOben Der Startpunkt (Min X, Min Y)
      * @param rechtsUnten Der Endpunkt (Max X, Max Y)
      * @return Eine ArrayList mit Vector2 Objekten
+     *
+     * Einziger KI generierter Code
      */
-    public static ArrayList<Vector2> generate(Vector2 linksOben, Vector2 rechtsUnten) {
+    public static ArrayList<Vector2> generate(Vector2 linksOben, Vector2 rechtsUnten, double mindestAbstand) {
         // Konfiguration für organische Verteilung
-        double r = 220.0;       // Der harte Mindestabstand (Gegner überlappen nicht)
+        double r = mindestAbstand;       // Der harte Mindestabstand (Gegner überlappen nicht)
         int k = 20;            // Genügend Versuche, um Abbrüche zu verhindern
         double jitter = 90.0;  // Das "Chaos" - bricht die Regelmäßigkeit auf
 

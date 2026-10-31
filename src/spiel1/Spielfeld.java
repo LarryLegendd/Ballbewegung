@@ -8,8 +8,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.*;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	//TODO maybe gibt es ein problem bei gegnerhits an der grenze
 	//TODO hits prüfen
 	//TODO Cooldowns fixen
+	//TODO 60fps vllt
 
 	// Transparent 16 x 16 pixel cursor image.
 	BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
@@ -101,7 +102,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	//debug only
 	private long timeAtLastFrame = System.currentTimeMillis();
 	
-	static int money = 1000;//vllt nicht static weil es so schon mitgegeben wird
+	static int money = 0;//vllt nicht static weil es so schon mitgegeben wird
 
 
 	
@@ -168,6 +169,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	private Button endscreenShopButton;
 	private Vector2 endscreenShopButtonPos;
 	private boolean endscreenPressed= false;//fixt fehler beim zweimal drücken
+	private int moneyGained=0;
 
 	private Timer slowTimer = new Timer(0,()->{return false;});//um nullpointer zu verhindern einen temporären timer erzeugen//genutzt um Zeit für bestimmte zeit zu verlangsammen
 	private Timer shakeTimer = new Timer(26, ()->{//Timer für den Schüttel Effekt
@@ -272,6 +274,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         }
 		
 		//==========	Button	==========
+		//erstellen
 		startButton = new Button(new Vector2(prefSize.getWidth()/2,prefSize.getHeight()/5),200,20,startButtonPressed,startButtonNeutral);
 		leftUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3,prefSize.getHeight()/2),200,20,swordButtonPressed,swordButtonNeutral);
 		rightUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3*2,prefSize.getHeight()/2),200,20,spearButtonPressed,spearButtonNeutral);
@@ -283,17 +286,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
 
 		endscreenShopButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
+		//array für einfacheren hover effekt
 		buttons = new Button[]{startButton, leftUpgradeButton, rightUpgradeButton, swordButton, spearButton, grapplingButton, staubsaugerButton, schwungSeilButton, endscreenShopButton};
-
-		for(int i = 0;i<2;i++) {
-			Areas.add(new EnemyArea(i));
-			Areas.get(i).GenerateEnemies();
-		}
+		
         
         // Maus-Events (z.B. Klick) werden registriert und verarbeitet
         addMouseListener(this);
-
-
 		addMouseMotionListener(this) ;
 
 
@@ -328,13 +326,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
                 doOnTick();
             }
         });
-
-
-        for(int i = 0;i<2;i++) {
-			currentArea[i]=Areas.get(i);
-		}
     }
-    
+
     private void resetGame() {
     	player.reset();
 		drawPlayer=true;
@@ -352,7 +345,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 		for(int i = 0;i<2;i++) {
 			Areas.add(new EnemyArea(i));
-			Areas.get(i).GenerateEnemies();
+			Areas.get(i).generateEnemies();
 		}
 
 		currentArea[0] = Areas.get(0);
@@ -392,13 +385,13 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	player.moveGameObject( timeMultiplyer);
         	cameraPos=cameraPos.lerp(player.getTransform().position.subtract(new Vector2(screenWidth/2,screenHeight/2)),0.1);//camera smooth folgen lassen
 
-
+			if(player.getPosition().x()% AreaWidth >0&&player.getPosition().x()% AreaWidth <20) System.out.println("Areaswitch");
 
 			int currScreenNumber =(int)player.getPosition().x()/AreaWidth;
 
 			if(currScreenNumber+1>Areas.toArray().length-1){//immer vorausgenerieren
 				Areas.add(new EnemyArea(currScreenNumber+1));
-				Areas.get(currScreenNumber+1).GenerateEnemies();
+				Areas.get(currScreenNumber+1).generateEnemies();
 			}
 
 			if(currentArea[1].getXpos() == currScreenNumber) { //wenn der spieler auf einen neuen bereich kommt wird der alte ersetzt
@@ -409,7 +402,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 
 			if (screen < (AreaWidth/2)	&& 	(currScreenNumber-1)>=0) {// spieler ist in der linken hälfte vom aktuellen gegnerbereich && es gibt einen bereich zum laden
-				currentArea[1] = Areas.get(currScreenNumber - 1);//links //FEHLER liegt hier
+				currentArea[1] = Areas.get(currScreenNumber - 1);//links
 			}
 			else{//der spieler geht nach rechts oder ist ganz links dann ist das ein fallback
 				currentArea[1] = Areas.get(currScreenNumber + 1);//rechts
@@ -422,16 +415,17 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 				currentArea[i].update();
 			}
 
-        	//Das spawnen hier sollte von dem oben ersetzt werden temp ,aber TODO das oben funktioniert nicht (und ist falsch weil wenn man schon oben rechts(und lu) war ist unten rechts nicht neu obwohle es das sein sollte) und weil dann enemis leer ist geht gar nichts mehr
-        	//framecounter++;//TODO das soll mit einer zahl ersetzt werden die sich beim scrollen erhöht
-
-
         	
         //wenn spieler nach unten fällt
-           if(player.getPosition().y()<0&&!isEnded) {//isended das es nur einmal aufgerufen wird
+           if(player.getPosition().y()<0&&!isEnded) {// !isended das es nur einmal aufgerufen wird
+
 			   normalTime();
         	   score= (int) player.getPosition().x();//berechnung score
+
         	   if(score>highscore)highscore=score;
+
+			   moneyGained=score/1000;
+			   money+=moneyGained;
 
 			   isEnded=true;
 			   drawPlayer=false;
@@ -539,7 +533,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		g2d.setColor(Color.BLACK);//farbe resetten
 	}
 
-
+	@Override
     public void paintComponent(Graphics g) {
 
 		if(System.currentTimeMillis()-timeAtLastFrame>17)System.out.println((System.currentTimeMillis()-timeAtLastFrame)+ " lag");
@@ -591,7 +585,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
 				g2d.drawRect((int) (endscreenPaneltopLeft.x()),(int)endscreenPaneltopLeft.y()
 						,(int)endscreenSize.x(),(int)endscreenSize.y());
-				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+(score/1000),
+				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+moneyGained,
 						(int)endscreendrawTextPos.x(),(int)endscreendrawTextPos.y());//TODO line seperator fixen und moneten richtig einfuegen
 				//https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
 				endscreenShopButton.paintMe(g2d);
@@ -603,6 +597,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
         	g.drawString(("Score: "+score),(int) screenWidth/2,(int) screenHeight/3);
         	g.drawString(("Highscore: "+highscore),(int) screenWidth/2,(int) screenHeight/3 -20);
+
+			g.drawString(("Money: "+money),(int) screenWidth/2,(int) screenHeight/3 +40);
 
         	startButton.paintMe(g2d);
 
@@ -636,42 +632,42 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     public void mouseExited(MouseEvent arg0) {}
 
     @Override
-    public void mousePressed(MouseEvent arg0) {//TODO machen das die inputs in DoOnTick behandelt werden.
+    public void mousePressed(MouseEvent arg0) {
 
 		Vector2 mouseScreenPos = new Vector2(arg0).toCoordinate();
 		if (currentScreen.equals("spiel")) {
+
+			ArrayList<Enemy> allEnemies = new ArrayList<Enemy>(currentArea[0].getEnemies()); //kombiniert alle Gegner in eine Arraylist, das die Attack methode nur einmal aufgerufen wird.
+			allEnemies.addAll(currentArea[1].getEnemies());//Quelle https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html
+			System.out.println("Arraylänge "+ currentArea[1].getEnemies().toArray().length);
 			if (arg0.getButton() == 3) //rechtsklick
 			{
-				for (int i = 0; i < 2; i++) {
-					rightWeapon.attack(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
+				//=========== Angriffsprüfung ======================
+				rightWeapon.attack(mouseScreenPos, allEnemies, new WeaponHitListener() {
+					//implementation von Hitlistener, sodass der Spieler rückstoß kriegen kann, ohne mitgegeben zu werden.
+					@Override
+					public void onHit(Vector2 knockback) {
+						player.addSpeed(knockback);
+					}
 
-						@Override
-						public void onHit(Vector2 knockback) {
-							player.addSpeed(knockback);
-							System.out.println(knockback + "knockback");
-						}
-
-						@Override
-						public void onMiss() {
-						}
-					});
-				}
+					@Override
+					public void onMiss() {
+					}
+				});
 			}
-
 			if (arg0.getButton() == 1) //linksklick
 			{
-				for (int i = 0; i < 2; i++) {
-					leftWeapon.attack(mouseScreenPos, currentArea[i].getEnemies(), new WeaponHitListener() {
+				//=========== Angriffsprüfung ======================
+				leftWeapon.attack(mouseScreenPos, allEnemies, new WeaponHitListener() {
+					//implementation von Hitlistener, sodass der Spieler rückstoß kriegen kann, ohne mitgegeben zu werden.
+					@Override
+					public void onHit(Vector2 knockback) {
+						player.addSpeed(knockback);
+					}
 
-						@Override
-						public void onHit(Vector2 knockback) {
-							player.addSpeed(knockback);
-						}
-
-						@Override
-						public void onMiss() {}
-					});
-				}
+					@Override
+					public void onMiss() {}
+				});
 			}
 		}
     	if(currentScreen.equals("spiel")&&isEnded){
@@ -695,11 +691,11 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     		}
     		
     		if(leftUpgradeButton.press(mouseScreenPos)) {
-    			leftWeapon.levelUp(money);
+    			money-=leftWeapon.levelUp(money);
     		}
     		
     		if(rightUpgradeButton.press(mouseScreenPos)) {
-    			rightWeapon.levelUp(money);
+    			money-=rightWeapon.levelUp(money);
     		}
     		
     		if(arg0.getButton()==1) { //linksklick
@@ -734,20 +730,17 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     				rightUpgradeButton.setneutral(swordButton.getneutral());
     				rightUpgradeButton.setpressed(swordButton.getpressed());
     				rightWeapon=sword;
-    				System.out.println("sword right");
     			}
     			if(spearButton.press(mouseScreenPos)) {
     				rightUpgradeButton.setneutral(spearButton.getneutral());
     				rightUpgradeButton.setpressed(spearButton.getpressed());
     				rightWeapon = spear;
-    				System.out.println("spear right");
     			}
     			if(grapplingButton.press(mouseScreenPos)) {
     				rightUpgradeButton.setneutral(grapplingButton.getneutral());
     				rightUpgradeButton.setpressed(grapplingButton.getpressed());
     				rightWeapon = grapple;
     			}
-    			
     			if(staubsaugerButton.press(mouseScreenPos)) {
     				rightUpgradeButton.setneutral(staubsaugerButton.getneutral());
     				rightUpgradeButton.setpressed(staubsaugerButton.getpressed());
@@ -786,5 +779,4 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	 * es heißt 10-15 seiten, aber realsitisch mehr. unter 30 bleiben.
 	 */
 
-}//falls lag vllt zu viele timer und man sollte einen globalen machen
-
+}

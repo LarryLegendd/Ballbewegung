@@ -21,7 +21,7 @@ public class TriangleHitbox extends Hitbox{//erstellt eine dreieckige hitbox mit
 //		spitze= new Vector2(hoehe,0).rotate(drehWinkel).add(ursprung);
 //	}
 	public TriangleHitbox(double breite, double hoehe,Transform transform) {
-		super(transform,(int)Math.max(hoehe,breite/2));//entferntester punkt
+		super(transform,(int)Math.max(hoehe,breite/2));//entferntester punkt aös size mitgeben.
 		basisl=new Vector2(0,-breite/2);
 		basisr=new Vector2(0,breite/2);
 		//Spitze

@@ -1,13 +1,7 @@
 package spiel1;
-
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
-import javax.swing.Timer;
 
 public class Sword extends Weapon {
 	private KreisTeilHitbox hitbox;
@@ -59,51 +53,39 @@ public class Sword extends Weapon {
 		drawPlayerPos= new Vector2(0,0).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);
 
 		showTimer();//anzeigen
-			for(Enemy enemy : enemies) {
+		for(Enemy enemy : enemies) {
 
-				//colidieren
-				if(hitbox.collides(enemy.getHitbox())) {
-		    		enemy.schadenNehmen(1);
-		    		enemy.addSpeed(mausdiff.normalize().multiply(swordEnemyKnockback));
-		    		knockback = mausdiff.normalize().multiply(swordKnockback).reverse();//das liefert die gegenrichtung.
+			//colidieren
+			if(hitbox.collides(enemy.getHitbox())) {
+				enemy.schadenNehmen(1);
+				enemy.addSpeed(mausdiff.normalize().multiply(swordEnemyKnockback));
+				knockback = mausdiff.normalize().multiply(swordKnockback).reverse();//das liefert die gegenrichtung.
 
-		    		hit = true;
-					break;// das break ist debateable weil der schaden von den Gegnern nicht akkurat berechnet wird
-				}
+				hit = true;
+				break;// das break ist debateable weil der schaden von den Gegnern nicht akkurat berechnet wird
+			}
 //	temp		System.out.println(knockback+"System.out.println(knockback+\"iansdf\");System.out.println(knockback+\"iansdf\");System.out.println(knockback+\"iansdf\");");
 //			System.out.println(hit+"git");
-			}
+		}
 
 
-		//ab hier consistent 31-32lag
-			if(hit)	{
-				listener.onHit(knockback);
-				//kein Cooldown wenn Gegner getroffen wird
-			}
-			else{
-				listener.onMiss();
-				peneltyCooldown(6);
-			}
-			
-			hit = false;
+		if(hit)	{
+			listener.onHit(knockback);
+			//kein Cooldown wenn Gegner getroffen wird
+		}
+		else{
+			listener.onMiss();
+			peneltyCooldown(6);
+		}
+
+		hit = false;
 
 	}
-	
-	@Override
-	public void levelUp(double money) {
-		if(level<levelArr.length-1) {
-			if(money > getNextPrice()) {//das -1 ist weil .length quasi +1 rechnet
-				// TODO geld abziehen
-				level++;
-		
-				updateLevel(level);
-			}else System.out.println("insufficient funds");//TODO das im spiel anzeigen lassen
-		}else System.out.println("maximales level wurde ereicht");
-	}
+
 	@Override
 	public double getNextPrice() {
-		if(level<levelArr.length)return levelArr[level+1][3];
-		else return 0;
+		if(level+1<levelArr.length )return levelArr[level+1][3];
+		else return -1;
 	}
 	
 	@Override

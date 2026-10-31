@@ -129,22 +129,12 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		TimerManager.addTimer(shootTimer);
 	}
 	
-	@Override
-	public void levelUp(double money) { // waffe verbessern
-		System.out.println(level);
-		if(level<levelArr.length-1) {//das -1 ist weil .length quasi +1 rechnet
-			if(money > getNextPrice()) {
-				level++;
-		
-				updateLevel(level);
-			}else System.out.println("insufficient funds");//TODO das im spiel anzeigen lassen
-		}else System.out.println("maximales level wurde ereicht");
-	}
+
 	
 	@Override
 	public double getNextPrice() {
-		if(level<levelArr.length)return levelArr[level+1][3];
-		else return 0;
+		if(level+1<levelArr.length)return levelArr[level+1][3];
+		else return -1;
 	}
 	@Override
 	protected void updateLevel(int level) {
