@@ -75,7 +75,7 @@ public class Sword extends Weapon {
 		}
 		else{
 			listener.onMiss();
-			peneltyCooldown(6);
+			peneltyCooldown(300);
 		}
 
 		hit = false;

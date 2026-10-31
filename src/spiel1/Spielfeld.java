@@ -82,7 +82,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	private Sword sword;
 	private Spear spear;
 	private Grapplinghook grapple;
-	private Staubsauger staubsauger;
+	//private Staubsauger staubsauger; nicht mehr verwendet, weil zu schwer zu steuern
 	private SchwungSeil schwungSeil;
 	private Weapon[] weapons;
 	
@@ -242,12 +242,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	URL neutralURL = getClass().getResource("/images/lanze_temp.png");//TODO Bilder einfuegen
             URL pressedURL = getClass().getResource("/images/schwert_temp.png");
             URL startNeutralURL = getClass().getResource("/images/start_temp.png");
-            URL staubSaugerURL = getClass().getResource("/images/staubsauger_temp.png");
+            //URL staubSaugerURL = getClass().getResource("/images/staubsauger_temp.png"); nicht mehr verwende weil zu schwer
             URL seilURL = getClass().getResource("/images/Seil_temp.png");
             URL grapplingURL = getClass().getResource("/images/grappling_hook.png");
             
             if (neutralURL == null || pressedURL == null) {
-                throw new RuntimeException("Button-Bilder nicht gefunden!");
+                throw new RuntimeException("Button-Bilder nicht gefunden");
             }
 
             startButtonPressed = ImageIO.read(pressedURL);
@@ -262,8 +262,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
             grapplingButtonPressed= ImageIO.read(pressedURL);
             grapplingButtonNeutral= ImageIO.read(grapplingURL);
 
-            staubsaugerButtonPressed= ImageIO.read(pressedURL);
-            staubsaugerButtonNeutral= ImageIO.read(staubSaugerURL);
+//            staubsaugerButtonPressed= ImageIO.read(pressedURL); nicht mehr verwendet, weil zu schwer zu steuern
+//            staubsaugerButtonNeutral= ImageIO.read(staubSaugerURL);
 
             schwungSeilButtonPressed= ImageIO.read(pressedURL);
             schwungSeilButtonNeutral= ImageIO.read(seilURL);
@@ -282,12 +282,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		swordButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*2),200,20,swordButtonPressed,swordButtonNeutral);
 		spearButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*3),200,20,spearButtonPressed,spearButtonNeutral);
 	    grapplingButton		= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*4),200,20,grapplingButtonPressed,grapplingButtonNeutral);
-	    staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral);
-		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*6),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
+	    //staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral); //Nicht mehr verwendet, weil zu schwer zu steuern
+		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
 
 		endscreenShopButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
 		//array für einfacheren hover effekt
-		buttons = new Button[]{startButton, leftUpgradeButton, rightUpgradeButton, swordButton, spearButton, grapplingButton, staubsaugerButton, schwungSeilButton, endscreenShopButton};
+		buttons = new Button[]{startButton, leftUpgradeButton, rightUpgradeButton, swordButton, spearButton, grapplingButton, schwungSeilButton, endscreenShopButton};
 		
         
         // Maus-Events (z.B. Klick) werden registriert und verarbeitet
@@ -305,13 +305,13 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         spear=new Spear(pointingJoint.getTransform());
         sword=new Sword(pointingJoint.getTransform());
         grapple = new Grapplinghook(pointingJoint.getTransform(), this, this);//this ist der timecontroller/cameracontroller
-        staubsauger = new Staubsauger(pointingJoint.getTransform());
+        //staubsauger = new Staubsauger(pointingJoint.getTransform()); nicht meh verwendet weil zu schwer zu steuern
         schwungSeil = new SchwungSeil(pointingJoint.getTransform(), player, this, this);
         weapons = new Weapon[]{
     			sword,
     			spear,
     			grapple,
-    			staubsauger,
+    			//staubsauger,
     			schwungSeil};
         
         leftWeapon=sword;
@@ -475,10 +475,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 			mausZeiger.moveJoint(new Transform(mausPos),1);
         }
 
-
-
         repaint(); // ruft die paintComponent Methode auf, um das Spielfeld neu zu zeichnen
-
     }
 
 	@Override
@@ -496,11 +493,11 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		mausPos= new Vector2(e).toCoordinate();
 		pointingJoint.setPointingPosition(mausPos);
 		for(Button button : buttons)
-		if (button.getHitbox().collides(mausPos)) {
-			button.rotate(Math.PI/32);
-		}else{
-			button.rotate(0);
-		}
+			if (button.getHitbox().collides(mausPos)) {
+				button.rotate(Math.PI/32);
+			}else{
+				button.rotate(0);
+			}
 		if(currentScreen.equals("shop")){
 			//mausZeiger.setPosition(mausPos);
 			mausZeiger.moveJoint(new Transform(mausPos),2);
@@ -585,7 +582,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
 				g2d.drawRect((int) (endscreenPaneltopLeft.x()),(int)endscreenPaneltopLeft.y()
 						,(int)endscreenSize.x(),(int)endscreenSize.y());
-				g2d.drawString("Score: "+score+" ".replaceAll("\\s+",System.getProperty("line.separator"))+"money gained: "+moneyGained,
+				g2d.drawString("Score: "+score+" ".replaceAll("\\s+", System.lineSeparator())+"money gained: "+moneyGained,
 						(int)endscreendrawTextPos.x(),(int)endscreendrawTextPos.y());//TODO line seperator fixen und moneten richtig einfuegen
 				//https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
 				endscreenShopButton.paintMe(g2d);
@@ -609,11 +606,10 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	g.drawString(("Level: "+rightWeapon.getLevel()),(int) rightUpgradeButton.getPosition().x(),(int) rightUpgradeButton.getPosition().y()+20);
 
 
-        	//for(Button button : buttons) button.paintMe(g);
         	swordButton.paintMe(g2d);
         	spearButton.paintMe(g2d);
         	grapplingButton.paintMe(g2d);
-        	staubsaugerButton.paintMe(g2d);
+        	//staubsaugerButton.paintMe(g2d); nicht mehr verwendet
         	schwungSeilButton.paintMe(g2d);
 
 			mausZeiger.paintMe(g2d);
@@ -639,7 +635,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 			ArrayList<Enemy> allEnemies = new ArrayList<Enemy>(currentArea[0].getEnemies()); //kombiniert alle Gegner in eine Arraylist, das die Attack methode nur einmal aufgerufen wird.
 			allEnemies.addAll(currentArea[1].getEnemies());//Quelle https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html
-			System.out.println("Arraylänge "+ currentArea[1].getEnemies().toArray().length);
+
 			if (arg0.getButton() == 3) //rechtsklick
 			{
 				//=========== Angriffsprüfung ======================
@@ -714,11 +710,11 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     				leftUpgradeButton.setpressed(grapplingButton.getpressed());
     				leftWeapon = grapple;
     			}
-    			if(staubsaugerButton.press(mouseScreenPos)) {
-    				leftUpgradeButton.setneutral(staubsaugerButton.getneutral());
-    				leftUpgradeButton.setpressed(staubsaugerButton.getpressed());
-    				leftWeapon = staubsauger;
-    			}
+    		//	if(staubsaugerButton.press(mouseScreenPos)) {
+    		//		leftUpgradeButton.setneutral(staubsaugerButton.getneutral());
+    		//		leftUpgradeButton.setpressed(staubsaugerButton.getpressed());
+    		//		leftWeapon = staubsauger;
+    		//	}
     			if(schwungSeilButton.press(mouseScreenPos)) {
     				leftUpgradeButton.setneutral(schwungSeilButton.getneutral());
     				leftUpgradeButton.setpressed(schwungSeilButton.getpressed());
@@ -741,11 +737,11 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     				rightUpgradeButton.setpressed(grapplingButton.getpressed());
     				rightWeapon = grapple;
     			}
-    			if(staubsaugerButton.press(mouseScreenPos)) {
-    				rightUpgradeButton.setneutral(staubsaugerButton.getneutral());
-    				rightUpgradeButton.setpressed(staubsaugerButton.getpressed());
-    				rightWeapon = staubsauger;
-    			}
+    		//	if(staubsaugerButton.press(mouseScreenPos)) {
+    		//		rightUpgradeButton.setneutral(staubsaugerButton.getneutral());
+    		//		rightUpgradeButton.setpressed(staubsaugerButton.getpressed());
+    		//		rightWeapon = staubsauger;
+    		//	}
     			if(schwungSeilButton.press(mouseScreenPos)) {
     				rightUpgradeButton.setneutral(schwungSeilButton.getneutral());
     				rightUpgradeButton.setpressed(schwungSeilButton.getpressed());

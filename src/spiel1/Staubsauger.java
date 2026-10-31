@@ -4,15 +4,11 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
-//TODO den löschen):
 /**
- * nicht Verwendet
+ * nicht Verwendete Waffe, weil zu schwer zu steuern
 */
 public class Staubsauger extends Weapon{
 	//Zieht den gegner an ohne den spieler zu verändern
-	
-	//TODO vllt knockback abhängig von distanz machen das der gegner immer kurz vor den spieler landet
-	
 	//Variablen fürs zeichen
 	private Vector2 letzteSpitze;
 	private Vector2 letzteBasis1;

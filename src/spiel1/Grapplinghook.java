@@ -91,18 +91,20 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){// der Listener ist gebraucht,
 		// weil der spieler nicht direkt beim losschiessen rückstoß kriegt, sondern erst wenn die Grappinghook geflogen
 		// ist und einen gegner getroffen hat.
-		
+
+		System.out.println("Schuss");
+
 		startCooldown();//startet cooldown
 		
 		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);// Richtung zur maus vom Spieler aus gesehen
-		playertransform.rotation = mausdiff.angle(); // TODO eigentlich soll sicht der spieler nicht drehen und wenn ja sicher nicht hier
 		transform.position = playertransform.position;
-		transform.rotation= playertransform.rotation;
+		transform.rotation= mausdiff.angle();
 		
 		speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
 		timeController.slowTimeFor((shoottime*13));//slow für den Schuss
 		currentshoottime =shoottime;
 		show();//nicht mit showTimer, weil die Zeit bei einem Treffer unterschiedlich lang ist
+		System.out.println("show");
 		Timer shootTimer = new Timer(13, () -> {//schiesst über längere zeit
 			transform.position = transform.position.add(speed);//Der enterhaken bewegt sich
 
@@ -121,6 +123,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 					currentshoottime = shoottime;
 					peneltyCooldown(30);
 					if(isShown())showTimer();//beendet nach ein bischen extrazeit den timer
+					System.out.println("Schuss vorbei");
 					return false;
 				}
 			}
@@ -128,9 +131,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		});
 		TimerManager.addTimer(shootTimer);
 	}
-	
 
-	
 	@Override
 	public double getNextPrice() {
 		if(level+1<levelArr.length)return levelArr[level+1][3];
