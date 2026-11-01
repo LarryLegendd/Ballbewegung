@@ -88,6 +88,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	private Weapon leftWeapon = null;
 	private Weapon rightWeapon = null;
 
+	private boolean isRightMousePressed;
+	private boolean isLeftMousePressed;
 
 	private static double timeMultiplyer = 1;
 	
@@ -454,7 +456,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
            }
 		   if(isEnded){
 			  // EndscreenTextPos=EndscreenTextPos.makeGlobal(endscreenPaneltopLeft);
-
+			   leftWeapon.hide();
+			   rightWeapon.hide();
 			   if(framesUntillScreenIsCentered<100)cameraPos= new Vector2(0,-2000);//setzt die Kamera unter das Spielfeld
 
 
@@ -482,29 +485,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		TimerManager.addTimer(shakeTimer);
 	}
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
 
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {//für hovern
-		mausPos= new Vector2(e).toCoordinate();
-		pointingJoint.setPointingPosition(mausPos);
-
-		for(Button button : buttons) {
-			if (button.getHitbox().collides(mausPos)) {
-				button.rotate(Math.PI / 32);
-				erklaerstring = button.getAusgabe();
-			} else {
-				button.rotate(0);
-			}
-		}
-		if(currentScreen.equals("shop")){
-			//mausZeiger.setPosition(mausPos);
-			mausZeiger.moveJoint(new Transform(mausPos),2);
-		}
-	}
 
 
 // quellen finden
@@ -580,7 +561,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 			drawSlowVignette(g2d,(int) screenWidth,(int) screenHeight,isTimeSlowed());
 
-			if(isEnded){//TODO Weapon show beenden
+			if(isEnded){
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
 				g2d.drawRect((int) (endscreenPaneltopLeft.x()),(int)endscreenPaneltopLeft.y()
 						,(int)endscreenSize.x(),(int)endscreenSize.y());
@@ -621,11 +602,36 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 			mausZeiger.paintMe(g2d);
 
+
 			g2d.drawString(erklaerstring,(int) screenWidth/8, (int) screenHeight/10*9);
 
 			g2d.dispose();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
         }
     }
+
+	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {//für hovern
+		mausPos= new Vector2(e).toCoordinate();
+		pointingJoint.setPointingPosition(mausPos);
+		boolean didCollide = false;
+		for(Button button : buttons) {
+			if (button.getHitbox().collides(mausPos)) {
+				button.rotate(Math.PI / 32);
+				erklaerstring = button.getAusgabe();
+				didCollide = true;
+			} else {
+				button.rotate(0);
+			}
+		}
+		if(!didCollide)erklaerstring = "";
+		if(currentScreen.equals("shop")){
+			//mausZeiger.setPosition(mausPos);
+			mausZeiger.moveJoint(new Transform(mausPos),2);
+		}
+	}
     // Diese Methoden müssen implementiert werden, da die Klasse das MouseListener Interface implementiert
     // Es werden nur die Methoden genutzt, die benötigt werden. Die anderen bleiben leer.
     @Override
@@ -648,6 +654,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 			if (arg0.getButton() == 3) //rechtsklick
 			{
+				isRightMousePressed = true;
 				//=========== Angriffsprüfung ======================
 				rightWeapon.attack(mouseScreenPos, allEnemies, new WeaponHitListener() {
 					//implementation von Hitlistener, sodass der Spieler rückstoß kriegen kann, ohne mitgegeben zu werden.

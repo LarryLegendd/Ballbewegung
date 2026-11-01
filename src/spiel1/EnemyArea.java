@@ -23,7 +23,7 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
         }else mindestAbstand= 150;
         for(Vector2 position : Bluenoise.generate(new Vector2(xpos*Spielfeld.AreaWidth,ypos*Spielfeld.AreaHeight),new Vector2((xpos+1)*Spielfeld.AreaWidth, (ypos+1)*Spielfeld.AreaWidth),mindestAbstand))
         {
-           enemies.add(new Enemy(new Transform(position),15,15,5));
+           enemies.add(new Enemy(new Transform(position),17,17,5));
         }
 
     }

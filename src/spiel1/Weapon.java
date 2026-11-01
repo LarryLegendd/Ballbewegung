@@ -120,15 +120,15 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	 */
 	public int levelUp(int money){
 		int price = (int) getNextPrice();
-		System.out.println(level);
+		System.out.println("money: "+money);
 		if(price != -1) {//-1 wird von getnextprice ausgegeben, wenn das levelarray zuende ist.
 			System.out.println(price+" price");
-			if(money > price) {
+			if(money >= price) {
 				level++;
 				updateLevel(level);
 				return price;
-			}else System.out.println("insufficient funds");//TODO das im spiel anzeigen lassen
-		}else System.out.println("maximales level wurde ereicht");
+			}else System.out.println("insufficient funds");
+		}
 		return 0;
 	}
 	/**

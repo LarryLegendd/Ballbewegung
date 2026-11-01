@@ -16,16 +16,16 @@ public class SchwungSeil extends Weapon {
 	
 	private Transform playertransform;
 	private Transform originTransform;
-	private boolean shouldStop;//TODO funktioniert noch nicht bei spammen
+	private boolean shouldStop;
 	/**
 	 * wenn daneben geschossen wird, ohne das es vom Spieler beendet werden soll wird sich gemerkt, dass ein stop
 	 * noch zusätzlich abgewartet werden muss
 	 */
-	private boolean waitforStop;
+	private boolean isAttacking;
 		
 	private final double[][] levelArr = {//TODO warum gibt es hier knockback und vllt stattdesen luftwiederstand einführen
 		//	Breite,range,kb, Preis, shoottime
-			  {2, 	3, 	5,		3,	5},
+			  {4, 	5, 	5,		3,	7},
 			  {4,	6, 	5.3,	5,	10},
 			  {6,	9, 	5.6,	8,	15},
 			  {8, 	12, 5.9,	10,	20},
@@ -59,6 +59,7 @@ public class SchwungSeil extends Weapon {
 			hide();
 			shouldStop = false;
 			this.stopCooldown();
+			isAttacking=false;
 			return false;
 		}
 		playertransform = player.getTransform();
@@ -113,26 +114,13 @@ public class SchwungSeil extends Weapon {
 		this.player = player;
 		originTransform = player.findPointing().getTransform();
 	}
-	
-	
-	public boolean shoot(Enemy enemy) {
-        //fürs zeichen 
-  		letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),transform.rotation);//links unten
-  		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
-  		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
-  		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
-  		show();//muss manuell (nicht mit showTimer()) gemacht werden weil es unterschiedlich lang dauert;
-  		
-  		if(hitbox.collides(enemy.getHitbox())) {
-      		enemy.schadenNehmen(1);
-      		cameraController.shake();
-      		
-      		return true;
-      	}else {
-      		return false;
-      	}
-	}
 
+	/**
+	 * startet einen Angriff
+	 * @param mauspos
+	 * @param enemies
+	 * @param listener
+	 */
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
 		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
@@ -142,6 +130,7 @@ public class SchwungSeil extends Weapon {
 		transform.speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit des Projektils
 		hitListener = listener;
 
+		isAttacking = true;
 
 		timeController.slowTime();
 
@@ -177,7 +166,7 @@ public class SchwungSeil extends Weapon {
 				peneltyCooldown(30);
 				timeController.normalTime();
 				if(isShown()) showTimer();//beendet nach ein bisschen extrazeit den timer. Nur showtimer, wenn nicht manuell beendet
-				if(shouldStop ==false) waitforStop=true;
+				isAttacking=false;
 				shouldStop = false;
 				return false;
 			}
@@ -188,11 +177,34 @@ public class SchwungSeil extends Weapon {
 
 	}
 
+	/**
+	 * prüft, ob ein gegner getroffen wird
+	 * @param enemy
+	 * @return
+	 */
+	public boolean shoot(Enemy enemy) {
+        //fürs zeichen 
+  		letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),transform.rotation);//links unten
+  		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
+  		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
+  		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
+  		show();//muss manuell (nicht mit showTimer()) gemacht werden weil es unterschiedlich lang dauert;
+  		
+  		if(hitbox.collides(enemy.getHitbox())) {
+      		enemy.schadenNehmen(1);
+      		cameraController.shake();
+      		
+      		return true;
+      	}else {
+      		return false;
+      	}
+	}
+
 	@Override
 	public void clickReleased() {
-		if(waitforStop==false){
+		if(isAttacking){
 			shouldStop =true;
-		}else waitforStop = false;
+		}
 	}
 
 	
