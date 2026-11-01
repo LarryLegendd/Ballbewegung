@@ -76,7 +76,6 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	private  ArrayList<EnemyArea> Areas = new ArrayList<>();
 
 		// Vector2 playerpos, Vector2 enemypos, Vector2 mauspos, double toleranzWinkel, double range, Enemy enemy, Graphics g //vllt temp
-	
 
 	
 	private Sword sword;
@@ -104,7 +103,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	
 	static int money = 0;//vllt nicht static weil es so schon mitgegeben wird
 
-
+	private String erklaerstring = "";
 	
 	//Buttons
     Button startButton;
@@ -275,15 +274,15 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		
 		//==========	Button	==========
 		//erstellen
-		startButton = new Button(new Vector2(prefSize.getWidth()/2,prefSize.getHeight()/5),200,20,startButtonPressed,startButtonNeutral);
-		leftUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3,prefSize.getHeight()/2),200,20,swordButtonPressed,swordButtonNeutral);
-		rightUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3*2,prefSize.getHeight()/2),200,20,spearButtonPressed,spearButtonNeutral);
+		startButton = new Button(new Vector2(prefSize.getWidth()/2,prefSize.getHeight()/5),200,20,startButtonPressed,startButtonNeutral,"Dieser Knopf startet das Spiel. Wenn er gedrückt wird fliegt der Spieler los und du musst dich mit deinen ausgewählten Waffen abstoßen um so weit wie möglich nach rechts zu kommen");
+		leftUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3,prefSize.getHeight()/2),200,20,swordButtonPressed,swordButtonNeutral,"Das ist deine Waffe, die auf der linken Maustaste belegt ist. Wenn dieser Knopf gedrückt wird wird sie verbessert. Das Verbessern kostet Münzen, die für geflogene Distanz erhalten werden.");
+		rightUpgradeButton = new Button(new Vector2(prefSize.getWidth()/3*2,prefSize.getHeight()/2),200,20,grapplingButtonPressed,grapplingButtonNeutral,"Das ist deine Waffe, die auf dem rechten Maustaste belegt ist. Wenn dieser Knopf gedrückt wird wird sie verbessert. Das Verbessern kostet Münzen, die für geflogene Distanz erhalten werden.");
 		
-		swordButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*2),200,20,swordButtonPressed,swordButtonNeutral);
-		spearButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*3),200,20,spearButtonPressed,spearButtonNeutral);
-	    grapplingButton		= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*4),200,20,grapplingButtonPressed,grapplingButtonNeutral);
+		swordButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*2),200,20,swordButtonPressed,swordButtonNeutral,"Mit dem Schwert stößt sich der Spieler ab. Wähle es aus, indem du mit der Maustaste, mit der du es verwenden willst auf diesen Knopf drückst.");
+		spearButton			= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*3),200,20,spearButtonPressed,spearButtonNeutral,"Mit dem Speer stößt sich der Spieler ab. Der Angriffsbereich ist kleiner, aber das Abstoßen stärker. Wähle ihn aus, indem du mit der Maustaste, mit der du ihn verwenden willst auf diesen Knopf drückst.");
+	    grapplingButton		= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*4),200,20,grapplingButtonPressed,grapplingButtonNeutral,"Der Enterhaken wird zum heranziehen an den Gegner genutzt. Wähle ihn aus, indem du mit der Maustaste, mit der du ihn verwenden willst auf diesen Knopf drückst.");
 	    //staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral); //Nicht mehr verwendet, weil zu schwer zu steuern
-		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
+		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral,"Das Schwungseil wird zum Schwingen an Gegnern verwendet. Halte dazu die Maustaste Gedrückt. Wähle es aus, indem du mit der Maustaste, mit der du es verwenden willst auf diesen Knopf drückst.");
 
 		endscreenShopButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()),200,20,schwungSeilButtonPressed,schwungSeilButtonNeutral);
 		//array für einfacheren hover effekt
@@ -492,12 +491,15 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseMoved(MouseEvent e) {//für hovern
 		mausPos= new Vector2(e).toCoordinate();
 		pointingJoint.setPointingPosition(mausPos);
-		for(Button button : buttons)
+
+		for(Button button : buttons) {
 			if (button.getHitbox().collides(mausPos)) {
-				button.rotate(Math.PI/32);
-			}else{
+				button.rotate(Math.PI / 32);
+				erklaerstring = button.getAusgabe();
+			} else {
 				button.rotate(0);
 			}
+		}
 		if(currentScreen.equals("shop")){
 			//mausZeiger.setPosition(mausPos);
 			mausZeiger.moveJoint(new Transform(mausPos),2);
@@ -603,16 +605,24 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	rightUpgradeButton.paintMe(g2d);
 
         	g.drawString(("Level: "+leftWeapon.getLevel()),(int) leftUpgradeButton.getPosition().x(),(int) leftUpgradeButton.getPosition().y()+20);
+			if(leftWeapon.getNextPrice()==-1)g.drawString("maximales Level erreicht",(int) leftUpgradeButton.getPosition().x()+70,(int) leftUpgradeButton.getPosition().y()+20);
+			else g.drawString(("Verbesserungskosten: "+leftWeapon.getNextPrice()),(int) leftUpgradeButton.getPosition().x()+70,(int) leftUpgradeButton.getPosition().y()+20);
+
         	g.drawString(("Level: "+rightWeapon.getLevel()),(int) rightUpgradeButton.getPosition().x(),(int) rightUpgradeButton.getPosition().y()+20);
+			if(rightWeapon.getNextPrice()==-1)g.drawString("maximales Level erreicht",(int) rightUpgradeButton.getPosition().x()+70,(int) rightUpgradeButton.getPosition().y()+20);
+			else g.drawString(("Verbesserungskosten: "+rightWeapon.getNextPrice()),(int) rightUpgradeButton.getPosition().x()+70,(int) rightUpgradeButton.getPosition().y()+20);
 
 
-        	swordButton.paintMe(g2d);
+			swordButton.paintMe(g2d);
         	spearButton.paintMe(g2d);
         	grapplingButton.paintMe(g2d);
         	//staubsaugerButton.paintMe(g2d); nicht mehr verwendet
         	schwungSeilButton.paintMe(g2d);
 
 			mausZeiger.paintMe(g2d);
+
+			g2d.drawString(erklaerstring,(int) screenWidth/8, (int) screenHeight/10*9);
+
 			g2d.dispose();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
         }
     }
@@ -699,16 +709,19 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     				leftUpgradeButton.setneutral(swordButton.getneutral());
     				leftUpgradeButton.setpressed(swordButton.getpressed());
     				leftWeapon=sword;
+					leftUpgradeButton.refresh();
     			}
     			if(spearButton.press(mouseScreenPos)) {
     				leftUpgradeButton.setneutral(spearButton.getneutral());
     				leftUpgradeButton.setpressed(spearButton.getpressed());
     				leftWeapon = spear;
+					leftUpgradeButton.refresh();
     			}
     			if(grapplingButton.press(mouseScreenPos)) {
     				leftUpgradeButton.setneutral(grapplingButton.getneutral());
     				leftUpgradeButton.setpressed(grapplingButton.getpressed());
     				leftWeapon = grapple;
+					leftUpgradeButton.refresh();
     			}
     		//	if(staubsaugerButton.press(mouseScreenPos)) {
     		//		leftUpgradeButton.setneutral(staubsaugerButton.getneutral());
@@ -719,6 +732,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     				leftUpgradeButton.setneutral(schwungSeilButton.getneutral());
     				leftUpgradeButton.setpressed(schwungSeilButton.getpressed());
     				leftWeapon = schwungSeil;
+					leftUpgradeButton.refresh();
     			}
     		}
     		if(arg0.getButton()==3) { //rechtsklick
@@ -726,16 +740,19 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     				rightUpgradeButton.setneutral(swordButton.getneutral());
     				rightUpgradeButton.setpressed(swordButton.getpressed());
     				rightWeapon=sword;
+					rightUpgradeButton.refresh();
     			}
     			if(spearButton.press(mouseScreenPos)) {
     				rightUpgradeButton.setneutral(spearButton.getneutral());
     				rightUpgradeButton.setpressed(spearButton.getpressed());
     				rightWeapon = spear;
+					rightUpgradeButton.refresh();
     			}
     			if(grapplingButton.press(mouseScreenPos)) {
     				rightUpgradeButton.setneutral(grapplingButton.getneutral());
     				rightUpgradeButton.setpressed(grapplingButton.getpressed());
     				rightWeapon = grapple;
+					rightUpgradeButton.refresh();
     			}
     		//	if(staubsaugerButton.press(mouseScreenPos)) {
     		//		rightUpgradeButton.setneutral(staubsaugerButton.getneutral());
@@ -746,13 +763,13 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     				rightUpgradeButton.setneutral(schwungSeilButton.getneutral());
     				rightUpgradeButton.setpressed(schwungSeilButton.getpressed());
     				rightWeapon = schwungSeil;
+					rightUpgradeButton.refresh();
     			}
     		}
     	}
 
     	
     }
-
 
     @Override
     public void mouseReleased(MouseEvent arg0){ // wird aufgerufen, wenn die Maustaste losgelassen wird

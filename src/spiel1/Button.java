@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.RescaleOp;
 
 public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe erstellen lassen
+    private String ausgabe;
 	private BufferedImage currentImage; // die bilder für die Knöpfe
     private BufferedImage pressedImage;
     private BufferedImage neutralImage;
@@ -19,6 +20,15 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
         this.pressedImage = pressed;
         this.neutralImage = neutral;
         this.currentImage = neutral;
+        ausgabe = "";
+    }
+
+    public Button(Vector2 midpoint, double width, double height, BufferedImage pressed, BufferedImage neutral, String ausgabe) { // Erstellen des Knopfes mit zwei Bildern
+        super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height); //Erstellt das Gameobjekt des Buttons. Die berechnung macht den mittelpunkt zum punkt links oben
+        this.pressedImage = pressed;
+        this.neutralImage = neutral;
+        this.currentImage = neutral;
+        this.ausgabe = ausgabe;
     }
 
     public Button(Vector2 midpoint, double width, double height, BufferedImage neutral) { // Macht das gedrückte bild automatisch dunkler
@@ -26,6 +36,7 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
         this.pressedImage = darkenImage(neutral, 0.5f);
         this.neutralImage = neutral;
         this.currentImage = neutral;
+        ausgabe = "";
     }
 
     private BufferedImage darkenImage(BufferedImage image, float helligkeit) {
@@ -48,7 +59,14 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
     	pressedImage = pressed;
     }
     public void setneutral(BufferedImage neutral) { neutralImage = neutral; }
-    
+
+    /**
+     * setzt das aktuelle bild auf das neutrale bild
+     */
+    public void refresh(){
+        currentImage=neutralImage;
+    }
+
     public boolean press(Vector2 mouseWorld) { // die methode die aufgerufen um zu prüfen Knopf gedrückt wird
 
     	if(getHitbox().collides(mouseWorld.x(),mouseWorld.y())) {// fragt in der Hitbox ab ob der button getroffen wird
@@ -86,6 +104,10 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
      */
     public void rotate(double angle){
         visualAngle=angle;
+    }
+
+    public String getAusgabe(){
+        return ausgabe;
     }
 
     @Override
