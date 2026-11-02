@@ -2,8 +2,10 @@ package spiel1;
 
 import java.awt.*;
 
-public class Enemy extends GameObject {//methode um gegner zu erzeugen
+public class Enemy extends GameObject {
+
 private int health;
+
 	public Enemy(Transform transform, double width, double height,int health){
 		super(transform, width, height);//für erstellung von fliegende Gegner transform
 		this.health = health;
@@ -35,10 +37,5 @@ private int health;
 	        (int) width,
 	        (int) height
 	    );
-
-//		hitbox= getHitbox(64);
-//		for(Vector2 hitbox:hitbox){
-//			hitbox.draw(g,Color.green);
-//		}
 	}
 }
