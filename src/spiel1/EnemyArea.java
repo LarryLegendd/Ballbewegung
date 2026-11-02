@@ -4,15 +4,12 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
-    //TODO size korrekt einfügen, um performance zu verbessern/testen was am besten ist
 
-   // Vector2 size; //temp
     int xpos;
     int ypos;
     ArrayList<Enemy> enemies = new ArrayList<>();
 
     public EnemyArea(int xpos){
-      //  this.size=size; //temp
         this.xpos=xpos;
     }
 
