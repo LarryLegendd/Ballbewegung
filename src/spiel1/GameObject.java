@@ -3,12 +3,11 @@ package spiel1;
 public abstract class GameObject{//Die oberklasse für gameobjekte
     
     protected double width;
-    protected double height;
-    //private Vector2 speed;
+    protected double height;
     private RectHitbox hitbox;
     private Transform transform;
     
-    public GameObject(Transform transform, double width, double height) {//speed wird automatisch 0 quelle: https://stackoverflow.com/questions/1182153/constructor-overloading-in-java-best-practice
+    public GameObject(Transform transform, double width, double height) {
     	this.transform = transform;
         this.width = width;
         this.height = height;
