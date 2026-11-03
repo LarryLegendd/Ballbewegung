@@ -33,6 +33,7 @@ public Button(Vector2 midpoint, double width, double height, BufferedImage press
         ausgabe = "";//keine Augabe
     }
 		
+// Konstruktor Overloading https://stackoverflow.com/questions/1182153/constructor-overloading-in-java-best-practice
 /**	Konstruktor für knöpfe mit Text (für die Erklärung)
 */
     public Button(Vector2 midpoint, double width, double height, BufferedImage pressed, BufferedImage neutral, String ausgabe) { // Erstellen des Knopfes mit zwei Bildern
