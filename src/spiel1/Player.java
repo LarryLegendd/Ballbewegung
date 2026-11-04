@@ -13,15 +13,16 @@ public class Player extends Joint{
 
 	public Player(Transform transform, double width, double height,Joint[] connectedJoints){
 		super(transform, width, height, connectedJoints);//der Spieler wird fliegend erzeugt
-		startSpeed=transform.speed;
+		startSpeed=transform.speed;// Die Erstellgeschwindigkeit wird gespeichert um beim zurücksetzen auf den Startwert festgelegt zu werden
 	}
 	
 	public void reset() {
 		setSpeed(startSpeed);//springt nach oben
-		setPosition(new Vector2(10,Spielfeld.screenHeight/2));
-		stopSwing();
+		setPosition(new Vector2(10,Spielfeld.screenHeight/2));//Positionsreset
+		stopSwing();//Schwungstatus zurücksetzen
 	}
 	
+Methoden um den Spieler in den Schwungzustand zu versetzen, in dem die Gravitation in Schwungseil berechnet wird
 	public void stopSwing() {
 		isSwinging = false;
 	}
@@ -30,11 +31,9 @@ public class Player extends Joint{
 	}
 	
 	@Override
-	public void moveGameObject(double time) {
-		// temp if(transform.speed.length()<.12)transform.speed=new Vector2(0,0);//behandelt ein edge case hauptsächlich beim schwingen das die richtung sich nicht ändert ganz vllt temp wenn die schwungberechnung geändert wird
-		
+	public void moveGameObject(double time) {	
     	if(isSwinging == false) {
-    		getTransform().speed= getTransform().speed.multiply((1-(0.02*time)));//normaler Luftwiderstand
+    		getTransform().speed= getTransform().speed.multiply((1-(0.02*time)));//normaler Luftwiderstand (2% der Geschwindigkeit wird abgezogen)
 			getTransform().speed= getTransform().speed.add(new Vector2(0,-.13).multiply(time));//Gravitation nur wenn nicht schwingt (beim schwingen seperat behandelt)
     	}else {
 			getTransform().speed= getTransform().speed.multiply((1-(0.005*time)));//Luftwiderstand wird verringert wenn der spieler schwingt(fühlt sich besser an)
@@ -49,10 +48,10 @@ public class Player extends Joint{
 	    Vector2 jPos = getTransform().position.toJPanel();
 	    g2d.drawOval(
 	        (int) (jPos.x()- width/2),
-	        (int) (jPos.y() - height/2), // nach oben verschieben
+	        (int) (jPos.y() - height/2), // verschieben, sodass der mittelpunkt des gezeichneten Kreises auf der Spielerposition ist
 	        (int) width,
 	        (int) height
 	    );
-		for(Joint joint : connectedJoints) joint.paintMe(g2d);
+		for(Joint joint : connectedJoints) joint.paintMe(g2d); //zeichnen der anliegenden Joints
 	}
 }
