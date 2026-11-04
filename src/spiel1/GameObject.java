@@ -8,11 +8,11 @@ public abstract class GameObject{//Die oberklasse für gameobjekte
     private Transform transform;
     
     public GameObject(Transform transform, double width, double height) {
-    	this.transform = transform;
-        this.width = width;
-        this.height = height;
-       
-        hitbox = new RectHitbox(this);
+					this.transform = transform;
+       	this.width = width;
+       	this.height = height;
+
+       	hitbox = new RectHitbox(this);//Rechteckige Hitbox mit den Maßen des Gameobjects erstellen.
     }
 
 
@@ -30,7 +30,7 @@ public abstract class GameObject{//Die oberklasse für gameobjekte
 
     public void setPosition(Vector2 objectPosition) {
         this.transform.position = objectPosition;
-        hitbox.setPosition(objectPosition);
+        hitbox.setPosition(objectPosition);// auch hitboxposition aktualisieren
     }
 
     public double getWidth() {
