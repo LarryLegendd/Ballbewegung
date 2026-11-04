@@ -38,8 +38,8 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	
 	private double basisBreite = levelArr[0][0]; // Breite der Basis vom Dreieck, das geschossen wird
 	private double hoehe = levelArr[0][1]; // Die Hoehe vom Dreieck, das geschossen wird
-	private double grappleKnockback = levelArr[0][2];
-	private int shoottime=(int)levelArr[0][4];
+	private double grappleKnockback = levelArr[0][2];// Wie stark sich der Spieler an den gegner ranzieht
+	private int shoottime=(int)levelArr[0][4];// Wie lang ein Schuss dauert
 	private int currentshoottime;
 	private double shootspeed=20;
 	
@@ -56,9 +56,10 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		this.cameraController = cameraController;
 	}
 	
-	
+	/** Kollisionsprüfung eines Gegners
+*/
 	public boolean shoot(Enemy enemy) {
-        //fürs zeichen 
+        //fürs zeichen position der Grapplinghook Ecken merken
   		letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),transform.rotation);//links unten
   		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
   		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
@@ -87,6 +88,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
       		return false;
       	}
 	}
+
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){// der Listener ist gebraucht,
 		// weil der spieler nicht direkt beim losschiessen rückstoß kriegt, sondern erst wenn die Grappinghook geflogen
@@ -105,6 +107,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		currentshoottime =shoottime;
 		show();//nicht mit showTimer, weil die Zeit bei einem Treffer unterschiedlich lang ist
 		System.out.println("show");
+
 		Timer shootTimer = new Timer(13, () -> {//schiesst über längere zeit
 			transform.position = transform.position.add(speed);//Der enterhaken bewegt sich
 
@@ -158,12 +161,12 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 			Vector2 JSpitze=letzteSpitze.toJPanel();
 			Vector2 Jmidpoint=midpoint.toJPanel();
 			Vector2 Jplayerpos=playertransform.position.toJPanel();
-//			System.out.println(letzteSpitze+" Lastpeek");
-//			System.out.println(hitbox.getSpitze()+" spitze");
-//			System.out.println(hitbox.getPosition()+" position");
+
+			//Dreieck
 			g.drawLine((int)JBasis1.x(),(int)JBasis1.y(), (int) JSpitze.x(), (int) JSpitze.y());
 			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JSpitze.x(), (int) JSpitze.y());
 			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JBasis1.x(), (int) JBasis1.y());
+		// Verbindungslinie
 			g.drawLine((int)Jmidpoint.x(),(int)Jmidpoint.y(), (int) Jplayerpos.x(), (int) Jplayerpos.y());
 		}
 	}
