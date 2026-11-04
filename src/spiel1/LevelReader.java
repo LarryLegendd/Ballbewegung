@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+// Nicht verwendet
 public class LevelReader {
 	private File f;
 	private String filePath;
