@@ -16,13 +16,14 @@ public class TimerManager {
             timersToAdd.add(timer);//Über buffer liste, da wenn ein timer beim enden eines anderen timers erstellt wird der neue timer während des durchlaufens der arraylist hinzugefügt werdenn würde.
         }
     }
-
+/**Methode zum Aktualisieren der Timer Liste
+*/
     public static void update(double deltaTime){
-        timers.addAll(timersToAdd);
-        timersToAdd.clear();
+        timers.addAll(timersToAdd);//neue Timer hinzufügen
+        timersToAdd.clear();//bufferliste leeren
         for(Timer timer: timers){
             if(!timer.isFinished())timer.update(deltaTime);
-        }
-        timers.removeIf(Timer :: isFinished);
+        }//laufende timer ticken lassen
+        timers.removeIf(Timer :: isFinished);//fertige timer löschen
     }
 }
