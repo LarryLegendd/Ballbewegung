@@ -1,30 +1,29 @@
 package spiel1;
 
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 
-public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht mann kann toleranzwinkel in dreieck und rechteck zu basisbreite hacken aber ist das sinnvoll? oberklasse macht keinen sinn da verschiedene arten von hitbox(siehe dreieck) ERgebnis:macht sinn weil levelsystem
-	//rendern
-	private boolean isShown=false; //private, weil es dann zentral steuerbar ist.
+public abstract class Weapon {
 
-	private static boolean cooldown;
-	protected Transform playertransform;
 	protected int level;
+
+	protected Transform playertransform;
+
+	//rendern
+	private boolean isShown=false;
 	private final Timer showTimer =new Timer(500,()->{
 		isShown = false;
 		return false;//beenden vom Timer
 	});
 
-
-
+	private static boolean cooldown;
 	private Timer cooldownTimer = new Timer(0,()->{return false;});//um nullpointer zu verhindern einen temporären timer erzeugen
 
 	public void stopCooldownTimer() {
 		cooldownTimer.setFinished();
 	}
+
 	/**
 	 * startet für eine bestimmte Zeit einen Cooldown
 	 */
@@ -36,6 +35,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	    });
 		TimerManager.addTimer(cooldownTimer);
 	}
+
 	/**
 	 * startet einen Cooldown auf unbestimmte Zeit
 	 */
@@ -57,7 +57,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	 * Zeigt für 0,5 Sekunden das Objekt an, indem es isShown auf true setzt.
 	 */
 	protected void showTimer() {
-		isShown = true;//vllt show(time)
+		isShown = true;
 		TimerManager.addTimer(showTimer);
 	}
 
@@ -84,7 +84,9 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		isShown = false;
 	}
 
-	/**Es wird um eine Attacke einer Waffe auszuführen immer die attack Methode in der Oberklasse Weapon aufgerufen. Diese attack Methode prüft den Cooldown und wenn die Waffe attackieren darf wird die abstrakte hit Methode Aufgerufen, die von der eigentlichen Waffe ausgeführt wird.
+	/**Es wird um eine Attacke einer Waffe auszuführen immer die attack Methode in der Oberklasse Weapon aufgerufen.
+	 * Diese attack Methode prüft den Cooldown und wenn die Waffe attackieren darf wird die abstrakte hit Methode aufgerufen,
+	 * die von der eigentlichen Waffe überschrieben wird.
 	 *
 	 * @param mauspos
 	 * @param enemies
@@ -101,6 +103,7 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 	 * angreifen in der unterklasse
 	 */
 	protected abstract void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener);
+
 	/**
 	 * beim schwungseil um das schwingen zu beenden
 	 */
@@ -108,12 +111,12 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 
 
 	//==========Level===============
-
 	/**
 	 * preis ausgeben
 	 * -1 wenn das levelarray zu ende ist
 	 */
 	public abstract double getNextPrice();//muss double sein wegen levelarray
+
 	/**
 	 * verbessern
 	 * returnt den preis
@@ -131,10 +134,12 @@ public abstract class Weapon {//Prozess: entscheiden ob oberklasse sinn macht ma
 		}
 		return 0;
 	}
+
 	/**
-	 * Werte, wie Reichweite oder Rückstoß der aus dem levelarray holen und als werte setzen
+	 * Werte, wie Reichweite oder Rückstoß aus dem levelarray holen und als werte setzen
 	 */
 	protected abstract void updateLevel(int level);
+
 	public  int getLevel() {
 		return level;
 	}

@@ -22,7 +22,7 @@ public class Player extends Joint{
 		stopSwing();//Schwungstatus zurücksetzen
 	}
 	
-Methoden um den Spieler in den Schwungzustand zu versetzen, in dem die Gravitation in Schwungseil berechnet wird
+//	Methoden um den Spieler in den Schwungzustand zu versetzen, in dem die Gravitation in Schwungseil berechnet wird
 	public void stopSwing() {
 		isSwinging = false;
 	}
@@ -31,7 +31,8 @@ Methoden um den Spieler in den Schwungzustand zu versetzen, in dem die Gravitati
 	}
 	
 	@Override
-	public void moveGameObject(double time) {	
+	public void moveGameObject(double time) {
+	
     	if(isSwinging == false) {
     		getTransform().speed= getTransform().speed.multiply((1-(0.02*time)));//normaler Luftwiderstand (2% der Geschwindigkeit wird abgezogen)
 			getTransform().speed= getTransform().speed.add(new Vector2(0,-.13).multiply(time));//Gravitation nur wenn nicht schwingt (beim schwingen seperat behandelt)

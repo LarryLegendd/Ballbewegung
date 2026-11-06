@@ -40,14 +40,14 @@ public record Vector2(double x,double y) {
 		//this zum ursprung machen
 		P2 = P2.makeLocal(this);
 		P3 = P3.makeLocal(this);
-
-		return ((P2.angle()-P3.angle())+(Math.PI*2))%(Math.PI*2);//TODO das sieht falsch aus
+		// Winkel voneinander Abziehen und 	negative winkel behandeln, indem 2pi addiert wird und modulo 2pi gerechnet hat. beide operationen verändern den betrag des Winkels nicht, schließen aber negative winkel aus.
+		return ((P2.angle()-P3.angle())	+	(Math.PI*2))%(Math.PI*2);
 	}
 		
-	public Vector2 normalize() {//Quelle: https://ceur-ws.org/Vol-1337/paper28.pdf dadurch bin ich auf die idee von normalize gekommen
+	public Vector2 normalize() {//Quelle: https://ceur-ws.org/Vol-1337/paper28.pdf dadurch bin ich auf die idee von normalize gekommen S.167 oben
 		double angle = angle();		//polar machen
 		
-	    double x = Math.cos(angle);//wieder kartesisch machen
+	    double x = Math.cos(angle);//wieder kartesisch machen, aber ohne die Länge zu berücksichtigen
 	    double y = Math.sin(angle);
 
 	    return new Vector2(x,y);
@@ -108,67 +108,108 @@ public record Vector2(double x,double y) {
 
 	/**Die Lerp Methode findet einen Punkt der auf einem Teil der Strecke zwischen zweier Punkte this und v liegt.
 	 *
-	 * @param v
-	 * @param x
+	 * @param v zweier Vektor
+	 * @param x Teilungsverhältnis
 	 */
 	public Vector2 lerp(Vector2 v, double x) {//x soll zwischen 0 und 1 sein wenn man z.b. 3/5 macht muss man aufpassen das man das castet weil sonst auf 0 für ein int gerundet wird
 		//Die Lineare Interpolation wird umgesetzt, indem zuerst der Vektor thisV zwischen zwischen den beiden Punkten
 		// gebildet wird. Dieser wird dann mit faktor x multipliziert, hierbei sollte x zwischen 0 und 1 sein um ein
-		// Ergebnis zu erhalten das zwischen den Punkten liegt. Anschließend wird Der erhaltene vektor auf den Punkt this
+		// Ergebnis zu erhalten das zwischen den Punkten liegt. Anschließend wird der erhaltene vektor auf den Punkt this
 		// addiert um das Endergebnis zu erhalten.
 		return this.add(v.subtract(this).multiply(x));
 	}
-	
-	public Vector2 lerpImHalbkreis(Vector2 v, Vector2 center, double x) {//sehr skurrile klasse
-		
-		double winkelUnterschied = Math.abs(v.subtract(center).angle()-subtract(center).angle());
-		double winkelUnterschied2 = Math.abs(v.subtract(center).angle()-subtract(center).angle()+(2*Math.PI));
-		double winkelUnterschied3 = Math.abs(v.subtract(center).angle()+(2*Math.PI)-subtract(center).angle());
-		if(winkelUnterschied>winkelUnterschied2)winkelUnterschied = winkelUnterschied2;
-		if(winkelUnterschied>winkelUnterschied3)winkelUnterschied = winkelUnterschied3;
-		
-		//lokal machen dann drehen dann global machen
-		return subtract(center).rotate(winkelUnterschied*x).add(center);
+
+	/**
+	 * Findet einen Punkt der auf einem Teil der Strecke zwischen zweier Punkte this und v liegt. Die Strecke ist dabei Kreisförmig.
+	 * Der Mittelpunkt des Kreises ist center.
+	 *
+	 * @param v
+	 * @param center
+	 * @param x
+	 */
+	public Vector2 lerpImHalbkreis(Vector2 v, Vector2 center, double x) {
+
+		//findet den Winkel zwischen den beiden Vektoren
+		double winkelUnterschied = center.angle(v,this);
+
+		//den Ursprung auf den Mittelpunkt des kreises setzen,		dann drehen von this 		um den gefundenen Winkel (so würde es den Vektor v ausgeben) multipliziert mit dem Teilungsverhältnis		dann global machen
+		return makeLocal(center).									rotate(					winkelUnterschied*x).					makeGlobal(center);
 		
 	}
-	
+
+	/**
+	 * @param v zweiter Vektor
+	 * @return Distanz zu v
+	 */
 	public double distanceTo(Vector2 v) {
 		return Math.abs(this.subtract(v).length());
 	}
 
-	public Vector2 makeGlobal(Vector2 abhaengig) {//nur add methode aber leichter zu verstehen
+	/**
+	 * Macht makeLocal(Vector2 abhaengig) rückgängig
+	 * @param abhaengig
+	 * @return
+	 */
+	public Vector2 makeGlobal(Vector2 abhaengig) {//nur add-Methode aber macht den Code lesbarer
 		return add(abhaengig);
 	}
-	
+
+	/**
+	 * Diese Methode macht  makeLocal(Vector2 abhaengig,double andererAngle) rückgängig
+	 * @param abhaengig
+	 * @param EigenerAngle
+	 * @return
+	 */
 	public Vector2 makeGlobal(Vector2 abhaengig, double EigenerAngle) {
 		return rotate(EigenerAngle).add(abhaengig);
 	}
-	
-	public Vector2 makeLocal(Vector2 abhaengig) {//nur subtract aber macht mehr sinn
+
+	/**
+	 * setzt den Ursprung auf abhaengig.
+	 * @param abhaengig
+	 * @return den Punkt this in diesem neuen Koordinatensystem.
+	 */
+	public Vector2 makeLocal(Vector2 abhaengig) {//nur subtract aber macht den Code lesbarer
 		return subtract(abhaengig);
 	}
+
+	/**
+	 * Diese Methode geht davon aus, dass abhaengig ein punkt ist und zusätzlich eine Drehrichtung hat.
+	 * Dies ist zum Beispiel bei einem Eckpunkt eines gedrehten Quadrats der Fall. Diese Methode geht davon aus, das this Lokal zu abhaengig gemacht werden soll und um den winkel abhaengigs, EigenerAngle, gedreht werden soll.
+	 * Im Beispiel des Quadrates wäre, wenn diese Methode bei allen Ecken relativ zur Ausgangsecke durchgeführt wurde das quadrat nicht mehr gedreht und die Ausgangsecke wäre am Ursprung.
+	 */
 	public Vector2 makeLocal(Vector2 abhaengig,double andererAngle) {
 		return subtract(abhaengig).rotate(-andererAngle);
 	}
-	
-	private Vector2 toJP() {//JPanels haben y achse nach unten
+
+
+	private Vector2 toJP() {//JPanels haben die y achse nach unten. diese methode macht wandelt einen Punkt in das JPanel Koordiantensystem um
 		return new Vector2(x,Spielfeld.screenHeight-y);
 	}
 	
-	public Vector2 toJPanel() {//JPanels haben y achse nach unten
+	public Vector2 toJPanel() {//JPanels haben y achse nach unten. Diese methode macht das rückgängig und berücksichtigt dabei die Kameraposition, sodass der ursprung bei der Kameraposition ist.
 		return makeLocal(Spielfeld.cameraPos).toJP();
 	}
 	
-	public Vector2 toCoordinate() {// Wandelt von JPanel zu Koordianten um
+	public Vector2 toCoordinate() {// Wandelt von JPanel zu Koordianten um unter berücksichtigung von der Kameraposition
 	    Vector2 v = new Vector2(x, Spielfeld.screenHeight - y);
 	    return  v.makeGlobal(Spielfeld.cameraPos);
 	}
-	
+
+	/**
+	 * Zeichnet den punkt
+	 * @param g
+	 */
 	public void draw(Graphics g) {
 		g.setColor(Color.RED);
 		g.drawOval(((int) x)-1, ((int) y)-1, 2, 2);
 		g.setColor(Color.BLACK);
 	}
+
+	/**
+	 * Zeichnet den punkt mit einer Farbe
+	 * @param g
+	 */
 	public void draw(Graphics g, Color c) {
 		g.setColor(c);
 		g.drawOval(((int) x)-1, ((int) y)-1, 2, 2);

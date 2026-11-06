@@ -10,10 +10,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.RescaleOp;
 
 public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe erstellen lassen
-    private String ausgabe;
 
-		// die bilder für die Knöpfe
-			private BufferedImage currentImage; 
+    // die bilder für die Knöpfe
+    private BufferedImage currentImage;
     private BufferedImage pressedImage;
     private BufferedImage neutralImage;
 
@@ -26,13 +25,15 @@ public class Button extends GameObject {    // Eine Klasse mit der sich knöpfe 
 */
 public Button(Vector2 midpoint, double width, double height, BufferedImage pressed, BufferedImage neutral) { // Erstellen des Knopfes mit zwei Bildern
         super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height); //Erstellt das Gameobjekt des Buttons. Die berechnung macht den mittelpunkt zum punkt links oben
-//				Bilder für die Knöpfe setzen        
-					this.pressedImage = pressed;
+
+//		Bilder für die Knöpfe setzen
+        this.pressedImage = pressed;
         this.neutralImage = neutral;
         this.currentImage = neutral;
         ausgabe = "";//keine Augabe
     }
-		
+
+		
 // Konstruktor Overloading https://stackoverflow.com/questions/1182153/constructor-overloading-in-java-best-practice
 /**	Konstruktor für knöpfe mit Text (für die Erklärung)
 */
@@ -44,8 +45,8 @@ public Button(Vector2 midpoint, double width, double height, BufferedImage press
         this.ausgabe = ausgabe;
     }
 
-			/**Knöpfe mit nur einem Bild. das gedrückte ist das gleiche in dunkler
-			*/
+    /**Knöpfe mit nur einem Bild. das gedrückte ist das gleiche in dunkler
+	*/
     public Button(Vector2 midpoint, double width, double height, BufferedImage neutral) { // Macht das gedrückte bild automatisch dunkler
         super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height);//Erstellt das Gameobjekt des Buttons. Die berechnung macht den mittelpunkt zum punkt links oben
         this.pressedImage = darkenImage(neutral, 0.5f);
@@ -82,7 +83,8 @@ public Button(Vector2 midpoint, double width, double height, BufferedImage press
         currentImage=neutralImage;
     }
 
-		/**Methode die zurückgibst ob ein Punkt den Knopf drückt. Wenn der Knopf getroffen wird, verändert sich sein Bild
+
+    /**Methode die zurückgibt, ob ein Punkt den Knopf drückt. Wenn der Knopf getroffen wird, verändert sich sein Bild
 */
     public boolean press(Vector2 mouseWorld) { // die methode die aufgerufen um zu prüfen Knopf gedrückt wird
 
@@ -95,7 +97,7 @@ public Button(Vector2 midpoint, double width, double height, BufferedImage press
     			return false;
     		}
     }
-    /**erstellt einen Timer um das Bild des Knopfes zurückzusetzen
+    /**erstellt einen Timer, um das Bild des Knopfes zurückzusetzen
 */
     public void buttonSpringBack(int timeInMs) { 
     	Timer timer = new Timer(timeInMs, new ActionListener() {
@@ -109,7 +111,8 @@ public Button(Vector2 midpoint, double width, double height, BufferedImage press
         timer.setRepeats(false); // nur einmal ausführen
         timer.start();
     }
-			/** lässt den Knopf fallen, um den Knopf am Endbildschirm springen zu lassen 
+
+    /** lässt den Knopf fallen, um den Knopf am Endbildschirm springen zu lassen
 */
     @Override
     public void moveGameObject(double time){//für buttonjump
@@ -135,9 +138,10 @@ public Button(Vector2 midpoint, double width, double height, BufferedImage press
         g2d.rotate(-visualAngle);
         g2d.translate(-getPosition().addX(width/2).toJPanel().x(),-getPosition().addY(height/2).toJPanel().y());
     	Vector2 jPos = getTransform().position.toJPanel(); //wandelt die position in das von JPanel benutzte format um
-
+
+
         g2d.drawImage(currentImage, (int) jPos.x(), (int) jPos.y(), //position ecke links oben
-                (int) (jPos.x()+getWidth()), (int)(jPos.y()+getHeight()),//position ecke rechts unten (das sieht falsch aus aber man muss height addieren weil JPanel -y nach oben hat)
+                (int) (jPos.x()+getWidth()), (int)(jPos.y()+getHeight()),//position ecke rechts unten (das sieht falsch aus aber man muss height addieren, weil JPanel -y nach oben hat)
                 0, 0,//erste ecke vom bild, eine ecke vom bild ist immer 0 0
                 currentImage.getWidth(), currentImage.getHeight(),// zweite ecke vom bild ist die 0+Breite, 0+Höhe
                 null);// kein imageobserver
