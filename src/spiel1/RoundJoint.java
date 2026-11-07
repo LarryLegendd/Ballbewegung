@@ -18,6 +18,6 @@ public class RoundJoint extends Joint{
                 (int) size,
                 (int) size
         );
-        for(Joint joint : connectedJoints)joint.paintMe(g2d);//andere joints zeichnenx
+        for(Joint joint : connectedJoints)joint.paintMe(g2d);//andere joints zeichnen
     }
 }

@@ -39,7 +39,8 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	private double basisBreite = levelArr[0][0]; // Breite der Basis vom Dreieck, das geschossen wird
 	private double hoehe = levelArr[0][1]; // Die Hoehe vom Dreieck, das geschossen wird
 	private double grappleKnockback = levelArr[0][2];// Wie stark sich der Spieler an den gegner ranzieht
-	private int shoottime=(int)levelArr[0][4];// Wie lang ein Schuss dauert
+	private int shoottime=(int)levelArr[0][4];
+// Wie lang ein Schuss dauert
 	private int currentshoottime;
 	private double shootspeed=20;
 	
@@ -124,7 +125,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 				if (currentshoottime <= 0) {//reset wenn timer ausgelaufen oder getroffen
 					listener.onMiss();//kein SpielerKnockback
 					currentshoottime = shoottime;
-					peneltyCooldown(30);
+					penaltyCooldown(30);
 					if(isShown())showTimer();//beendet nach ein bischen extrazeit den timer
 					System.out.println("Schuss vorbei");
 					return false;

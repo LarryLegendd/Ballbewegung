@@ -3,7 +3,6 @@ package spiel1;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import javax.swing.Timer;
 /**
  * nicht Verwendete Waffe, weil zu schwer zu steuern
 */
@@ -72,7 +71,7 @@ public class Staubsauger extends Weapon{
 			if(hit) {
 				show();//beendet nach ein bischen extrazeit den timer
 			}else{
-                peneltyCooldown(3);
+                penaltyCooldown(3);
                 show();//extrazeit fürs zeichnen
             }
 

@@ -27,7 +27,7 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
 
     public void update(){//aktualisiert positionen und lebensstatus der gegner
         for(Enemy enemy : enemies) enemy.moveGameObject(Spielfeld.getTimeMultiplyer());
-        enemies.removeIf(Enemy::isDead);
+        enemies.removeIf(Enemy::isDead);//https://stackoverflow.com/questions/13205773/how-to-destroy-an-object-in-java
     }
 
     public ArrayList<Enemy> getEnemies() {

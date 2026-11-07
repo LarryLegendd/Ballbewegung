@@ -96,8 +96,8 @@ public class RectHitbox extends Hitbox {
 		
 		@Override
 		public Vector2[] toPoints(int hitboxAccuracy) { //gibt Punkte auf der außenkante der Hitbox an
-			if(hitboxAccuracy<4)hitboxAccuracy=4;
-			Vector2[] hitbox = new Vector2[hitboxAccuracy];
+			if(hitboxAccuracy<4)hitboxAccuracy=4;//untergrenze für Anzahl der Punkte
+			Vector2[] hitbox = new Vector2[hitboxAccuracy];//Array für die punkte
 			//Eckpunkte definieren
 			hitbox[0]=lio.makeGlobal(transform.position, transform.rotation - extradrehwinkel);
 			hitbox[1]=reo.makeGlobal(transform.position, transform.rotation - extradrehwinkel);

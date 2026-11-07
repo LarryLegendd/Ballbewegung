@@ -20,10 +20,6 @@ public class Timer {
         this.event = event;
     }
 
-    public boolean isFinished() {
-        return isFinished;
-    }
-
     public void update(double deltaTime){//zählt timer runter
         time-=deltaTime;
         if(time<=0){
@@ -41,10 +37,14 @@ public class Timer {
     }
 
     /**
-     * beendet den Timer ohne das Event auszuführen
+     * beendet den Timer, ohne das Event auszuführen
      */
     public void setFinished(){
         isFinished= true;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
     }
 
     public void reset(){

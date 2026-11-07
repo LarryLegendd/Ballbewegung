@@ -45,27 +45,23 @@ public class Spear extends Weapon {
 		Vector2 knockback= new Vector2(0,0);
 		showTimer();
 		for(Enemy enemy: enemies) {
-			Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
-			playertransform.rotation = mausdiff.angle();
+			Vector2 mausAbstand = mauspos.makeLocal(playertransform.position);
+			playertransform.rotation = mausAbstand.angle();
 
-
-	//		//rendern neue makeglobal mit winkel das
-	//    	g.drawLine((int)B1.x, (int)B1.y,(int) S.x, (int) S.y);
-	//		g.drawLine((int)B2.x, (int)B2.y,(int) S.x, (int) S.y);
-
-			//fürs zeichen
+			//fürs Zeichen Positionen der Ecken merken
 			letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),playertransform.rotation);//links unten
 			letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),playertransform.rotation);//rechts unten
 			letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),playertransform.rotation);
 
-			if(hitbox.collides(enemy.getHitbox(),64)) {
+			if(hitbox.collides(enemy.getHitbox(),64)) {//kollision
 				enemy.schadenNehmen(1);
-				enemy.addSpeed(mausdiff.normalize().multiply(spearEnemyKnockback));
+				enemy.addSpeed(mausAbstand.normalize().multiply(spearEnemyKnockback));
 
-				knockback = mausdiff.normalize().multiply(spearKnockback).reverse();//das liefert die gegenrichtung.
+				knockback = mausAbstand.normalize().multiply(spearKnockback).reverse();//das liefert die gegenrichtung.
 
 
 				hit =true;
+				break;//für performance sobald ein gegner getroffen wird abbrechen.
 			}
 		}
 		if(hit) {
@@ -74,7 +70,7 @@ public class Spear extends Weapon {
 		}
 		else {
 			listener.onMiss();
-			peneltyCooldown(16);
+			penaltyCooldown(16);
 		}
 	}
 
@@ -83,6 +79,11 @@ public class Spear extends Weapon {
 		if(level+1<levelArr.length)return levelArr[level+1][3];
 		else return -1;
 	}
+
+	/**
+	 * Aktualisiert die werte der waffe aus dem levelarray
+	 * @param level
+	 */
 	@Override
 	protected void updateLevel(int level) {
 		basisBreite = levelArr[level][0];
@@ -94,13 +95,9 @@ public class Spear extends Weapon {
 	@Override
 	public void paintMe(Graphics g) {
 		if(isShown()&& letzteBasis1 != null) {
-			
 			Vector2 JBasis1=letzteBasis1.toJPanel();
 			Vector2 JBasis2=letzteBasis2.toJPanel();
 			Vector2 JSpitze=letzteSpitze.toJPanel();
-//			System.out.println(letzteSpitze+" Lastpeek");
-//			System.out.println(hitbox.getSpitze()+" spitze");
-//			System.out.println(hitbox.getPosition()+" position");
 			g.drawLine((int)JBasis1.x(),(int)JBasis1.y(), (int) JSpitze.x(), (int) JSpitze.y());
 			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JSpitze.x(), (int) JSpitze.y());
 		}

@@ -13,7 +13,7 @@ public class Player extends Joint{
 
 	public Player(Transform transform, double width, double height,Joint[] connectedJoints){
 		super(transform, width, height, connectedJoints);//der Spieler wird fliegend erzeugt
-		startSpeed=transform.speed;// Die Erstellgeschwindigkeit wird gespeichert um beim zurücksetzen auf den Startwert festgelegt zu werden
+		startSpeed=transform.speed;// Die Erstellgeschwindigkeit wird gespeichert, um beim Zurücksetzen auf den Startwert festgelegt zu werden
 	}
 	
 	public void reset() {

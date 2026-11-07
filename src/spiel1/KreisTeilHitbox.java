@@ -16,14 +16,16 @@ public class KreisTeilHitbox extends Hitbox{
 	
 	@Override
 	public Vector2[] toPoints(int hitboxAccuracy) {
-		if(hitboxAccuracy<3)hitboxAccuracy=3;
+		if(hitboxAccuracy<3)hitboxAccuracy=3;//untergrenze für Anzahl der Punkte
 		Vector2[] hitbox = new Vector2[hitboxAccuracy];// Array, in das alles punkte geschrieben werden
 
 // Die Punkte, an denen sich die Linien treffen, aus dem Konstruktor abgelesen
 		hitbox[0]=new Vector2(0,0).makeGlobal(transform.position, transform.rotation);
 		hitbox[1]=new Vector2(range,0).rotate(angle/2).makeGlobal(transform.position, transform.rotation);
 		hitbox[2]=new Vector2(range,0).rotate(-(angle/2)).makeGlobal(transform.position, transform.rotation);
-		Vector2 midpoint = new Vector2(0,0).makeGlobal(transform.position, transform.rotation);//TODO das könnte unnötig sein
+
+		//mittelpunkt für lerpImHalbkreis
+		Vector2 midpoint = new Vector2(0,0).makeGlobal(transform.position, transform.rotation);
 		
 	// zwischenpunkte setzen
 		if(hitboxAccuracy>3)for(int i=3;i<hitboxAccuracy;i++) {
@@ -45,7 +47,7 @@ public class KreisTeilHitbox extends Hitbox{
 	@Override
 	public boolean collides(Vector2 point) {
 		point = point.makeLocal(transform.position,transform.rotation);
-//Prüfung von Abstand 			und 												Winkel
+//Prüfung von Abstand 			und 				Winkel
 		if(point.length()<=range&&(point.angle()<angle/2||point.angle()>Math.PI*2-angle/2))return true;
 		else return false;
 	}

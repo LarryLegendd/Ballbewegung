@@ -50,11 +50,10 @@ public class SpielFenster extends JFrame{ //Durch Ableiten von JFrame werden z.B
         add(spielfeld);  //Hinzufügen des Spielfeldes zum SpielFenster ; (add() erben alle von Container)
         pack();  //Ideale Größe berechnen
 
-        this.setTitle("Fliegender Ball");
+        this.setTitle("Endless Runner");
         this.setLocation(0,0); //Linke obere Fensterecke festlegen
         this.setResizable(true);
         this.setVisible(true);
-
 
         repaint();
     }

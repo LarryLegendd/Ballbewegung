@@ -14,14 +14,9 @@ public class TriangleHitbox extends Hitbox{//erstellt eine dreieckige hitbox mit
 	private Vector2 lastpoint;//temp
 	private Vector2 lastppre;
 	
-//	public TriangleHitbox(Vector2 ursprung, double breite, double hoehe, double drehWinkel) {
-//		basis1=new Vector2(0,breite/2).rotate(drehWinkel).add(ursprung);//richtige länge und dann drehen und dann auf spieler verschieben
-//		basis2=new Vector2(0,-breite/2).rotate(drehWinkel).add(ursprung);
-//		//Spitze
-//		spitze= new Vector2(hoehe,0).rotate(drehWinkel).add(ursprung);
-//	}
+
 	public TriangleHitbox(double breite, double hoehe,Transform transform) {
-		super(transform,(int)Math.max(hoehe,breite/2));//entferntester punkt aös size mitgeben.
+		super(transform,(int)Math.max(hoehe,breite/2));//entferntester punkt als size mitgeben.
 		basisl=new Vector2(0,-breite/2);
 		basisr=new Vector2(0,breite/2);
 		//Spitze
@@ -57,8 +52,10 @@ public class TriangleHitbox extends Hitbox{//erstellt eine dreieckige hitbox mit
 
 	@Override
 	public Vector2[] toPoints(int hitboxAccuracy) {
-		if(hitboxAccuracy<3)hitboxAccuracy=3;
-		Vector2[] hitbox = new Vector2[hitboxAccuracy];
+		if(hitboxAccuracy<3)hitboxAccuracy=3;//untergrenze für Anzahl der Punkte
+		Vector2[] hitbox = new Vector2[hitboxAccuracy];// Array, in das alles punkte geschrieben werden
+
+// Die Punkte, an denen sich die Linien treffen, aus dem Konstruktor abgelesen
 		hitbox[0]=basisl.makeGlobal(transform.position, transform.rotation);
 		hitbox[1]=basisr.makeGlobal(transform.position, transform.rotation);
 		hitbox[2]=spitze.makeGlobal(transform.position, transform.rotation);

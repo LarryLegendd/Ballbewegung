@@ -27,7 +27,7 @@ public abstract class Weapon {
 	/**
 	 * startet für eine bestimmte Zeit einen Cooldown
 	 */
-	protected void peneltyCooldown(int millis) {
+	protected void penaltyCooldown(int millis) {
 		startCooldown();
 		cooldownTimer = new Timer(millis, () -> {
 	       		cooldown=false;

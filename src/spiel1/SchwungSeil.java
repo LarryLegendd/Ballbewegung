@@ -138,33 +138,33 @@ public class SchwungSeil extends Weapon {
 
 		shoottimer=shoottime;
 		t = 	new Timer(13, () -> {//Timer für das geradeaus fliegen des Projektils
-			transform.position = transform.position.add(transform.speed);
+			transform.position = transform.position.add(transform.speed); // bewegen des "Pfeils"
 
 			shoottimer--;
 
-			if (shouldStop) {
+			if (shouldStop) {//aufhören, wenn der Spieler das verlangt
 				shoottimer=0;
 			}
 
-			for(Enemy enemy : enemies)
+			for(Enemy enemy : enemies)//prüfen, ob es einen Gegner trifft.
 			{
 				if(shoot(enemy))
 				{
 					hitEnemy = enemy;
-					timeController.normalTime();
+					timeController.normalTime();//zeitverlangsamung deaktivieren
 
-					if (swingtimer != null) {
+					if (swingtimer != null) {//schwingen starten
 						TimerManager.addTimer(swingtimer);
 					}
 					return false;
 
 				}
 			}
-			if (shoottimer <= 0) {//reset wenn timer ausgelaufen
+			if (shoottimer <= 0) {//reset wenn timer ausgelaufen, weil daneben geschossen wurde.
 				listener.onMiss();
 				shoottimer = shoottime;
-				peneltyCooldown(30);
-				timeController.normalTime();
+				penaltyCooldown(30);//Strafcooldown
+				timeController.normalTime();//zeitverlangsamung deaktivieren
 				if(isShown()) showTimer();//beendet nach ein bisschen extrazeit den timer. Nur showtimer, wenn nicht manuell beendet
 				isAttacking=false;
 				shouldStop = false;
@@ -183,14 +183,15 @@ public class SchwungSeil extends Weapon {
 	 * @return
 	 */
 	public boolean shoot(Enemy enemy) {
-        //fürs zeichen 
+        //fürs zeichen positionen merken
   		letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),transform.rotation);//links unten
   		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
   		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
   		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
+
   		show();//muss manuell (nicht mit showTimer()) gemacht werden weil es unterschiedlich lang dauert;
   		
-  		if(hitbox.collides(enemy.getHitbox())) {
+  		if(hitbox.collides(enemy.getHitbox())) {//wenn getroffen
       		enemy.schadenNehmen(1);
       		cameraController.shake();
       		
@@ -203,7 +204,7 @@ public class SchwungSeil extends Weapon {
 	@Override
 	public void clickReleased() {
 		if(isAttacking){
-			shouldStop =true;
+			shouldStop =true;//Attacke abbrechen
 		}
 	}
 
@@ -213,6 +214,11 @@ public class SchwungSeil extends Weapon {
 		if(level+1<levelArr.length)return levelArr[level+1][3];
 		else return -1;
 	}
+
+	/**
+	 * Aktualisiert die werte der waffe aus dem levelarray
+	 * @param level
+	 */
 	@Override
 	protected void updateLevel(int level) {
 		basisBreite = levelArr[level][0];
@@ -227,15 +233,19 @@ public class SchwungSeil extends Weapon {
 		if(hitbox!=null)hitbox.paintMe(g);
 		else System.err.println("hitbox ist null");
 		if(isShown()&&letzteBasis1!=null) {
-			
+			//positionen ins JPanel koordinatesystem umwandeln
 			Vector2 JBasis1=letzteBasis1.toJPanel();
 			Vector2 JBasis2=letzteBasis2.toJPanel();
 			Vector2 JSpitze=letzteSpitze.toJPanel();
 			Vector2 Jmidpoint=midpoint.toJPanel();
 			Vector2 Jplayerpos= originTransform.position.toJPanel();
+
+			//dreieck
 			g.drawLine((int)JBasis1.x(),(int)JBasis1.y(), (int) JSpitze.x(), (int) JSpitze.y());
 			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JSpitze.x(), (int) JSpitze.y());
 			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JBasis1.x(), (int) JBasis1.y());
+
+			//seil
 			g.drawLine((int)Jmidpoint.x(),(int)Jmidpoint.y(), (int) Jplayerpos.x(), (int) Jplayerpos.y());
 		}
 	}
