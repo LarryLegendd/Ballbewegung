@@ -55,6 +55,16 @@ public Button(Vector2 midpoint, double width, double height, BufferedImage press
         ausgabe = "";
     }
 
+    /**	Konstruktor für knöpfe mit Text (für die Erklärung) und nur einem bild
+     */
+    public Button(Vector2 midpoint, double width, double height, BufferedImage neutral, String ausgabe) { // Erstellen des Knopfes mit zwei Bildern
+        super(new Transform(midpoint.add(new Vector2(-width/2, -height/2))), width, height); //Erstellt das Gameobjekt des Buttons. Die berechnung macht den mittelpunkt zum punkt links oben
+        this.pressedImage = darkenImage(neutral, 0.5f);
+        this.neutralImage = neutral;
+        this.currentImage = neutral;
+        this.ausgabe = ausgabe;
+    }
+
     private BufferedImage darkenImage(BufferedImage image, float helligkeit) {
         RescaleOp op = new RescaleOp(helligkeit, 0f, null); // Erstellt ein RescaleOp, das ist eine art filter für das bild das es vergrößern und die helligkeit ändern kann. Quelle: das was da steht wenn man drüber hovert. offizielle java dokumentation
         return op.filter(image, null);//nutzt die filtermethode um den verdunklungsfilter anzuwenden

@@ -12,11 +12,11 @@ public class Spear extends Weapon {
 	
 	private double[][] levelArr = {
 		//	Breite,range,kb, Preis
-			  {20, 150, 15,		3},
-			  {25, 160, 18,		5},
-			  {30, 170, 21,		8},
-			  {35, 180, 24,	10},
-			  {40, 190, 27,	15},
+			  {20, 120, 15,		3},
+			  {25, 130, 18,		5},
+			  {30, 150, 21,		8},
+			  {35, 160, 24,	10},
+			  {40, 180, 27,	15},
 			  {45, 200, 30,	20},
 			  {50, 210, 33,	30},
 			  {55, 220, 36,	40},
@@ -26,7 +26,7 @@ public class Spear extends Weapon {
 	
 	private double basisBreite = levelArr[0][0];
 	private double range = levelArr[0][1];
-	private double spearKnockback = levelArr[0][3];
+	private double spearKnockback = levelArr[0][2];
 	private double spearEnemyKnockback = 2;
 	
 	private TriangleHitbox hitbox;
@@ -52,7 +52,7 @@ public class Spear extends Weapon {
 			letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),mausAbstand.angle());//rechts unten
 			letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),mausAbstand.angle());
 
-			if(hitbox.collides(enemy.getHitbox(),64)) {//kollision
+			if(hitbox.collides(enemy.getHitbox(),100)) {//kollision
 				enemy.schadenNehmen(1);
 				enemy.addSpeed(mausAbstand.normalize().multiply(spearEnemyKnockback));
 
@@ -65,11 +65,10 @@ public class Spear extends Weapon {
 		}
 		if(hit) {
 			listener.onHit(knockback);// kein Cooldown bei Treffer
-
 		}
 		else {
 			listener.onMiss();
-			penaltyCooldown(16);
+			penaltyCooldown(200);
 		}
 	}
 

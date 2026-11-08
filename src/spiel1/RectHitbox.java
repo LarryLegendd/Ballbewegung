@@ -9,13 +9,7 @@ public class RectHitbox extends Hitbox {
 		private int standardHitboxAccuracy=16;//zu wie vielen punkten die hitbox umgewandelt wird
 		
 		private double extradrehwinkel= 0;
-		
-		private Vector2 lastpoint;//temp
-		private Vector2 lastppre;//temp
-		private Vector2 lastpos;//temp
-		
-		private double lastangle = 0;
-		
+
 		private Vector2 lio;//links oben
 		private Vector2 reo;//rechts oben
 		private Vector2 liu;//links unten
@@ -82,13 +76,8 @@ public class RectHitbox extends Hitbox {
 		
 		@Override
 		public boolean collides(Vector2 point) {//theoretisch efficcienter die hitbox global abzuspeichern oder so das in collides hitbox für die anderen punkte gemerkt ist
-			lastangle = transform.rotation;//Das ist der eigene angle weil der von der anderen ist schon in topoints
-			lastpos=transform.position;
-
-			lastppre = point;
+			lastangle = transform.rotation;//Das ist der eigene angle weil der von der anderen Hitbox ist schon in topoints
 			point = point.makeLocal(transform.position).rotate(-transform.rotation+extradrehwinkel);
-
-			lastpoint=point;
 			return (point.x() >= lio.x() && point.x() <= reu.x() &&
 			        point.y() <= lio.y() && point.y() >= reu.y());
 		}
@@ -134,13 +123,6 @@ public class RectHitbox extends Hitbox {
 			 {
 				 for(Vector2 point : toPoints()) {
 					point.toJPanel().draw(g);
-				 }
-				 
-				 g.drawRect( (int) lio.toJPanel().x(), (int) lio.toJPanel().y(), (int) reu.toJPanel().x(), (int) reu.toJPanel().y());
-				 if(lastpoint!=null) {
-					 lastpoint.toJPanel().draw(g);
-					// lastppre.draw(g, Color.green);
-					 lastpos.toJPanel().draw(g, Color.blue);
 				 }
 			 }
 			 

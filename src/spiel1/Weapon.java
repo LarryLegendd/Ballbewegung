@@ -123,9 +123,7 @@ public abstract class Weapon {
 	 */
 	public int levelUp(int money){
 		int price = (int) getNextPrice();
-		System.out.println("money: "+money);
 		if(price != -1) {//-1 wird von getnextprice ausgegeben, wenn das levelarray zuende ist.
-			System.out.println(price+" price");
 			if(money >= price) {
 				level++;
 				updateLevel(level);

@@ -73,12 +73,16 @@ public class Joint extends GameObject {
     }
 
     public void moveJoint(Transform originTransform, double time) {
+
+        Vector2 altePosition = getPosition(); //letzte position vor der bewegung speichern
+
         if(distance<0)System.err.println("moveJoint should not be called at the head joint or distance is negative");
         for(Joint joint : connectedJoints){
             //addiert die Differenz der Geschwindigkeiten von diesem Gelenk und den Anderen gelenken zu seiner eigenen Geschwindigkeit, um alle Kräfte zu Berücksichtigen
             getTransform().speed = getSpeed().add(joint.getSpeed().makeLocal(getSpeed())).multiply(1);//alle Geschwindigkeiten Addieren
         }
         getTransform().speed = getSpeed().add(originTransform.speed.makeLocal(getSpeed())).multiply(1);//das gleiche wie drüber mit Originspeed
+
 
 
         //Bewegung mit Gravitation
@@ -94,6 +98,9 @@ public class Joint extends GameObject {
         getTransform().position = getPosition().makeLocal(originTransform.position).normalize().multiply(distance).makeGlobal(originTransform.position);
         lastOriginPos=originTransform.position;
         getTransform().rotation = getPosition().makeLocal(originTransform.position).angle();
+
+        //den speed auf das setzen, wie der Joint sich tatsächlich bewegt hat
+        getTransform().speed = getTransform().position.subtract(altePosition);
 
         for(Joint joint : connectedJoints) joint.moveJoint(getTransform(),time);// am ende die anderen Joints aufrufen, dadurch bewegt sich zuerst der nächste joint vom origin, und die anderen folgen.
     }

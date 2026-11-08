@@ -12,7 +12,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	private Vector2 letzteSpitze;
 	private Vector2 letzteBasis1;
 	private Vector2 letzteBasis2;
-	private Vector2 midpoint;
+
 	
 	private Vector2 knockback;
 	
@@ -24,16 +24,16 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	
 	private double[][] levelArr = {
 		//	Breite,hoehe,kb, Preis, shoottime
-			  {5, 	9, 	7.5,	4,	15},
-			  {6,	10, 	8,		5,	20},
-			  {7,	11, 	9,		8,	25},
-			  {8, 	12, 10,		10,	30},
-			  {10, 	15, 11,		15,	35},
-			  {12, 	18, 12,		20, 40},
-			  {14, 	21, 13,		30,	45},
-			  {16, 	24, 14,		40,	50},
-			  {18, 	27, 15,		50,	55},
-			  {20,	30,	16,		100,60},
+			  {8, 	9, 	7.5,	4,	15},
+			  {9,	10, 8,		5,	20},
+			  {10,	11, 9,		8,	25},
+			  {12, 	12, 10,		10,	30},
+			  {14, 	15, 11,		15,	35},
+			  {16, 	18, 12,		20, 40},
+			  {18, 	21, 13,		30,	45},
+			  {20, 	24, 14,		40,	50},
+			  {22, 	27, 15,		50,	55},
+			  {24,	30,	16,		100,60},
 		};
 	
 	private double basisBreite = levelArr[0][0]; // Breite der Basis vom Dreieck, das geschossen wird
@@ -64,7 +64,7 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
   		letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),transform.rotation);//links unten
   		letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),transform.rotation);//rechts unten
   		letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),transform.rotation);
-  		midpoint = letzteBasis1.getPointBetween(letzteBasis2);
+
 
   		if(hitbox.collides(enemy.getHitbox())) {// wenn die hitbox der Grapplinghook mit der eines gegners kollidiert
       		enemy.schadenNehmen(1);
@@ -95,8 +95,6 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		// weil der spieler nicht direkt beim losschiessen rückstoß kriegt, sondern erst wenn die Grappinghook geflogen
 		// ist und einen gegner getroffen hat.
 
-		System.out.println("Schuss");
-
 		startCooldown();//startet cooldown
 		
 		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);// Richtung zur maus vom Spieler aus gesehen
@@ -106,8 +104,11 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 		speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit der Kugel
 		timeController.slowTimeFor((shoottime*13));//slow für den Schuss
 		currentshoottime =shoottime;
+
+		letzteBasis1 = null;//vor show letztebasis1 null setzen, sodass nicht die alte position gezeichnet wird
+
 		show();//nicht mit showTimer, weil die Zeit bei einem Treffer unterschiedlich lang ist
-		System.out.println("show");
+
 
 		Timer shootTimer = new Timer(13, () -> {//schiesst über längere zeit
 			transform.position = transform.position.add(speed);//Der enterhaken bewegt sich
@@ -127,7 +128,6 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 					currentshoottime = shoottime;
 					penaltyCooldown(30);
 					if(isShown())showTimer();//beendet nach ein bischen extrazeit den timer
-					System.out.println("Schuss vorbei");
 					return false;
 				}
 			}
@@ -154,19 +154,20 @@ public class Grapplinghook extends Weapon { // die Ranziehattacke
 	@Override
 	public void paintMe(Graphics g) {
 		if(hitbox!=null)hitbox.paintMe(g);
-		else System.out.println("hitbox ist null");
+		else System.err.println("hitbox ist null");
 		if(isShown()&&letzteBasis1!=null) {
 			
 			Vector2 JBasis1=letzteBasis1.toJPanel();
 			Vector2 JBasis2=letzteBasis2.toJPanel();
 			Vector2 JSpitze=letzteSpitze.toJPanel();
-			Vector2 Jmidpoint=midpoint.toJPanel();
+			Vector2 Jmidpoint=JBasis1.getPointBetween(JBasis2);
+
 			Vector2 Jplayerpos=playertransform.position.toJPanel();
 
 			//Dreieck
 			g.drawLine((int)JBasis1.x(),(int)JBasis1.y(), (int) JSpitze.x(), (int) JSpitze.y());
 			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JSpitze.x(), (int) JSpitze.y());
-			g.drawLine((int)JBasis2.x(),(int)JBasis2.y(), (int) JBasis1.x(), (int) JBasis1.y());
+			g.drawLine((int)Jmidpoint.x(),(int)Jmidpoint.y(), (int) JSpitze.x(), (int) JSpitze.y());
 		// Verbindungslinie
 			g.drawLine((int)Jmidpoint.x(),(int)Jmidpoint.y(), (int) Jplayerpos.x(), (int) Jplayerpos.y());
 		}

@@ -23,7 +23,7 @@ public record Vector2(double x,double y) {
 		double angle = Math.atan2(y, x);
 		
 		if (angle < 0) {// winkel ist immer positiv
-		    angle += 2 * Math.PI;
+		    angle += 2.0 * Math.PI;
 		}
 		return angle ;
 	}
@@ -41,7 +41,7 @@ public record Vector2(double x,double y) {
 		P2 = P2.makeLocal(this);
 		P3 = P3.makeLocal(this);
 		// Winkel voneinander Abziehen und 	negative winkel behandeln, indem 2pi addiert wird und modulo 2pi gerechnet hat. beide operationen verändern den betrag des Winkels nicht, schließen aber negative winkel aus.
-		return ((P2.angle()-P3.angle())	+	(Math.PI*2))%(Math.PI*2);
+		return ((P3.angle()-P2.angle())	+	(Math.PI*2.0))%(Math.PI*2.0);
 	}
 		
 	public Vector2 normalize() {//Quelle: https://ceur-ws.org/Vol-1337/paper28.pdf dadurch bin ich auf die idee von normalize gekommen S.167 oben
@@ -73,29 +73,20 @@ public record Vector2(double x,double y) {
 	public Vector2 multiply(double value) {
 		return new Vector2(this.x*value , this.y*value);
 	}
-	
-//	public void print() {
-//		System.out.println("x: "+x+" y: "+y);
-//	}
-//	public void print(String name) {
-//		System.out.println(name + " x: "+x+" y: "+y);
-//	}
-	
+
+	/**
+	 * drehen dieses vektors
+	 * @param angle
+	 * @return
+	 */
 	public Vector2 rotate(double angle) {
-//		double newAngle = ((angle()+angle) % (Math.PI*2));
-//		
-//		double x = Math.cos(newAngle);//kartesisch machen
-//	    double y = Math.sin(newAngle);
-//	    
-//	    return new Vector2(x,y).multiply(length());
-//		
-		double cos = Math.cos(angle);
-	    double sin = Math.sin(angle);
-	    
-	    double newX = this.x * cos - this.y * sin;
-	    double newY = this.x * sin + this.y * cos;
-	    
-	    return new Vector2(newX, newY);
+		//polar machen und drehen
+		double newAngle = ((angle()+angle) % (Math.PI*2));
+
+		double x = Math.cos(newAngle);//kartesisch machen
+	    double y = Math.sin(newAngle);
+
+	    return new Vector2(x,y).multiply(length());
 	}
 	
 	public Vector2 subtract(Vector2 v) {
@@ -181,7 +172,6 @@ public record Vector2(double x,double y) {
 	public Vector2 makeLocal(Vector2 abhaengig,double andererAngle) {
 		return subtract(abhaengig).rotate(-andererAngle);
 	}
-
 
 	private Vector2 toJP() {//JPanels haben die y achse nach unten. diese methode macht wandelt einen Punkt in das JPanel Koordiantensystem um
 		return new Vector2(x,Spielfeld.screenHeight-y);

@@ -11,9 +11,6 @@ public class TriangleHitbox extends Hitbox{//erstellt eine dreieckige hitbox mit
 	
 	private int standardHitboxAccuracy = 64;
 	
-	private Vector2 lastpoint;//temp
-	private Vector2 lastppre;
-	
 
 	public TriangleHitbox(double breite, double hoehe,Transform transform) {
 		super(transform,(int)Math.max(hoehe,breite/2));//entferntester punkt als size mitgeben.
@@ -81,23 +78,8 @@ public class TriangleHitbox extends Hitbox{//erstellt eine dreieckige hitbox mit
 
 	@Override
 	public boolean collides(Vector2 point) {// quelle https://prlbr.de/2014/liegt-der-punkt-im-dreieck Ansatz 3(prüfen ob ein winkel größer 180° ist
-		
-		//if(enemy.getPosition().distanceTo(playerpos)<range+Math.sqrt(enemy.getWidth()*enemy.getWidth() + enemy.getHeight()*enemy.getHeight())){//optimierung das nur nah genuge gegner geprüft werden
-		lastppre=point;
 		point = point.makeLocal(transform.position,transform.rotation);
-		lastpoint=point;
-//		System.out.println("Punkt1: "+lastpoint+" Punkt2: "+lastppre+" position: "+transform.position+" winkel: "+transform.rotation);
-//		System.out.println(point.angle(basis1, basis2)/Math.PI*180+" b1 b2");
-//		System.out.println(point+" pointpos");
-//		System.out.println(basis1+" basis1");
-//		System.out.println(basis2+" basis2");
-		
-//		System.out.println(point.angle(spitze, basis1)> Math.PI);
-//		System.out.println(point.angle(basis2, spitze)> Math.PI );
-//		System.out.println("point: "+point+" basis1: "+basisl +" basis2: "+basisr);
-//		System.out.println(point.angle(basisl, basisr)/Math.PI*180+" p12");
-//		System.out.println(point.angle(spitze, basisl)/Math.PI*180+" ps1");
-//		System.out.println(point.angle(basisr, spitze)/Math.PI*180+" p2s");	
+
 		if( point.angle(basisl, basisr) < Math.PI
 		&&  point.angle(spitze, basisl) < Math.PI 
 		&&  point.angle(basisr, spitze) < Math.PI) {
@@ -114,17 +96,5 @@ public class TriangleHitbox extends Hitbox{//erstellt eine dreieckige hitbox mit
 		return standardHitboxAccuracy;
 	}
 	
-	public void paintMe(Graphics g) {
-		 
-		 if(doDraw) //wenn aktiviert zeichnen
-		 {
-			 if(lastpoint!=null) {
-				 lastpoint.toJPanel().draw(g);
-				 
-				 lastppre.toJPanel().draw(g);
-				 
-			 }
-		 }
-		 
-	}
+	public void paintMe(Graphics g) {}
 }
