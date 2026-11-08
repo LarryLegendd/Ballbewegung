@@ -23,23 +23,23 @@ public class SchwungSeil extends Weapon {
 	 */
 	private boolean isAttacking;
 		
-	private final double[][] levelArr = {//TODO warum gibt es hier knockback und vllt stattdesen luftwiederstand einführen
-		//	Breite,range,kb, Preis, shoottime
-			  {4, 	5, 	5,		3,	7},
-			  {4,	6, 	5.3,	5,	10},
-			  {6,	9, 	5.6,	8,	15},
-			  {8, 	12, 5.9,	10,	20},
-			  {10, 	15, 6.2,	15,	25},
-			  {12, 	18, 6.5,	20,	30},
-			  {14, 	21, 6.8,	30,	35},
-			  {16, 	24, 7.1,	40,	40},
-			  {18, 	27, 7.4,	50,	45},
-			  {20,	 30, 7.7,	100,50},
+	private final double[][] levelArr = {
+		//	Breite,range, Preis, shoottime
+			  {4, 	5, 	3,	7},
+			  {4,	6, 	5,	10},
+			  {6,	9, 	8,	15},
+			  {8, 	12, 10,	20},
+			  {10, 	15, 15,	25},
+			  {12, 	18,	20,	30},
+			  {14, 	21, 30,	35},
+			  {16, 	24, 40,	40},
+			  {18, 	27, 50,	45},
+			  {20,	30, 100,50},
 		};
 	
 	private double basisBreite = levelArr[0][0];
-	private double range = levelArr[0][1];
-	private int shoottime=(int)levelArr[0][4];
+	private double range = levelArr[0][1]; // abstand zwischen basis und spitze vom dreieck
+	private int shoottime=(int)levelArr[0][3];
 	private int shoottimer;
 	private double shootspeed=20;
 	
@@ -210,7 +210,7 @@ public class SchwungSeil extends Weapon {
 	
 	@Override
 	public double getNextPrice() {
-		if(level+1<levelArr.length)return levelArr[level+1][3];
+		if(level+1<levelArr.length)return levelArr[level+1][2];
 		else return -1;
 	}
 
@@ -222,7 +222,7 @@ public class SchwungSeil extends Weapon {
 	protected void updateLevel(int level) {
 		basisBreite = levelArr[level][0];
 		range = levelArr[level][1];
-		shoottime=(int)levelArr[level][4];
+		shoottime=(int)levelArr[level][3];
 		hitbox = new TriangleHitbox(basisBreite, range, transform);
 		System.out.println(level);
 	}

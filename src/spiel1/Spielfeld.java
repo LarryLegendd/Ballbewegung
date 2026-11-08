@@ -335,7 +335,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     	for(int i = 0; i < weapons.length; i++) if(weapons[i]!= null) {
     		weapons[i].reset();
     		System.out.println("waffe "+i+" geresettet");
-    	}else System.out.println("waffe "+i+" ist null");//TODO cooldown bug wenn man mit cooldown stirbt kann man nicht mehr schiessen(glaube ich) aber ist nicht replezierbar
+    	}else System.out.println("waffe "+i+" ist null");
 
 		//Gegner initialisieren & Löschen
 		Areas.clear();
@@ -374,7 +374,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     	
     	TimerManager.update(13*getTimeSpeed());
     	
-        if (currentScreen.equals("spiel")) { // Spiel läuft //TODO eine one time methode, die beim wechseln von modi aufgerufen wird
+        if (currentScreen.equals("spiel")) { // Spiel läuft
 
 			this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
@@ -426,9 +426,9 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 			   isEnded=true;
 			   drawPlayer=false;
-			   leftWeapon.startCooldown();//Spieler kann nicht mehr attackieren //TODO funktioniert noch nicht
+			   leftWeapon.startCooldown();//Spieler kann nicht mehr attackieren
 
-			   leftWeapon.hide();//TODO funktioniert noch nicht ganz
+			   leftWeapon.hide();
 			   rightWeapon.hide();
 
 			   // definition vom rechteck das runterfällt.
@@ -561,9 +561,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 				Vector2 endscreendrawTextPos = endscreenTextPos.makeGlobal(endscreenPaneltopLeft);
 				g2d.drawRect((int) (endscreenPaneltopLeft.x()),(int)endscreenPaneltopLeft.y()
 						,(int)endscreenSize.x(),(int)endscreenSize.y());
-				g2d.drawString("Score: "+score+" ".replaceAll("\\s+", System.lineSeparator())+"money gained: "+moneyGained,
-						(int)endscreendrawTextPos.x(),(int)endscreendrawTextPos.y());//TODO line seperator fixen und moneten richtig einfuegen
-				//https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
+				g2d.drawString("Score: "+score,
+						(int)endscreendrawTextPos.x(), (int)endscreendrawTextPos.y());
+
+				g2d.drawString("Münzen gewonnen: "+moneyGained,
+						(int)endscreendrawTextPos.x(), (int)endscreendrawTextPos.y()+20);
+
 				endscreenShopButton.paintMe(g2d);
 			}
 
@@ -574,7 +577,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	g.drawString(("Score: "+score),(int) screenWidth/2,(int) screenHeight/3);
         	g.drawString(("Highscore: "+highscore),(int) screenWidth/2,(int) screenHeight/3 -20);
 
-			g.drawString(("Money: "+money),(int) screenWidth/2,(int) screenHeight/3 +40);
+			g.drawString(("Münzen: "+money),(int) screenWidth/2,(int) screenHeight/3 +40);
 
         	startButton.paintMe(g2d);
 
@@ -785,14 +788,4 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 			leftWeapon.clickReleased();
 		}
     }
-
-	//TODO spielführung also ein tutorial das man lernt was man machen muss
-	//TODO gut komentierter quellcode
-	/*allgemeiner überblick
-	 * mindestens ein klassendiagramm
-	 * überblick über die wichtigsten klassen
-	 * 3oder4 wesentliche stellen genauer beschreiben
-	 * es heißt 10-15 seiten, aber realsitisch mehr. unter 30 bleiben.
-	 */
-
 }
