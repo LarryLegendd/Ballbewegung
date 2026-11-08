@@ -124,7 +124,6 @@ public class SchwungSeil extends Weapon {
 	@Override
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener){
 		Vector2 mausdiff = mauspos.makeLocal(playertransform.position);
-		playertransform.rotation = mausdiff.angle();
 		transform.position = originTransform.position;
 		transform.rotation= originTransform.rotation;
 		transform.speed = mausdiff.normalize().multiply(shootspeed);//setzt die richtung und geschwindigkeit des Projektils

@@ -45,7 +45,6 @@ public class Sword extends Weapon {
 	public void hit(Vector2 mauspos, ArrayList<Enemy> enemies, WeaponHitListener listener) {
 
 		Vector2 mausAbstand = mauspos.makeLocal(playertransform.position);
-		playertransform.rotation = mausAbstand.angle();
 
 		//fürs Zeichnen Punkte merken
 		drawEndpoint1=new Vector2(range,0).rotate(angle/2).makeGlobal(hitbox.transform.position, hitbox.transform.rotation);

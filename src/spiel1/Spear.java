@@ -46,12 +46,11 @@ public class Spear extends Weapon {
 		showTimer();
 		for(Enemy enemy: enemies) {
 			Vector2 mausAbstand = mauspos.makeLocal(playertransform.position);
-			playertransform.rotation = mausAbstand.angle();
 
 			//fürs Zeichen Positionen der Ecken merken
-			letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),playertransform.rotation);//links unten
-			letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),playertransform.rotation);//rechts unten
-			letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),playertransform.rotation);
+			letzteBasis1 = hitbox.getBasis1().makeGlobal(hitbox.getPosition(),mausAbstand.angle());//links unten
+			letzteBasis2 = hitbox.getBasis2().makeGlobal(hitbox.getPosition(),mausAbstand.angle());//rechts unten
+			letzteSpitze = hitbox.getSpitze().makeGlobal(hitbox.getPosition(),mausAbstand.angle());
 
 			if(hitbox.collides(enemy.getHitbox(),64)) {//kollision
 				enemy.schadenNehmen(1);
