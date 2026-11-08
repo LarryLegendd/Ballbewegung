@@ -471,13 +471,13 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 
 
-// quellen finden
+// quelle: https://xmlgraphics.apache.org/batik/javadoc/org/apache/batik/ext/awt/RadialGradientPaint.html
 	public void drawSlowVignette(Graphics2D g2d, int width, int height, boolean isTimeSlowed) {
 		double slowpercentage = ((1-getTimeMultiplyer())*100);//https://stackoverflow.com/questions/16656651/does-java-have-a-clamp-function/75707634#75707634 & https://stackoverflow.com/questions/16656651/does-java-have-a-clamp-function/75707634#75707634
 		if(slowpercentage>100)slowpercentage=100;
 		if(slowpercentage<0)slowpercentage=0;
 		//Vignette
-		float[] fractions = {0.0f, 0.8f, 1.0f};
+		float[] distance = {0.0f, 0.8f, 1.0f};
 		Color[] colors = {
 				new Color(0, 0, 0,0),        // durchsichtig für mitte
 				new Color(0, 30, 100,(int)(slowpercentage/100*40)),    // Leichtes Blau
@@ -487,7 +487,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 		RadialGradientPaint mask = new RadialGradientPaint(
 				new Point((int) screenWidth/2, (int) screenHeight/2),
 				(float)(width * 0.8), // Radius des Effekts
-				fractions,
+				distance,
 				colors
 		);
 
