@@ -9,8 +9,11 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
     int ypos;
     ArrayList<Enemy> enemies = new ArrayList<>();
 
-    public EnemyArea(int xpos){
+    private MunitionGiver munitionGiver;
+
+    public EnemyArea(int xpos, MunitionGiver munitionGiver){
         this.xpos=xpos;
+        this.munitionGiver = munitionGiver;
     }
 
     public void generateEnemies(){//füllt den bereich mit gegnern
@@ -20,7 +23,7 @@ public class EnemyArea { // eine Klasse um gegner auf der Karte zu erzeugen
         }else mindestAbstand= 150;
         for(Vector2 position : Bluenoise.generate(new Vector2(xpos*Spielfeld.AreaWidth,ypos*Spielfeld.AreaHeight),new Vector2((xpos+1)*Spielfeld.AreaWidth, (ypos+1)*Spielfeld.AreaWidth),mindestAbstand))
         {
-           enemies.add(new Enemy(new Transform(position),17,17,5));
+           enemies.add(new Enemy(new Transform(position),17,17,5,munitionGiver));
         }
 
     }

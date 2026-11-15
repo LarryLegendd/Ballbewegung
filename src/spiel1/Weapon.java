@@ -143,5 +143,7 @@ public abstract class Weapon {
 	}
 
 	public abstract Hitbox getHitbox();
+
+	public void addMunition(double munition){}
 	public void paintMe(Graphics g) {}
 }

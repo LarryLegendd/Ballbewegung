@@ -3,4 +3,5 @@ package spiel1;
 */
 public interface CameraController {
 	void shake();
+	void shake(double strength);
 }
