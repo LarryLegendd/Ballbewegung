@@ -73,13 +73,15 @@ public class Sniper extends Weapon {
 
             Vector2 mausAbstand = mauspos.makeLocal(playertransform.position);
             boolean hit = false;
-            for (Enemy enemy : enemies) {
+            if(enemies != null){
+                for (Enemy enemy : enemies) {
 
-                if (enemy.getHitbox().collides(mauspos)) {
-                    enemy.schadenNehmen(5);
-                    enemy.addSpeed(mausAbstand.normalize().multiply(sniperEnemyKnockback));
-                    hit = true;
-                    break;
+                    if (enemy.getHitbox().collides(mauspos)) {
+                        enemy.schadenNehmen(5);
+                        enemy.addSpeed(mausAbstand.normalize().multiply(sniperEnemyKnockback));
+                        hit = true;
+                        break;
+                    }
                 }
             }
             munition--;
