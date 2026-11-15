@@ -65,22 +65,14 @@ public class Shotgun extends Weapon{
 
             showTimer();//anzeigen
 
-            double hitEnemies = 0;
-
             for (Enemy enemy : enemies) {
-
                 //Kollidieren
                 if (hitbox.collides(enemy.getHitbox())) {
                     enemy.schadenNehmen(1);
                     enemy.addSpeed(mausAbstand.normalize().multiply(shotgunEnemyKnockback));
-
-                    hitEnemies++;
                 }
             }
             knockback = mausAbstand.normalize().multiply(shotgunKnockback).reverse();//das liefert die gegenrichtung.
-
-            munition += hitEnemies/5;
-            if(munition > shotgunMaxMunition) munition = shotgunMaxMunition;
 
             cameraController.shake(100);
             listener.onHit(knockback);

@@ -76,6 +76,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	//private Staubsauger staubsauger; nicht mehr verwendet, weil zu schwer zu steuern
 	private SchwungSeil schwungSeil;
 	private Shotgun shotgun;
+	private Sniper sniper;
 
 	private Weapon[] weapons;
 	
@@ -124,7 +125,9 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 	Button shotgunButton;
 
-	private Button[] selectionButtons= {swordButton,spearButton,grapplingButton,staubsaugerButton,schwungSeilButton,shotgunButton};
+	Button sniperButton;
+
+	private Button[] selectionButtons= {swordButton,spearButton,grapplingButton,staubsaugerButton,schwungSeilButton,shotgunButton,sniperButton};
     private Button[] buttons;
 
 	private String currentScreen= "spiel"; // aktueller Bildschirmstatus
@@ -274,11 +277,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	    //staubsaugerButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,staubsaugerButtonPressed,staubsaugerButtonNeutral); //Nicht mehr verwendet, weil zu schwer zu steuern
 		schwungSeilButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*5),200,20,schwungSeilButtonNeutral,"Das Schwungseil wird zum Schwingen an Gegnern verwendet. Halte dazu die Maustaste Gedrückt. Wähle es aus, indem du mit der Maustaste, mit der du es verwenden willst auf diesen Knopf drückst.");
 		shotgunButton		= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*6),200,20,swordButtonNeutral,"Shotgun. Wähle sie aus, indem du mit der Maustaste, mit der du sie verwenden willst auf diesen Knopf drückst.");
+		sniperButton		= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()/(selectionButtons.length+2)*7),200,20,schwungSeilButtonNeutral,"Sniper. Wähle sie aus, indem du mit der Maustaste, mit der du sie verwenden willst auf diesen Knopf drückst.");
 
 
 		endscreenShopButton	= new Button(new Vector2(prefSize.getWidth()/50,prefSize.getHeight()),192,48,shopButton,shopButton);
 		//array für einfacheren hover effekt
-		buttons = new Button[]{startButton, leftUpgradeButton, rightUpgradeButton, swordButton, spearButton, grapplingButton, schwungSeilButton, endscreenShopButton, shotgunButton};
+		buttons = new Button[]{startButton, leftUpgradeButton, rightUpgradeButton, swordButton, spearButton, grapplingButton, schwungSeilButton, endscreenShopButton, shotgunButton, sniperButton};
 		
         
         // Maus-Events (z.B. Klick) werden registriert und verarbeitet
@@ -296,6 +300,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         spear	= new Spear(pointingJoint.getTransform());
         sword	= new Sword(pointingJoint.getTransform());
 		shotgun = new Shotgun(pointingJoint.getTransform(),this);
+		sniper 	= new Sniper(pointingJoint.getTransform(),this, this);
         grapple = new Grapplinghook(pointingJoint.getTransform(), this, this);//this ist der timecontroller/cameracontroller
         //staubsauger = new Staubsauger(pointingJoint.getTransform()); nicht meh verwendet weil zu schwer zu steuern
         schwungSeil = new SchwungSeil(pointingJoint.getTransform(), player, this, this);
@@ -305,8 +310,8 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     			grapple,
     			//staubsauger,
     			schwungSeil,
-				shotgun
-
+				shotgun,
+				sniper
 		};
         
         leftWeapon=sword;
@@ -611,7 +616,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	//staubsaugerButton.paintMe(g2d); nicht mehr verwendet
         	schwungSeilButton.paintMe(g2d);
 			shotgunButton.paintMe(g2d);
-
+			sniperButton.paintMe(g2d);
 			mausZeiger.paintMe(g2d);
 
 
@@ -761,6 +766,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 					leftWeapon=shotgun;
 					leftUpgradeButton.refresh();
 				}
+				if(sniperButton.press(mouseScreenPos)) {
+					leftUpgradeButton.setneutral(sniperButton.getneutral());
+					leftUpgradeButton.setpressed(sniperButton.getpressed());
+					leftWeapon=sniper;
+					leftUpgradeButton.refresh();
+				}
     		}
     		if(arg0.getButton()==3) { //rechtsklick
     			if(swordButton.press(mouseScreenPos)) {
@@ -798,6 +809,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 					rightWeapon=shotgun;
 					rightUpgradeButton.refresh();
 				}
+				if(sniperButton.press(mouseScreenPos)) {
+					rightUpgradeButton.setneutral(sniperButton.getneutral());
+					rightUpgradeButton.setpressed(sniperButton.getpressed());
+					rightWeapon=sniper;
+					rightUpgradeButton.refresh();
+				}
     		}
     	}
 
@@ -809,10 +826,10 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 		if(arg0.getButton()==3) //rechtsklick
 		{
-			rightWeapon.clickReleased();
+			rightWeapon.clickReleased(new Vector2(arg0).toCoordinate());
 		}
 		if(arg0.getButton()==1) { //linksklick
-			leftWeapon.clickReleased();
+			leftWeapon.clickReleased(new Vector2(arg0).toCoordinate());
 		}
     }
 

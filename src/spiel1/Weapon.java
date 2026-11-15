@@ -107,7 +107,7 @@ public abstract class Weapon {
 	/**
 	 * beim schwungseil um das schwingen zu beenden
 	 */
-	public void clickReleased() {}
+	public void clickReleased(Vector2 mausPos) {}
 
 
 	//==========Level===============

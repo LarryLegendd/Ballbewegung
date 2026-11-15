@@ -201,7 +201,7 @@ public class SchwungSeil extends Weapon {
 	}
 
 	@Override
-	public void clickReleased() {
+	public void clickReleased(Vector2 mauspos) {
 		if(isAttacking){
 			shouldStop =true;//Attacke abbrechen
 		}
