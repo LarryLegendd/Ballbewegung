@@ -19,11 +19,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.RadialGradientPaint;
 
-public class Spielfeld extends JPanel implements MouseListener, MouseMotionListener, TimeController, CameraController, MunitionGiver{ // JPanel ist eine Klasse, in der gezeichnet werden kann
+public class Spielfeld extends JPanel implements MouseListener, MouseMotionListener, TimeController, CameraController, MunitionGiver, MouseController{ // JPanel ist eine Klasse, in der gezeichnet werden kann
 
 
 	// Transparent 16 x 16 pixel cursor image.
 	BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+
+	private String cursor= "Player";
+	private double sniperCursorSichtbarkeit = 0;
 
 	//blank cursor.
 	Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(//https://stackoverflow.com/questions/1984071/how-to-hide-cursor-in-a-swing-application
@@ -62,7 +65,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
 	private RoundJoint kopfJoint = new RoundJoint(10);
 	private Joint halsJoint = new Joint(new Joint[] {kopfJoint},new Vector2(0,1),6);
-	private Joint mausZeiger = new Joint(new Joint[]{	new Joint(new Joint[]{	halsJoint	,	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[]{	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[] {},18,new Vector2(13,0))	},18)	,},18)	},0)	;
+	private Joint spielerMausZeiger = new Joint(new Joint[]{	new Joint(new Joint[]{	halsJoint	,	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[]{	new Joint(new Joint[] {},18,new Vector2(-13,0))	,	new Joint(new Joint[] {},18,new Vector2(13,0))	},18)	,},18)	},0)	;
 
 	private EnemyArea[]	currentArea = new EnemyArea[2];
 	static final int AreaWidth = 3000;
@@ -88,6 +91,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	//camera für scrollen (links unten die ecke ist die kamerapos
 	static Vector2 cameraPos= new Vector2(0,0);
 	private Vector2 mausPos=new Vector2(0,0);
+	private Vector2 JPanelMausPos = new Vector2(0,0);
 	
 	public static double screenHeight;//wird in SpielFenster gesetzt
 	public static double screenWidth;
@@ -140,8 +144,6 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
    
 
     private javax.swing.Timer t; // Timer, der in regelmäßigen Abständen die Methode doOnTick() aufruft
-
-    private Cursor c; // Cursor-Objekt, um den Mauszeiger zu verändern
 
 	boolean isEnded= false;
 
@@ -289,18 +291,12 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         addMouseListener(this);
 		addMouseMotionListener(this) ;
 
-
-
-
-		// Mauszeiger wird zu Fadenkreuz
-       // c = new Cursor(blankCursor);//CROSSHAIR_CURSOR); // erzeugen eines Cursor-Objektes
-        this.setCursor(blankCursor); // setCursor ist eine Methode der JPanel Klasse
         
         
         spear	= new Spear(pointingJoint.getTransform());
         sword	= new Sword(pointingJoint.getTransform());
 		shotgun = new Shotgun(pointingJoint.getTransform(),this);
-		sniper 	= new Sniper(pointingJoint.getTransform(),this, this);
+		sniper 	= new Sniper(pointingJoint.getTransform(),this, this,this);
         grapple = new Grapplinghook(pointingJoint.getTransform(), this, this);//this ist der timecontroller/cameracontroller
         //staubsauger = new Staubsauger(pointingJoint.getTransform()); nicht meh verwendet weil zu schwer zu steuern
         schwungSeil = new SchwungSeil(pointingJoint.getTransform(), player, this, this);
@@ -372,14 +368,17 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
     // Diese Methode wird in regelmäßigen Abständen vom Timer aufgerufen und sorgt für ein Spiel update
     private void doOnTick() {
 
-    	screenHeight = this.getHeight();
+		mausPos = JPanelMausPos.toCoordinate(); //Mausposition jeden Frame neu kalkulieren;
+
+
+		screenHeight = this.getHeight();
     	screenWidth = this.getWidth();
     	
     	TimerManager.update(13*getTimeSpeed());
     	
         if (currentScreen.equals("spiel")) { // Spiel läuft
 
-			this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+			//cursorX();
 
         	//Player
         	player.moveGameObject( timeMultiplyer);
@@ -469,9 +468,9 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
         }
         if (currentScreen.equals( "shop")) {
-			this.setCursor(blankCursor);
         	cameraPos=new Vector2(0,0);
-			mausZeiger.moveJoint(new Transform(mausPos),1);
+			cursorPlayer();
+			spielerMausZeiger.moveJoint(new Transform(mausPos),2);
         }
 
         repaint(); // ruft die paintComponent Methode auf, um das Spielfeld neu zu zeichnen
@@ -617,21 +616,25 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
         	schwungSeilButton.paintMe(g2d);
 			shotgunButton.paintMe(g2d);
 			sniperButton.paintMe(g2d);
-			mausZeiger.paintMe(g2d);
+
 
 
 			g2d.drawString(erklaerstring,(int) screenWidth/8, (int) screenHeight/10*9);
-
-			g2d.dispose();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
         }
+		paintCursor(g2d);
+		g2d.dispose();//das es sauber zurückgesetzt wird und das normal g von java unverändert bleibt
     }
 
 	@Override
-	public void mouseDragged(MouseEvent e) {}
+	public void mouseDragged(MouseEvent e) {
+		JPanelMausPos = new Vector2(e);
+		mausPos= new Vector2(e).toCoordinate();
+	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {//für hovern
-		mausPos= new Vector2(e).toCoordinate();
+		JPanelMausPos = new Vector2(e);
+
 		pointingJoint.setPointingPosition(mausPos);
 		boolean didCollide = false;
 		for(Button button : buttons) {
@@ -644,10 +647,6 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 			}
 		}
 		if(!didCollide)erklaerstring = "";
-		if(currentScreen.equals("shop")){
-			//mausZeiger.setPosition(mausPos);
-			mausZeiger.moveJoint(new Transform(mausPos),2);
-		}
 	}
     // Diese Methoden müssen implementiert werden, da die Klasse das MouseListener Interface implementiert
     // Es werden nur die Methoden genutzt, die benötigt werden. Die anderen bleiben leer.
@@ -716,6 +715,7 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 
     		if(startButton.press(mouseScreenPos)) {
     			TimerManager.addTimer(new Timer(100,()->{
+					cursorX();
 					resetGame();
 					return false;
 				}));
@@ -836,5 +836,56 @@ public class Spielfeld extends JPanel implements MouseListener, MouseMotionListe
 	@Override
 	public void giveMunition(double munition) {
 		for(Weapon weapon: weapons) weapon.addMunition(munition);
+	}
+
+	@Override
+	public void cursorPlayer() {
+		this.setCursor(blankCursor);
+		cursor = "Player";
+	}
+
+	@Override
+	public void cursorSniper(double sichtbarkeit) {
+		this.setCursor(blankCursor);
+		cursor = "Sniper";
+		sniperCursorSichtbarkeit = sichtbarkeit;
+	}
+
+	@Override
+	public void cursorX() {
+		cursor = "X";
+		this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+	}
+
+	@Override
+	public void paintCursor(Graphics2D g2d) {
+		if(cursor.equals("Player")) {
+			spielerMausZeiger.paintMe(g2d);
+		}
+		if(cursor.equals("Sniper")){
+			Vector2 Jmaus = mausPos.toJPanel();
+			g2d.drawOval((int)(Jmaus.x()-25),(int)(Jmaus.y()-25),50,50);
+			g2d.drawLine((int)(Jmaus.x()-25),(int)(Jmaus.y()),(int)(Jmaus.x()+25),(int)(Jmaus.y()));
+			g2d.drawLine((int)(Jmaus.x()),(int)(Jmaus.y()+25),(int)(Jmaus.x()),(int)(Jmaus.y()-25));
+
+			float[] distance = { 0f, 1.0f};
+			Color[] colors = {
+					new Color(0, 0, 0,0),        // durchsichtig für mitte
+					new Color(0, 0, 0,(int)sniperCursorSichtbarkeit),    // Leichtes Blau
+			};
+
+			RadialGradientPaint mask = new RadialGradientPaint(
+					new Point((int) Jmaus.x(), (int) Jmaus.y()),
+					(float)(50), // Radius des Effekts
+					distance,
+					colors
+			);
+			g2d.setPaint(mask);
+			g2d.fillRect(0, 0,(int) screenWidth,(int) screenHeight);
+			
+		}
+		if(cursor.equals("X")){}
+
+
 	}
 }

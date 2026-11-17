@@ -12,16 +12,16 @@ public class Sniper extends Weapon {
 
     private double[][] levelArr = {
 //    sichtbarkeit, kb, Munition, Preis
-            {0, 	32,     1,	    3},
-            {43,    34,	    1,      5},
-            {87, 	36,	    1,      8},
-            {103,   38,	    1,      10},
-            {127,   40,     1,	    15},
-            {160,   42,     1,      20},
-            {190,   44,	    1,      30},
-            {210,   46,	    1,      40},
-            {240,   48,     1,	    50},
-            {255, 	50,	    2,	    100},
+            {255, 	32,     1,	    3},
+            {240,   34,	    1,      5},
+            {210, 	36,	    1,      8},
+            {190,   38,	    1,      10},
+            {160,   40,     1,	    15},
+            {127,   42,     1,      20},
+            {103,   44,	    1,      30},
+            {87,    46,	    1,      40},
+            {43,    48,     1,	    50},
+            {0, 	50,	    2,	    100},
     };
 
     private double sichtbarkeit = levelArr[0][0];
@@ -38,12 +38,14 @@ public class Sniper extends Weapon {
     private CameraController cameraController;
 
     private TimeController timeController;
+    private MouseController mouseController;
 
-    public Sniper(Transform playertransform, CameraController cameraController, TimeController timeController) {
+    public Sniper(Transform playertransform, CameraController cameraController, TimeController timeController, MouseController mouseController) {
         this.playertransform= playertransform;
         hitbox = new RectHitbox(1,1,playertransform);
         this.cameraController = cameraController;
         this.timeController = timeController;
+        this.mouseController = mouseController;
     }
 
     @Override
@@ -58,11 +60,8 @@ public class Sniper extends Weapon {
             this.enemies = enemies;
             this.weaponlistener=listener;
 
-
-            Vector2 mausPos = mauspos;
-
             timeController.slowTime();
-            show();//anzeigen
+            mouseController.cursorSniper(sichtbarkeit);
         }
 
     }
@@ -92,7 +91,7 @@ public class Sniper extends Weapon {
             }
             weaponlistener.onHit(knockback);
             timeController.normalTime();
-            hide();
+            mouseController.cursorX();
         }
     }
 
@@ -114,14 +113,7 @@ public class Sniper extends Weapon {
     }
 
     @Override
-    public void paintMe(Graphics g){
-        Graphics2D g2d = (Graphics2D) g;
-        if(isShown()&&mausPos!=null) {
-            Vector2 jmausPos = mausPos.toJPanel();
-            g2d.drawLine((int)jmausPos.x(),(int)jmausPos.y(),(int)jmausPos.x(),(int)(jmausPos.y()+10));
-            //TODO mauszeiger ausblenden und eigenen zeichnen, sodass der eigene auch von der g2d slowverzerrung modifiziert wird und wieder an der richtigen stelle ist.
-        }
-    }
+    public void paintMe(Graphics g){}
 
     @Override
     public Hitbox getHitbox() {
